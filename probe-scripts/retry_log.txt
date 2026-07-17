@@ -1,0 +1,2 @@
+2026-07-18T01:18:02 attempt=1 status=403 body={"errors":[{"type":"forbidden"}],"request_id":"178432668296466f6904fbcbd5be3026"}
+2026-07-18T01:22:03 attempt=2 status=403 body={"errors":[{"type":"forbidden"}],"request_id":"17843269232510765887a4f530ee4022"}
