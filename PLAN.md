@@ -470,3 +470,17 @@ LinkedIn:
 ---
 ## Журнал исполнения (дописывать сюда)
 <!-- этап N: дата, ветка A/B/C/D, found-таблица, отклонения -->
+
+### Этап 0 — 2026-07-18 — каркас готов, доступ к hh НЕ получен (СТОП на ветвлении)
+
+**Каркас.** git init (main); скелет §3.1: `etl/` (config.py и skills_catalog.py — полностью по §3.4/§6.1; fetch/normalize/fx/skills/aggregate/cli — стабы с сигнатурами), pyproject, `.gitignore`/`.gitattributes`/`.dockerignore`, README-стаб, Chart.js 4.4.3 + annotation 3.0.1 вендорены в `site/vendor/`. `pip install -e ".[dev]"` в `.venv` (Python 3.12.13, homebrew). Приёмка каркаса пройдена: `ruff check etl tests` — clean; `pytest -q` — 2 passed (SEARCH_PLAN["ru"] ⊆ SEARCH_KEYS; CANONICAL == list(SKILLS)).
+
+**Репозиторий.** github.com/midat-fx/salary-radar-kz (public), запушен. Секрет `GEMINI_API_KEY` установлен (`gh secret set`).
+
+**Приватность (отклонение от «probe-scripts as-is»).** `probe-scripts/jar.txt` и `h2.txt` удалены до пуша — содержали cookie `__ddg9_` с домашним IP владельца (176.33.61.131). В публичную историю IP не попал. Остальные probe-scripts (публичные ответы API) — в репо.
+
+**Смоук GO/NO-GO доступа к hh.**
+- Actions egress (US Azure): `GET /vacancies?text=python&area=40&per_page=1` → **HTTP 403** `{"errors":[{"type":"forbidden"}]}`, request_id `178433006467958e3f41eb35dba8d022`. Run: actions/runs/29620143306.
+- Мак владельца (Анкара, разовый curl): `/vacancies` → **403** (request_id `1784330129279b83fadbe41dcbbf9025`); контроль `/dictionaries` → **200**. Ровно паттерн §9: вакансионные эндпоинты забанены по IP, справочники живы. Бан 18.07 НЕ спал — забанены и Actions-egress, и домашний IP.
+
+**Ветка: A исключена (Actions=403). Выбор B/C/D — за владельцем (СТОП).** По плану следующий шаг — ветка B: регистрация OAuth-приложения на dev.hh.ru (действие владельца; исполнителю самому не делать) → секрет `HH_APP_TOKEN` → повтор смоука с `Authorization: Bearer`. Риск: 403 отдаёт ddos-guard по IP до авторизации, поэтому app-токен из забаненного egress (Actions) может не снять бан; тогда ветка C (Cloudflare Worker-прокси — но CF-egress тоже может быть под 403; `wrangler` в системе не найден, нужен `npx wrangler` или установка) или D (CIS-egress: KZ/RU-VPN на маке + launchd, либо self-hosted runner). Ожидаю решения владельца.
