@@ -86,6 +86,19 @@ jobs:
             git push && break || git pull --rebase origin main
           done
 
+      - name: Deploy to Cloudflare Pages
+        if: steps.guard.outputs.skip != '1'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
+            npx --yes wrangler@latest pages deploy site \
+              --project-name=tech-salary-radar --branch=main --commit-dirty=true
+          else
+            echo "CLOUDFLARE_API_TOKEN not set — data committed; deploy skipped (see README)."
+          fi
+
       - name: Alert on failure
         if: failure()
         run: |
