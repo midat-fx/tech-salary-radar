@@ -28,13 +28,16 @@ _MID = re.compile(r"\b(mid|middle|mid[- ]level|intermediate)\b", re.I)
 
 _MGMT = re.compile(r"\b(manager|director|vp|vice president|head of|chief|cto|ceo|cio|cfo|coo)\b", re.I)
 
-_DENY_ROLE = re.compile(r"\b(product manager|program manager|product owner|technical program|"
+# hard deny wins over an allow-signal (eng-adjacent-but-not-dev, PM, design)
+_HARD_DENY = re.compile(r"\b(product manager|program manager|product owner|technical program|"
                         r"designer|ux designer|ui designer|product designer|graphic designer|"
-                        r"design lead|sales|account executive|account manager|recruit|talent|"
-                        r"\bhr\b|people ops|human resources|legal|counsel|finance|accounting|"
-                        r"marketing|content|community|customer success|customer support|\bsupport\b|"
-                        r"\boffice\b|coordinator|facilities|executive assistant|administrative|"
-                        r"receptionist)\b", re.I)
+                        r"design lead|sales engineer|solutions engineer|solutions consultant|"
+                        r"sales development|account executive|account manager)\b", re.I)
+# soft deny only applies when the title carries NO allow (tech) signal
+_SOFT_DENY = re.compile(r"\b(sales|recruit|talent|\bhr\b|people ops|human resources|legal|counsel|"
+                        r"finance|accounting|marketing|content|community|customer success|"
+                        r"customer support|\bsupport\b|\boffice\b|coordinator|facilities|"
+                        r"executive assistant|administrative|receptionist)\b", re.I)
 _ALLOW_ROLE = re.compile(r"\b(engineer|engineering|developer|programmer|software|backend|back[- ]end|"
                          r"front[- ]?end|full[- ]?stack|sde|mobile|android|ios|data|machine learning|"
                          r"\bml\b|\bai\b|mlops|devops|sre|site reliability|platform|infrastructure|"
@@ -79,12 +82,15 @@ def is_management(title):
 
 
 def passes_role_filter(title, department=None):
-    """Keep only tech-IC roles (allow eng/data/ML/DevOps/SRE/QA/security; deny non-tech, PM, design)."""
+    """Keep only tech-IC roles. hard-deny (PM/design/sales-eng) wins; else an allow (tech) signal
+    wins over soft-deny (non-tech words); else a tech department keeps it (PLAN.md §3.7)."""
     t = title or ""
-    if _DENY_ROLE.search(t):
+    if _HARD_DENY.search(t):
         return False
     if _ALLOW_ROLE.search(t):
         return True
+    if _SOFT_DENY.search(t):
+        return False
     if department and _TECH_DEPT.search(department):
         return True
     return False
