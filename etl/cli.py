@@ -74,8 +74,23 @@ def cmd_run(args):
 
 
 def cmd_backfill(args):
-    """One-off backfill of jobs by published_at (PLAN.md stage 4)."""
-    raise NotImplementedError
+    """One-off: rebuild data/jobs/* keyed by each open job's publish date (PLAN.md stage 4)."""
+    import shutil
+
+    from etl.normalize import backfill_job_rows
+    dt = today_str()
+    client = make_client()
+    jobs = list(iter_jobs(client, load_seed(), log=print))
+    rates = fetch_rates(client, args.data_dir)
+    jobs_dir = Path(args.data_dir) / "jobs"
+    if jobs_dir.exists():
+        shutil.rmtree(jobs_dir)          # Шаг 0: retro rebuild of the whole pool by publish date
+    by_date = backfill_job_rows(jobs, rates, dt)
+    for fs, rows in sorted(by_date.items()):
+        write_partition(rows, args.data_dir, "jobs", fs)
+    total = sum(len(v) for v in by_date.values())
+    print(f"backfill: {total} jobs across {len(by_date)} publish dates "
+          f"({min(by_date)}..{max(by_date)})")
 
 
 def cmd_aggregate(args):
