@@ -399,4 +399,16 @@ enbek.kz достижим из Анкары (nginx+Laravel+Livewire, server-rend
 - **Lever**: palantir 274, matchgroup 83 (многие slug 404 — курировать). `descriptionPlain`, `workplaceType`, `createdAt` epoch-ms. `salaryRange` часто пуст.
 - **Ashby**: openai 723, notion 141, ramp 125, replit 94, linear 24. `descriptionPlain`, `isRemote`, **`compensation` плотная (ramp 125/125)**: components Salary с interval/currency/min/max.
 
-PLAN переписан под ATS (§1–§10): USD-методика, seniority-из-title, регион US/EU/other, salary.py, sources.py, сид-лист §6.5. Каталог навыков (61) и каркас переносятся. Следующий шаг — этап 1 (вычистить hh-специфику из config/стабов/smoke, sources.py+fetch.py, собрать и живьём провалидировать сид ≥300).
+PLAN переписан под ATS (§1–§10): USD-методика, seniority-из-title, регион US/EU/other, salary.py, sources.py, сид-лист §6.5. Каталог навыков (61) и каркас переносятся.
+
+**Ревью владельца применено (§3.6/§3.7):** грейды junior/mid/senior/staff+/**unspecified** (без маркера — не в mid); management-роли исключены из ЗП-статистики; premium в стратах **грейд×регион** (против конфаундинга); роль-фильтр tech-IC (allow eng/data/ML/DevOps/SRE/QA/security; deny non-tech; **PM и designer исключены из v1**, счётчик filtered_non_tech); LLM обрезка 1500→**4000**, батч 20→**10**; схема сида `{name,ats,slug,status,added}` + дедуп/мёртвые.
+
+### Этап 1 — 2026-07-18 — ✅ ВЫПОЛНЕН
+
+- **hh-специфика вычищена** из config.py (SOURCES 3 ATS вместо AREAS/SEARCH_KEYS), стабов, test_config, smoke.yml (проверяет 3 ATS), README/UA. `grep` hh-специфики в etl/tests — чисто.
+- **sources.py** — реальные парсеры Greenhouse/Lever/Ashby → общий формат (`_get` с tenacity: 404→[], 429/5xx→retry; strip_html для GH; Lever epoch-ms→ISO). **fetch.py** — make_client(UA), load_seed (только active), iter_jobs (пауза+джиттер, мёртвая доска не роняет прогон). salary.py/normalize.py стабы обновлены (is_management, passes_role_filter).
+- **Фикстуры** tests/fixtures/{greenhouse,lever,ashby}.json — обрезанные живые ответы. **test_sources.py** (MockTransport): парсинг 3 ATS + 404/пустая → []. `ruff` clean, `pytest` 8 passed.
+- **Сид-лист собран и живьём провалидирован** (`probe-scripts/ats-recon/build_seed.py` + `expand_seed.py`; кандидаты из публичного `Feashliaa/job-board-aggregator`). Итог `data/seed_companies.json`: **491 записи, 320 active** (greenhouse 181, ashby 92, lever 47), 164 dead, 7 empty. **16 506 активных вакансий**. Доля: **remote 63%, EU 37%** (заметная). Схема `{name,ats,slug,status,added,n_jobs,has_eu,has_remote}`; дедуп по name; курируемые dead помечены (не удалены); случайные dead из bulk не пишутся (шум).
+- **Приёмка:** живой `fetch_ashby(client,"ramp")` → 125 джоб, 125 с compensation; `load_seed()` → 320 active; pytest зелёный. ✅
+
+Следующий — этап 2 (salary.py + fx.py + normalize.py: парсинг вилок→annual USD, санитар, регион/seniority/management/роль-фильтр, дедуп, партиции; test_cli_dry).
