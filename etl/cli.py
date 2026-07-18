@@ -18,14 +18,16 @@ def today_str():
     return datetime.now(ZoneInfo(TZ)).date().isoformat()
 
 
-def existing_job_uids(data_dir):
-    """DISTINCT job_uid across all data/jobs/* partitions (empty set if none yet)."""
-    glob = Path(data_dir) / "jobs"
-    if not any(glob.rglob("*.parquet")):
+def existing_job_uids(data_dir, exclude_dt=None):
+    """DISTINCT job_uid across data/jobs/* partitions, excluding the given dt (so a same-day
+    re-run reproduces its own 'new' set instead of wiping it). Empty set if none."""
+    root = Path(data_dir) / "jobs"
+    parts = [p for p in root.glob("dt=*/part.parquet") if p.parent.name != f"dt={exclude_dt}"]
+    if not parts:
         return set()
     import duckdb
-    q = f"SELECT DISTINCT job_uid FROM read_parquet('{glob}/*/part.parquet')"
-    return {r[0] for r in duckdb.sql(q).fetchall()}
+    files = ",".join(f"'{p}'" for p in parts)
+    return {r[0] for r in duckdb.sql(f"SELECT DISTINCT job_uid FROM read_parquet([{files}])").fetchall()}
 
 
 def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_limit=None):
@@ -33,7 +35,7 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
     kwargs = {"log": log} if pause is None else {"log": log, "pause": pause}
     jobs = list(iter_jobs(client, seed, **kwargs))
     rates = fetch_rates(client, data_dir)
-    result = normalize_all(jobs, rates, dt, existing_job_uids(data_dir))
+    result = normalize_all(jobs, rates, dt, existing_job_uids(data_dir, exclude_dt=dt))
     snap, new, stats = result["snapshot_rows"], result["new_rows"], result["stats"]
     write_partition(snap, data_dir, "snapshots", dt)
     write_partition(new, data_dir, "jobs", dt)
