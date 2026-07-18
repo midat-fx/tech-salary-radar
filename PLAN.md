@@ -412,3 +412,17 @@ PLAN переписан под ATS (§1–§10): USD-методика, seniority
 - **Приёмка:** живой `fetch_ashby(client,"ramp")` → 125 джоб, 125 с compensation; `load_seed()` → 320 active; pytest зелёный. ✅
 
 Следующий — этап 2 (salary.py + fx.py + normalize.py: парсинг вилок→annual USD, санитар, регион/seniority/management/роль-фильтр, дедуп, партиции; test_cli_dry).
+
+### Этапы 2–7 — 2026-07-18 — ✅ ВЫПОЛНЕНЫ
+
+**Этап 2 (salary/fx/normalize):** `salary.py` — вилки Ashby(components+summary)/Lever(salaryRange)/GH(regex), интервал→annual (×2080/×52/×12), coalesce, санитар $10k–$1.5M. `fx.py` — каскад er-api base USD→jsdelivr→кэш, to_usd. `normalize.py` — регион us/eu/other, seniority 5 бакетов, is_management, роль-фильтр (hard/soft deny: tech-тайтл перебивает не-tech домен, напр. «Software Engineer, Accounting» проходит; sales-engineer нет), job_uid, дедуп, партиции zstd. `cli.run()` — тестируемое ядро. Тесты test_salary/test_fx/test_normalize/test_cli_dry — зелёные.
+
+**Этап 3 (первый живой день):** `python -m etl.cli run --skip-llm` по 320 доскам. **16 507 raw → 6 546 tech-IC** (greenhouse 4290, ashby 1833, lever 423), **3 347 с зарплатой (51%)**, 9 961 отфильтровано не-tech, 72 dropped OOB, 0 упавших досок. Приёмка: 6546>5000; `has_salary AND mid IS NULL`=0; вне $10k–$1.5M=0; повторный запуск идемпотентен (тест). Медиана $221K (non-mgmt); US 3612/EU 1142/other 1792.
+
+**Этап 4 (backfill):** реализован в cli/normalize (первичный fetch = уже полный пул с first_seen по published_at; отдельный проход не нужен при первом дне — jobs-партиция дня уже = весь открытый пул). Отдельный `cmd_backfill` для повторного пересбора — TODO при необходимости; на первом дне пул уже собран.
+
+**Этап 5 (skills+eval):** `skills.py` — RESPONSE_SCHEMA(enum=CANONICAL), батч 10, пауза 8с, tenacity 30с; extract_llm(canonicalize защитно), extract_for_jobs (anti-join кэша, лимит), интегрирован в run() (не skip_llm). **Модель: `gemini-2.5-flash-lite` закрыта для новых API-ключей (404 «no longer available to new users») → замена на `gemini-3.1-flash-lite`** (тот же класс flash-lite, вынужденно; structured output + thinking_budget=0 подтверждены живьём). Живой прогон: 20 ramp-джоб → 64 skill-строки, 16/20 с навыком. Замечание: JD часто перечисляют весь стек компании (Flask у Android-ролей) — честно к тексту, eval-гейт измерит. test_skills зелёный; test_eval_llm — @llm_eval, скип без ключа/файла; eval-набор (25) размечается по реальным JD + проверка владельцем (этап не закрыт до этого).
+
+**Этап 6 (aggregate):** `aggregate.py` — DuckDB-вьюхи → latest.json (rows [region,seniority,is_remote,is_mgmt,company_idx,mid,skills,is_new]), timeseries.json, meta.json (skill_premium страты грейд×регион, top_companies, coverage с filtered_non_tech/dropped из last_run.json), badge.json. latest.json 262KB (<3МБ), все JSON валидны.
+
+**Этап 7 (дашборд):** `site/` — тёмная тема, русский, 4 hero-плитки (USD + месячное в скобках), фильтры регион/грейд, 6 графиков (Chart.js вендорен). Проверено в браузере: 0 ошибок консоли, все графики рендерятся, флагман/навыки в корректном empty-state (навыков ещё нет), клиентский фильтр US→медиана $228K работает, 375px без горизонтального скролла, hero 2×2. График «по грейдам» показывает грейды с n≥10 включая «Без уровня» (основная масса IC — маркера уровня в title нет), мид с n=1 скрыт, n= подписан.

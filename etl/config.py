@@ -21,7 +21,7 @@ SALARY_MIN_USD = 10_000        # sanity floor: annual mid below this is dropped 
 SALARY_MAX_USD = 1_500_000     # sanity ceiling: annual mid above this is dropped
 
 # LLM
-LLM_MODEL = "gemini-2.5-flash-lite"
+LLM_MODEL = "gemini-3.1-flash-lite"   # 2.5-flash-lite is closed to new API keys (see journal)
 LLM_BATCH_SIZE = 10            # small batch: long English JDs (requirements live mid/end of text)
 LLM_PAUSE_SEC = 8.0
 LLM_DAILY_JOB_LIMIT = 1200     # = 120 calls at batch 10; never exceed the 900 daily call ceiling
