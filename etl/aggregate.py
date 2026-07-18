@@ -6,6 +6,6 @@ def aggregate(data_dir, site_data_dir):
     raise NotImplementedError
 
 
-def skill_premium(con, source_area):
-    """Skill premium per country, stratified by experience bucket (PLAN.md §3.6)."""
+def skill_premium(con):
+    """Skill premium, stratified by seniority bucket, on the salary-bearing subset (PLAN.md §3.6)."""
     raise NotImplementedError

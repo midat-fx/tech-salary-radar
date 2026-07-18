@@ -1,4 +1,4 @@
-"""FX rates cascade (hh dictionaries -> er-api -> jsdelivr -> cache) and gross->net->KZT (PLAN.md §5)."""
+"""FX rates cascade (er-api base USD -> jsdelivr -> cache), for non-USD -> USD (PLAN.md §5)."""
 
 
 class FxError(RuntimeError):
@@ -6,20 +6,10 @@ class FxError(RuntimeError):
 
 
 def fetch_rates(client, data_dir):
-    """Resolve KZT-per-currency rates via the source cascade; refresh the cache on success."""
+    """Resolve 'currency per 1 USD' rates via the source cascade; refresh the cache on success."""
     raise NotImplementedError
 
 
-def gross_to_net(amount, currency, gross):
-    """KZT gross ->x0.90, RUB gross ->x0.87; gross in {false,null} or other currency as-is."""
-    raise NotImplementedError
-
-
-def to_kzt(amount, currency, rates):
-    """Convert an amount in the given currency to KZT using resolved rates."""
-    raise NotImplementedError
-
-
-def apply_fx(rows, rates):
-    """Fill salary_kzt_net_from / salary_kzt_net_to: gross->net in source currency, then ->KZT."""
+def to_usd(amount, currency, rates):
+    """Convert an amount in the given currency to USD (usd = amount / rate_ccy)."""
     raise NotImplementedError

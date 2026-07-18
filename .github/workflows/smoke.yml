@@ -1,7 +1,6 @@
 name: smoke
 
-# GO/NO-GO probe of hh vacancy-endpoint access from GitHub Actions egress (PLAN.md §7 stage 0).
-# Stays as a diagnostic afterwards.
+# Diagnostic: confirm the three public ATS APIs are reachable from Actions egress (PLAN.md §4).
 on:
   workflow_dispatch:
 
@@ -9,16 +8,16 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe hh /vacancies
+      - name: Probe ATS boards
         run: |
-          UA="salary-radar-kz/1.0 (+https://github.com/midat-fx/salary-radar-kz; midat.faizov@gmail.com)"
-          code=$(curl -s -o body.txt -w '%{http_code}' -A "$UA" \
-            "https://api.hh.ru/vacancies?text=python&area=40&per_page=1")
-          echo "HTTP ${code}"
-          if [ "${code}" != "200" ]; then
-            echo "--- response body ---"
-            cat body.txt
-            exit 1
-          fi
-          echo "--- response body (first 300 bytes) ---"
-          head -c 300 body.txt
+          UA="tech-salary-radar/1.0 (+https://github.com/midat-fx/tech-salary-radar; midat.faizov@gmail.com)"
+          fail=0
+          probe() {
+            code=$(curl -s -o body.txt -w '%{http_code}' -A "$UA" "$1")
+            echo "$2: HTTP ${code} ($(wc -c <body.txt) bytes)"
+            [ "${code}" = "200" ] || fail=1
+          }
+          probe "https://boards-api.greenhouse.io/v1/boards/stripe/jobs?content=true" greenhouse
+          probe "https://api.lever.co/v0/postings/palantir?mode=json" lever
+          probe "https://api.ashbyhq.com/posting-api/job-board/ramp?includeCompensation=true" ashby
+          exit $fail

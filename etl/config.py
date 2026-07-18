@@ -1,36 +1,32 @@
 """All ETL constants. Single source of truth for the pipeline (see PLAN.md §3.4)."""
 
-import os
+USER_AGENT = "tech-salary-radar/1.0 (+https://github.com/midat-fx/tech-salary-radar; midat.faizov@gmail.com)"
 
-HH_BASE = os.environ.get("HH_BASE", "https://api.hh.ru")
-USER_AGENT = "salary-radar-kz/1.0 (+https://github.com/midat-fx/salary-radar-kz; midat.faizov@gmail.com)"
-AREAS = {"kz": 40, "ru": 113}                      # id confirmed live 18.07
-SEARCH_KEYS = {  # order = dedup priority
-    "ml_ai":   '"machine learning" OR ML OR AI OR LLM OR "искусственный интеллект" OR нейросет* OR "computer vision" OR NLP',
-    "data":    '"data engineer" OR "data scientist" OR "data analyst" OR "аналитик данных" OR "инженер данных" OR "дата-сайентист" OR "дата-инженер"',
-    "python":  'python OR питон OR django OR fastapi',
-    "devops":  'devops OR SRE OR kubernetes',
-    "backend": 'backend OR бэкенд OR back-end OR java OR "node.js" OR golang OR "c#" OR php OR ".net"',
-    "frontend": 'frontend OR фронтенд OR front-end OR react OR vue OR angular OR верстальщик',
-    "mobile":  'android OR ios OR flutter OR "react native"',
-    "qa":      'QA OR тестировщик OR "test engineer" OR автотест*',
-    "analyst": '"бизнес-аналитик" OR "системный аналитик" OR "BI-аналитик" OR "продуктовый аналитик" OR "product analyst"',
-    "one_c":   '"1С" OR "1C"',
-    "dev_other": 'разработчик OR программист OR developer OR "software engineer"',
+# Public, no-auth ATS job-board endpoints. {slug} = company board slug (verified live 18.07, see §4).
+SOURCES = {
+    "greenhouse": "https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true",
+    "lever":      "https://api.lever.co/v0/postings/{slug}?mode=json",
+    "ashby":      "https://api.ashbyhq.com/posting-api/job-board/{slug}?includeCompensation=true",
 }
-SEARCH_PLAN = {"kz": list(SEARCH_KEYS), "ru": ["ml_ai", "data"]}
-PER_PAGE = 100
-MAX_PAGES = 20
-DEPTH_SPLIT_THRESHOLD = 1900
-SEARCH_PAUSE_SEC = 1.0          # + jitter 0.2-0.4 in code
-DETAIL_LIMIT = 400
-DETAIL_PAUSE_SEC = 1.0
-BACKFILL_DAYS = 35              # hh archive is not deeper (see PLAN.md §9)
+SEED_PATH = "data/seed_companies.json"     # [{ "source": ..., "slug": ..., "name": ... }]
+
+FETCH_PAUSE_SEC = 0.5          # + jitter 0.2-0.4 in code; one request per board
+HTTP_TIMEOUT = 20
+
+# Salary normalization -> annual gross USD (see §5)
+HOURS_PER_YEAR = 2080
+WEEKS_PER_YEAR = 52
+MONTHS_PER_YEAR = 12
+SALARY_MIN_USD = 10_000        # sanity floor: annual mid below this is dropped as garbage
+SALARY_MAX_USD = 1_500_000     # sanity ceiling: annual mid above this is dropped
+
+# LLM
 LLM_MODEL = "gemini-2.5-flash-lite"
 LLM_BATCH_SIZE = 20
 LLM_PAUSE_SEC = 8.0
-LLM_DAILY_VACANCY_LIMIT = 1200  # = 60 calls; never exceed the 900 daily call ceiling
-LLM_TEXT_TRIM = 1500            # description chars per vacancy
+LLM_DAILY_JOB_LIMIT = 1200     # = 60 calls; never exceed the 900 daily call ceiling
+LLM_TEXT_TRIM = 1500           # description chars per job
 PROMPT_VERSION = "v1"
+
 FX_MAX_AGE_DAYS = 3
 TZ = "Asia/Almaty"
