@@ -1,61 +1,66 @@
-# PLAN.md — «Зарплатный радар» (salary-radar-kz)
+# PLAN.md — «Радар навыков и зарплат» (tech-salary-radar)
 
-> Полная инструкция сборки. Все архитектурные решения УЖЕ приняты (4 агента-разведчика + синтез, 18.07.2026).
+> Полная инструкция сборки. Источник изменён 18.07.2026: hh соискательский API закрыт 15.12.2025 →
+> рефрейм на публичные ATS-доски (Greenhouse/Lever/Ashby). Все архитектурные решения приняты владельцем.
 > Исполнитель НЕ принимает архитектурных решений — только выполняет этапы и проходит приёмки.
+> История поворота источника (hh → enbek → ATS) — в «Журнале исполнения» в конце файла.
 
 ## §0. Правила для исполнителя
 
 1. Работать строго по этапам §7. Этап не завершён, пока не пройдена его **приёмка**. Приёмки не пропускать и не ослаблять.
-2. Встретил противоречие или невозможность — СТОП, короткий вопрос владельцу. Не изобретать обходы, особенно вокруг блокировок hh.
+2. Встретил противоречие или невозможность — СТОП, короткий вопрос владельцу. Не изобретать обходы.
 3. Ответы владельцу — по-русски. Код, коммиты, README — по-английски. Дашборд — по-русски.
 4. Коммиты: обычные conventional (`feat:`, `fix:`, `data:`), автор только Midat Faizov <midat.faizov@gmail.com>, **без Co-Authored-By и любых упоминаний Claude/AI-ассистента**.
 5. Не добавлять зависимостей сверх зафиксированных в §3.2. Не добавлять фич сверх плана — всё «хорошо бы ещё» идёт в Roadmap README.
-6. Известные ловушки — §9. Прочитать ДО начала кода.
-7. gh (GitHub CLI) и wrangler авторизованы у владельца; секрет GEMINI_API_KEY лежит в `~/projects/deka/.env` (строка `GEMINI_API_KEY=`) — в GitHub Secrets его добавляет исполнитель командой `gh secret set`.
+6. **«Проверено» = есть живой ответ в руках.** Любой факт об источнике подтверждать реальным ответом API и сохранять сырьё (обрезанный сэмпл) в `probe-scripts/`. Урок hh: план утверждал «проверено разведкой», а живой вакансии не было ни одной.
+7. Известные ловушки — §9. Прочитать ДО начала кода.
+8. gh и wrangler авторизованы у владельца; секрет GEMINI_API_KEY лежит в `~/projects/deka/.env` (строка `GEMINI_API_KEY=`) — уже добавлен в GitHub Secrets репозитория.
 
 ## §1. Что строим и зачем
 
-**Продукт:** публичный сайт-дашборд «Зарплатный радар» — рынок IT-вакансий Казахстана (+AI-срез России): медианные зарплаты по грейдам и городам, какие навыки требуют и **какие навыки добавляют к зарплате больше всего** (флагманский график, такого нет ни у hh, ни у калькуляторов). Обновляется сам каждое утро без участия автора. Хостинг $0/мес.
+**Продукт:** публичный сайт-дашборд «Радар навыков и зарплат» — срез мирового tech-найма глазами СНГ-разработчика: сколько платят по грейдам и регионам, какие навыки требуют чаще всего и **какие навыки добавляют к зарплате больше всего** (флагманский график). Данные — из публичных карьерных досок (ATS) сотен tech-компаний. Обновляется сам каждое утро. Хостинг $0/мес.
 
-**Зачем:** флагманский Python-проект портфолио (у автора всё портфолио на TypeScript — это дыра под цель junior AI/Data Engineer). Чекбоксы: Python, pandas, SQL/DuckDB, ETL, cron-оркестрация, Docker, CI/CD, LLM structured output + eval, data quality. Вау-аудитория: рекрутеры, разработчики КЗ (@itmankz, 8k), сам автор.
+**Зачем:** флагманский Python-проект портфолио под цель junior AI/Data Engineer (у автора всё портфолио на TypeScript). Чекбоксы: Python, pandas, SQL/DuckDB, ETL из нескольких API, cron-оркестрация, Docker, CI/CD, LLM structured output + eval, data quality. Аудитория: рекрутеры, разработчики СНГ (@itmankz, 8k), сам автор — «что учить и сколько это приносит».
 
-**Имя:** репозиторий `salary-radar-kz` (публичный, github.com/midat-fx), на дашборде — «Зарплатный радар». Проверено 18.07: имя свободно на GitHub и в рунете.
+**Имя:** репозиторий `tech-salary-radar` (публичный, github.com/midat-fx), на дашборде — «Радар навыков и зарплат».
 
 ## §2. Продуктовая рамка (зафиксировано)
 
-- **Охват v1:** Казахстан — весь IT (11 поисковых ключей); Россия — только AI/Data-срез (2 ключа: `ml_ai`, `data`). Позиционирование: «IT-рынок Казахстана + AI-срез России». Беларусь/Узбекистан/Кыргызстан, весь IT РФ — Roadmap.
-- **Валюты на дашборде:** срез KZ — тенге ₸, срез RU — рубли ₽. В данных всё нормализуется в нетто-KZT (единая аналитическая база); рублёвое отображение = KZT ÷ `rub_kzt` из meta.json. Премия навыка — в %, валюто-независима.
-- **Только тёмная тема**, без переключателей языка/темы, без RSS и share-кнопок в v1.
-- **Источник данных v1 — только hh.** Проверено: Adzuna не покрывает Казахстан и СНГ (страны: gb,us,at,au,be,br,ca,ch,de,es,fr,in,it,mx,nl,nz,pl,sg,za). В Roadmap: исследовать enbek.kz. Источники не выдумывать.
-- Позиционирование против hh-статистики/калькуляторов (для README и постов): (1) премия навыка из полного текста через LLM — уникальный график; (2) Казахстан первым классом, в тенге; (3) открытые код+данные+методика, «не верь на слово — скачай parquet и пересчитай сам».
+- **Источник v1 — публичные ATS-доски: Greenhouse, Lever, Ashby.** No-auth, полные тексты вакансий. Сид ≥300 компаний (§6.5), заметная доля с remote/EU-наймом (не только US-офисы). Remotive/Arbeitnow (remote-агрегаторы) — Roadmap. Источники не выдумывать; каждый подтверждён живой разведкой (§4).
+- **Позиционирование:** «мировой tech-найм глазами СНГ-разработчика — что учить и сколько это приносит». Аудитория — рекрутеры и разработчики СНГ.
+- **Зарплата:** аналитическая база = **годовой gross USD**. Интервалы приводятся к годовым (§5). Не-USD (GBP/EUR/…) → USD по дневному курсу (§5). На дашборде — USD; в hero-плитках и тултипах рядом с годовой цифрой месячная в скобках «(~$X/мес, ÷12)»; оси и корзины — только annual USD, без тумблеров валют. Подпись методики: «зарплаты — gross, годовые, как принято в международном найме; по N вакансий с указанной вилкой».
+- **Только тёмная тема**, дашборд по-русски, без переключателей языка/темы/валюты, без RSS и share-кнопок в v1.
+- Против hh/калькуляторов больше не позиционируемся (hh мёртв как источник). Позиция: (1) премия навыка из полного текста вакансии через LLM — уникальный график; (2) открытые код+данные+методика, «не верь на слово — скачай parquet и пересчитай сам»; (3) фокус на том, что востребовано и оплачивается в глобальном tech-найме.
 
 ## §3. Архитектура
 
 ### 3.1. Дерево репозитория
 
 ```
-salary-radar-kz/
+tech-salary-radar/
 ├── README.md                      # EN; структура — §7 этап 9
 ├── PLAN.md                        # этот файл (коммитится — журнал решений)
 ├── pyproject.toml
 ├── .python-version                # 3.12
-├── .gitignore                     # __pycache__/ .venv/ *.egg-info/ .pytest_cache/ .ruff_cache/ probe-scripts/__pycache__/
+├── .gitignore
 ├── .gitattributes                 # *.parquet binary / site/vendor/* linguist-vendored
 ├── Dockerfile
 ├── .dockerignore                  # data/ site/ tests/ docs/ .git/ .github/
 ├── .github/workflows/
 │   ├── ci.yml                     # ruff + pytest; llm-eval шаг добавляется этапом 5
-│   ├── smoke.yml                  # workflow_dispatch: GO/NO-GO этапа 0, остаётся как диагностика
+│   ├── smoke.yml                  # workflow_dispatch: доступность 3 ATS API (диагностика)
 │   ├── pipeline.yml               # ежедневный cron: ETL → commit (минимальная версия с этапа 3)
-│   └── backfill.yml               # workflow_dispatch: разовый бэкфилл 35 дней
+│   └── backfill.yml               # workflow_dispatch: разовый бэкфилл «новых» по дате публикации
 ├── etl/
 │   ├── __init__.py
 │   ├── config.py                  # все константы (§3.4)
-│   ├── fetch.py                   # httpx-клиент hh
-│   ├── normalize.py               # items → строки таблиц
-│   ├── fx.py                      # курсы (hh dictionaries → er-api → кэш), gross→net, KZT
-│   ├── skills_catalog.py          # 60 канонических навыков + алиасы (§6.1)
-│   ├── skills.py                  # key_skills + Gemini-извлечение, кэш
+│   ├── sources.py                 # httpx-клиенты Greenhouse/Lever/Ashby + парсеры в общий формат
+│   ├── fetch.py                   # обход сид-листа: по компании → sources → нормализованные джобы
+│   ├── normalize.py               # джобы → строки таблиц (регион, seniority, дедуп, запись партиций)
+│   ├── fx.py                      # курсы (er-api base USD → jsdelivr → кэш), интервал→annual, →USD
+│   ├── salary.py                  # парсинг вилок по источникам (Ashby structured, Lever field, GH regex) + санитар
+│   ├── skills_catalog.py          # 61 канонический навык + алиасы (§6.1)
+│   ├── skills.py                  # Gemini-извлечение навыков из текста, кэш
 │   ├── aggregate.py               # DuckDB SQL → site/data/*.json + badge.json
 │   └── cli.py                     # python -m etl.cli run|backfill|aggregate
 ├── site/
@@ -64,33 +69,33 @@ salary-radar-kz/
 │   ├── style.css
 │   ├── vendor/chart.umd.min.js            # Chart.js 4.4.3 (вендорен)
 │   ├── vendor/chartjs-plugin-annotation.min.js
-│   └── data/                      # артефакты aggregate (коммитятся)
-│       ├── latest.json            # компактные повакансионные строки активного среза
-│       ├── timeseries.json        # по дням
-│       ├── meta.json              # updated_at, курсы, пороги, атрибуция
-│       └── badge.json             # для shields.io endpoint-бейджей
+│   └── data/                      # артефакты aggregate (коммитятся): latest.json, timeseries.json, meta.json, badge.json
 ├── data/
-│   ├── snapshots/dt=YYYY-MM-DD/part.parquet   # ежедневно: ВСЕ активные найденные (тонкая)
-│   ├── vacancies/dt=YYYY-MM-DD/part.parquet   # только НОВЫЕ id этого дня (полные поля)
-│   ├── skills/dt=YYYY-MM-DD/part.parquet      # навыки новых id (+ это кэш LLM)
-│   ├── cache/fx_latest.json                   # фолбэк курсов (коммитится)
-│   └── eval/skills_eval.jsonl                 # 25 размеченных примеров (§6.4)
-├── probe-scripts/                 # разведскрипты API (уже лежат в ~/projects/salary-radar-kz/probe-scripts)
+│   ├── seed_companies.json                     # курируемый сид ≥300 [{source, slug, name?}] (§6.5, коммитится)
+│   ├── snapshots/dt=YYYY-MM-DD/part.parquet     # ежедневно: ВСЕ активные найденные (тонкая)
+│   ├── jobs/dt=YYYY-MM-DD/part.parquet          # только НОВЫЕ job_uid этого дня (полные поля)
+│   ├── skills/dt=YYYY-MM-DD/part.parquet        # навыки новых job_uid (+ это кэш LLM)
+│   ├── cache/fx_latest.json                     # фолбэк курсов (коммитится)
+│   └── eval/skills_eval.jsonl                   # 25 размеченных примеров (§6.4)
+├── probe-scripts/                 # разведскрипты + ats-recon/ (COOKBOOK.md, sample_*.json — живое сырьё)
 ├── docs/screenshot-hero.png       # этап 9
 ├── docs/screenshot-skills.png
 └── tests/
     ├── conftest.py                # фикстуры; авто-skip llm_eval без ключа
-    ├── fixtures/hh_page.json      # записанная страница поиска (этап 1)
-    ├── fixtures/hh_detail.json    # записанная деталь вакансии
-    ├── test_fetch.py              # пагинация/дробление на фикстурах (httpx MockTransport)
-    ├── test_normalize.py
+    ├── fixtures/greenhouse.json   # обрезанные живые ответы (этап 1)
+    ├── fixtures/lever.json
+    ├── fixtures/ashby.json
+    ├── test_config.py
+    ├── test_sources.py            # парсинг 3 ATS на фикстурах (httpx MockTransport)
+    ├── test_salary.py             # интервал→annual, coalesce, санитар-границы, валюты
+    ├── test_normalize.py          # регион, seniority, дедуп, идемпотентность
     ├── test_fx.py
-    ├── test_skills.py             # canonicalize, extract_key_skills, парсинг ответа LLM
+    ├── test_skills.py             # canonicalize, парсинг ответа LLM
     ├── test_aggregate.py          # на синтетическом мини-parquet
     └── test_eval_llm.py           # @pytest.mark.llm_eval (реальный Gemini)
 ```
 
-Вендоринг (обе ссылки проверены 18.07, 200):
+Вендоринг (проверено 18.07, 200):
 ```bash
 curl -sSL -o site/vendor/chart.umd.min.js 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js'
 curl -sSL -o site/vendor/chartjs-plugin-annotation.min.js 'https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js'
@@ -98,100 +103,61 @@ curl -sSL -o site/vendor/chartjs-plugin-annotation.min.js 'https://cdn.jsdelivr.
 
 ### 3.2. pyproject.toml (зафиксирован)
 
-```toml
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "salary-radar"
-version = "0.1.0"
-requires-python = ">=3.12"
-dependencies = [
-  "httpx>=0.27",
-  "pandas>=2.2",
-  "pyarrow>=17",
-  "duckdb>=1.1",
-  "google-genai>=1.20",
-  "tenacity>=9.0",
-]
-
-[project.optional-dependencies]
-dev = ["pytest>=8.2", "ruff>=0.5"]
-
-[tool.setuptools]
-packages = ["etl"]
-
-[tool.pytest.ini_options]
-markers = ["llm_eval: тесты с реальным вызовом Gemini (нужен GEMINI_API_KEY)"]
-
-[tool.ruff]
-line-length = 100
-```
+Идентичен уже созданному (httpx, pandas, pyarrow, duckdb, google-genai, tenacity; dev: pytest, ruff; ruff line-length 100; pytest marker llm_eval). Зависимостей не добавлять.
 
 ### 3.3. Модель данных: три append-only таблицы
 
-Ежедневный прогон записывает **дневные партиции, которые никогда не переписываются** (исключение: повторный запуск того же дня перезаписывает партиции этого дня целиком — идемпотентность).
+`job_uid = f"{source}:{company}:{job_id}"` — стабильный ключ дедупа (компания использует ровно один ATS, id уникален внутри доски). Ежедневный прогон пишет **дневные партиции, которые не переписываются** (исключение: повторный запуск того же дня перезаписывает партиции этого дня целиком — идемпотентность). Parquet `compression="zstd"`, сортировка по job_uid. **Сырой JSON и полные тексты описаний в git не попадают** (текст — вход LLM в том же запуске, выбрасывается). checkout в Actions `fetch-depth: 1`.
 
-**`data/snapshots/dt=*/part.parquet`** — все активные вакансии, найденные сегодня (тонкая, ~5-8k строк/день):
+**`data/snapshots/dt=*/part.parquet`** — все активные джобы, найденные сегодня (тонкая):
 
 | колонка | тип |
 |---|---|
-| vacancy_id | int64 |
-| snapshot_date | date32 (= dt партиции, таймзона Asia/Almaty) |
-| source_area | string: `kz`\|`ru` |
-| area_id | int32 |
-| salary_from, salary_to | float64, nullable (как опубликовано) |
-| salary_currency | string, nullable (нормализованный: RUR→RUB, BYR→BYN) |
-| salary_gross | bool, nullable |
-| salary_kzt_net_from, salary_kzt_net_to | float64, nullable (§5) |
-| experience | string: noExperience\|between1And3\|between3And6\|moreThan6 |
-| schedule | string, nullable: fullDay\|shift\|flexible\|remote\|flyInFlyOut |
-| search_key | string (первый совпавший ключ из SEARCH_KEYS по порядку) |
+| job_uid | string |
+| snapshot_date | date32 (Asia/Almaty) |
+| source | string: greenhouse\|lever\|ashby |
+| company | string (slug) |
+| region | string: us\|eu\|other (§3.6) |
+| is_remote | bool |
+| seniority | string: junior\|mid\|senior\|lead (из title, §3.6) |
+| salary_min_usd, salary_max_usd | float64, nullable (annual gross USD) |
+| salary_mid_usd | float64, nullable (COALESCE, после санитара §5) |
+| has_salary | bool |
+| employment_type | string, nullable |
+| published_at | timestamp UTC |
 
-**`data/vacancies/dt=*/part.parquet`** — только id, впервые увиденные в этот день (полные поля, ~200-500 строк/день):
-vacancy_id, first_seen (date32), title, employer, employer_id, city (area.name), area_id, published_at (timestamp UTC), snippet (requirement+responsibility, теги вырезаны), has_description (bool), плюс те же salary/experience/schedule-поля, что в snapshots.
+**`data/jobs/dt=*/part.parquet`** — job_uid, впервые увиденные в этот день (полные поля): job_uid, first_seen (date32), source, company, title, location_raw (string), region, is_remote, seniority, employment_type, published_at, apply_url, currency_original, salary_min_orig, salary_max_orig, salary_interval_orig, + те же salary_*_usd/has_salary, что в snapshots.
 
-**`data/skills/dt=*/part.parquet`** — навыки новых id (длинный формат; **одновременно кэш LLM**):
-vacancy_id (int64), skill (string, nullable — **NULL = «обработано, навыков не найдено»**), source (`llm`\|`key_skills`), prompt_version (string, сейчас `v1`), extracted_at (timestamp UTC).
-Множество обработанных id = `SELECT DISTINCT vacancy_id FROM read_parquet('data/skills/*/part.parquet')` — вакансия из него никогда не переизвлекается. Очередь на извлечение = anti-join vacancies − skills (самозалечивается: не успели сегодня — доедет завтра).
+**`data/skills/dt=*/part.parquet`** — навыки новых job_uid (длинный формат, **кэш LLM**): job_uid (string), skill (string, nullable — **NULL = «обработано, навыков не найдено»**), source (`llm`), prompt_version (string, `v1`), extracted_at (timestamp UTC). Множество обработанных = `SELECT DISTINCT job_uid FROM skills`; очередь на извлечение = anti-join jobs − skills (самозалечивается). У ATS нет бесплатного ground-truth аналога hh key_skills → навыки только LLM; eval на ручной разметке (§6.4).
 
-**Механизм «новых» (единственный, применяется везде):** новые id дня = anti-join `vacancy_id` сегодняшнего снапшота против ВСЕХ существующих `data/vacancies/*` партиций. Никаких date_from-эвристик для определения новизны.
+**Механизм «новых»:** новые job_uid дня = anti-join сегодняшнего снапшота против ВСЕХ существующих `data/jobs/*`. Календарное «вчера» не используется.
 
-Правила хранения: parquet `compression="zstd"`, сортировка по vacancy_id; **raw JSON и полные тексты описаний в git не попадают никогда** (description скачивается, используется как вход LLM в тот же запуск и выбрасывается); `.gitattributes`: `*.parquet binary`; в Actions checkout с `fetch-depth: 1`.
-Рост: ~0.4-0.6 МБ/день ≈ 150-220 МБ/год — для GitHub ок (лимиты: рекомендация <1 ГБ, файл <100 МБ), LFS не нужен. Ручка: если партиция дня >1.5 МБ три дня подряд — сузить RU-план (одна строка конфига).
+Рост: сид ~300 компаний × ~сотни джоб ≈ 30–80k активных строк/день (тонкая snapshots) + сотни новых/день (jobs). Порядок ~0.5–1 МБ/день. Ручка: если партиция дня >2 МБ три дня подряд — сузить сид (одна строка конфига). LFS не нужен.
 
 ### 3.4. etl/config.py (все константы)
 
 ```python
-HH_BASE = os.environ.get("HH_BASE", "https://api.hh.ru")
-USER_AGENT = "salary-radar-kz/1.0 (+https://github.com/midat-fx/salary-radar-kz; midat.faizov@gmail.com)"
-AREAS = {"kz": 40, "ru": 113}                      # id подтверждены живьём 18.07
-SEARCH_KEYS = {  # порядок = приоритет при дедупе
-    "ml_ai":   '"machine learning" OR ML OR AI OR LLM OR "искусственный интеллект" OR нейросет* OR "computer vision" OR NLP',
-    "data":    '"data engineer" OR "data scientist" OR "data analyst" OR "аналитик данных" OR "инженер данных" OR "дата-сайентист" OR "дата-инженер"',
-    "python":  'python OR питон OR django OR fastapi',
-    "devops":  'devops OR SRE OR kubernetes',
-    "backend": 'backend OR бэкенд OR back-end OR java OR "node.js" OR golang OR "c#" OR php OR ".net"',
-    "frontend": 'frontend OR фронтенд OR front-end OR react OR vue OR angular OR верстальщик',
-    "mobile":  'android OR ios OR flutter OR "react native"',
-    "qa":      'QA OR тестировщик OR "test engineer" OR автотест*',
-    "analyst": '"бизнес-аналитик" OR "системный аналитик" OR "BI-аналитик" OR "продуктовый аналитик" OR "product analyst"',
-    "one_c":   '"1С" OR "1C"',
-    "dev_other": 'разработчик OR программист OR developer OR "software engineer"',
+USER_AGENT = "tech-salary-radar/1.0 (+https://github.com/midat-fx/tech-salary-radar; midat.faizov@gmail.com)"
+SOURCES = {
+    "greenhouse": "https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true",
+    "lever":      "https://api.lever.co/v0/postings/{slug}?mode=json",
+    "ashby":      "https://api.ashbyhq.com/posting-api/job-board/{slug}?includeCompensation=true",
 }
-SEARCH_PLAN = {"kz": list(SEARCH_KEYS), "ru": ["ml_ai", "data"]}
-PER_PAGE = 100; MAX_PAGES = 20; DEPTH_SPLIT_THRESHOLD = 1900
-SEARCH_PAUSE_SEC = 1.0          # + джиттер 0.2-0.4 в коде
-DETAIL_LIMIT = 400; DETAIL_PAUSE_SEC = 1.0
-BACKFILL_DAYS = 35              # архив hh глубже недоступен (см. §9)
+SEED_PATH = "data/seed_companies.json"     # [{ "source": ..., "slug": ..., "name": ... }]
+FETCH_PAUSE_SEC = 0.5           # + джиттер 0.2-0.4 в коде; 1 запрос на доску
+HTTP_TIMEOUT = 20
+# зарплата
+HOURS_PER_YEAR = 2080; WEEKS_PER_YEAR = 52; MONTHS_PER_YEAR = 12
+SALARY_MIN_USD = 10_000; SALARY_MAX_USD = 1_500_000   # санитар: вне диапазона — отбросить
+# LLM
 LLM_MODEL = "gemini-2.5-flash-lite"; LLM_BATCH_SIZE = 20; LLM_PAUSE_SEC = 8.0
-LLM_DAILY_VACANCY_LIMIT = 1200  # = 60 вызовов; дневной потолок вызовов 900 не превышать
-LLM_TEXT_TRIM = 1500            # символов описания на вакансию
+LLM_DAILY_JOB_LIMIT = 1200      # = 60 вызовов; дневной потолок 900 вызовов не превышать
+LLM_TEXT_TRIM = 1500            # символов описания на джобу
 PROMPT_VERSION = "v1"
 FX_MAX_AGE_DAYS = 3
 TZ = "Asia/Almaty"
 ```
+Никаких hh-констант (AREAS, SEARCH_KEYS, RUR, salary_range, налоги) — вычищены.
 
 ### 3.5. Файлы для фронта (пишет aggregate.py, читает только их)
 
@@ -199,277 +165,186 @@ TZ = "Asia/Almaty"
 ```jsonc
 {
   "snapshot_date": "2026-08-20",
-  "cities": ["Алматы", "Астана", "Шымкент", "Москва", "Санкт-Петербург"],  // индексы для rows
-  "skills": ["Python", "SQL", ...],                                          // индексы для rows
+  "companies": ["stripe", "ashby", ...],     // индексы для rows
+  "skills": ["Python", "SQL", ...],          // индексы для rows
   "rows": [
-    // [country, exp, city_idx|-1, is_remote, salary_mid_kzt_net|null, skills|null, is_new]
-    // skills: null = id ещё НЕ обработан LLM; [] = обработан, навыков нет; [idx,...] = навыки
+    // [region, seniority, is_remote, company_idx, salary_mid_usd|null, skills|null, is_new]
+    // region: us|eu|other; seniority: junior|mid|senior|lead
+    // skills: null = ещё НЕ обработан LLM; [] = обработан, навыков нет; [idx,...] = навыки
     // is_new: 1 если first_seen = snapshot_date
-    ["kz", "between1And3", 0, 0, 650000, [0, 1, 14], 0],
-    ...
+    ["us", "senior", 1, 3, 245000, [0, 1, 14], 0]
   ]
 }
 ```
-Правила: country ∈ kz|ru; exp — бакет hh; city_idx — индекс в cities или -1 («другие»); города в cities: для KZ Алматы/Астана/Шымкент, для RU Москва/СПб; salary_mid_kzt_net = COALESCE((from+to)/2, from, to) по нетто-KZT, null если зарплаты нет; skill_idx — индексы в skills (DISTINCT по вакансии). Оценка размера: 3-6k строк ≈ 150-400 КБ — ок (CI-ассерт: latest.json ≤ 2 МБ).
+Оценка размера: 30–80k строк — держать компактно (индексы, короткие коды); CI-ассерт latest.json ≤ 3 МБ (если больше — сузить сид или урезать поля).
 
-**site/data/timeseries.json**: `[{ "date": "2026-08-01", "country": "kz", "active": 840, "new": 37, "median_kzt": 850000 }, ...]` — только реальные снапшоты.
+**site/data/timeseries.json**: `[{ "date": "2026-08-01", "active": 41200, "new": 620, "median_usd": 168000 }, ...]` — только реальные снапшоты.
 
 **site/data/meta.json**:
 ```jsonc
 {
   "updated_at": "2026-08-20T01:52:07Z",
   "days_collected": 12,
-  "fx": { "date": "2026-08-20", "source": "hh-dictionaries", "stale": false, "usd_kzt": 471.2, "rub_kzt": 6.05 },
-  "tax_note": "Нетто-оценка: KZT gross ×0.90 (ИПН 10%), RUB gross ×0.87 (НДФЛ 13%). Упрощение: не учтены ОПВ/ВОСМС (КЗ) и прогрессивная шкала НДФЛ (РФ).",
-  "attribution": "Данные о вакансиях: HeadHunter (hh.kz, hh.ru), официальное открытое API api.hh.ru. Проект не аффилирован с HeadHunter.",
-  "skill_premium": {   // серверный расчёт (§3.6), по странам
-    "kz": [ { "skill": "LLM", "n": 24, "premium_pct": 42.1, "median_with_kzt": 1250000, "median_without_kzt": 880000 }, ... ],
-    "ru": [ ... ]
-  },
-  "top_employers": { "kz": [ { "name": "Kaspi.kz", "n": 14, "hh_url": "https://hh.kz/employer/..." }, ... ], "ru": [...] },
-  "coverage": { "skills_extracted_share": 0.97 }
+  "companies_tracked": 312,
+  "sources": { "greenhouse": 140, "lever": 60, "ashby": 112 },   // компаний по источнику
+  "fx": { "date": "2026-08-20", "base": "USD", "source": "er-api", "stale": false, "gbp_usd": 1.27, "eur_usd": 1.08 },
+  "salary_note": "Зарплаты — gross, годовые (интервал приведён к году), в USD. По N вакансий с указанной вилкой. Не-USD → USD по дневному курсу.",
+  "attribution": "Данные о вакансиях: публичные карьерные доски компаний (Greenhouse, Lever, Ashby). Проект не аффилирован с ними.",
+  "skill_premium": [ { "skill": "Rust", "n": 34, "premium_pct": 22.4, "median_with_usd": 210000, "median_without_usd": 172000 }, ... ],
+  "top_companies": [ { "company": "stripe", "n": 190, "url": "https://boards.greenhouse.io/stripe" }, ... ],
+  "coverage": { "salary_share": 0.38, "skills_extracted_share": 0.95, "dropped_salary_out_of_bounds": 214 }
 }
 ```
 
-**site/data/badge.json** (для shields.io endpoint): `{ "schemaVersion": 1, "label": "vacancies tracked", "message": "5 214", "color": "brightgreen" }` (+второй файл при желании не делать — один бейдж достаточен).
+**site/data/badge.json** (shields.io endpoint): `{ "schemaVersion": 1, "label": "jobs tracked", "message": "41 200", "color": "brightgreen" }`.
 
 ### 3.6. Методика метрик (зафиксирована)
 
-- Зарплатная середина: `mid = COALESCE((from+to)/2, from, to)` по **нетто-KZT**. Медианы: `quantile_cont(mid, 0.5)`, только строки с mid IS NOT NULL. Отображение ₽ на фронте: `kzt / meta.fx.rub_kzt`, округление до тысяч.
-- **Премия навыка (флагман), считается в aggregate.py по каждой стране отдельно:** внутри каждого experience-бакета b, где ≥8 вакансий с ЗП с навыком И ≥8 без навыка, считаем ratio_b = median_with_b / median_without_b. Вес бакета = n_with_b (вакансий с ЗП и навыком в бакете). **premium_pct = (Σ ratio_b·n_with_b / Σ n_with_b − 1)·100.** Навык допускается при ≥15 вакансиях с ЗП суммарно; показываем топ-10 положительных. В meta: n = Σ n_with_b по учтённым бакетам; median_with_kzt/median_without_kzt — пулированные медианы по объединению учтённых бакетов (только для тултипа; числа в примерах JSON иллюстративны). График премий реагирует ТОЛЬКО на фильтр страны (не на опыт/город) — оговорено подзаголовком «стратифицировано по грейдам».
-- «Новые за день» = id с first_seen = дата. Активные = строки снапшота даты.
-- Подписи опыта: noExperience=«Без опыта», between1And3=«1–3 года», between3And6=«3–6 лет», moreThan6=«6+ лет».
+- **Зарплата → annual gross USD** (§5): интервал×коэффициент → год; валюта→USD; `mid = COALESCE((min+max)/2, min, max)`; строки с `mid < $10k` или `mid > $1.5M` отбрасываются (счётчик — в лог и `meta.coverage.dropped_salary_out_of_bounds`). Медианы: `quantile_cont(mid, 0.5)` только по `mid IS NOT NULL`. На фронте месячное = `usd/12`, округление до сотен.
+- **Регион:** из location/country. `us` — США; `eu` — страны ЕС + UK/EEA; иначе `other`. Флаг `is_remote` — отдельно (из isRemote/workplaceType; для GH — по тексту location «Remote»).
+- **Seniority из title** (regex, порядок сверху): `lead` (lead|staff|principal|head|manager\+eng), `senior` (senior|sr\.|snr), `junior` (junior|jr\.|intern|graduate|entry), иначе `mid`. Задокументировать в README-методике как эвристику.
+- **Премия навыка (флагман), по salary-subset:** только строки с `mid IS NOT NULL`. Внутри каждого seniority-бакета b, где ≥8 джоб с навыком И ≥8 без, `ratio_b = median_with_b / median_without_b`, вес = n_with_b. **premium_pct = (Σ ratio_b·n_with_b / Σ n_with_b − 1)·100.** Навык допускается при ≥15 джобах с ЗП суммарно; топ-10 положительных. Стратификация по seniority (не по региону) убирает Simpson-эффект. Подзаголовок графика: «стратифицировано по грейдам · по N вакансий с указанной вилкой».
+- «Новые за день» = job_uid с first_seen = дата. Активные = строки снапшота даты.
+- Подписи seniority: junior=«Джуниор», mid=«Мидл», senior=«Сеньор», lead=«Лид/Стафф».
 
-## §4. API cookbook hh (проверено разведкой 18.07, скрипты в probe-scripts/)
+## §4. Cookbook источников (проверено живой разведкой 18.07 — сырьё в `probe-scripts/ats-recon/`)
 
-- База `https://api.hh.ru`, авторизация для поиска не нужна. **Обязательный заголовок каждого запроса**: `User-Agent` из config (без него — ошибка bad_user_agent).
-- **Area id (живьём):** Казахстан **40**, Россия **113**, Алматы **160**, Астана **159**. `area=40` включает все города КЗ; город вакансии — в `item.area.name`.
-- Поиск: `GET /vacancies?text=<query>&search_field=name&area=40&per_page=100&page=0&order_by=publication_time`. `search_field=name` — ищем только по названию (меньше шума и глубины; честная пометка в README). Операторы text: пробел=AND, OR, NOT, скобки, "точная фраза", усечение `нейросет*`.
-- Пагинация: per_page max 100, page с 0; глубина выдачи ~2000 → если `found > 1900`, дробить запрос: сначала по 4 experience-бакетам, если бакет всё ещё >1900 — по временным окнам date_from/date_to (ISO 8601; поддерживают datetime; **`+` таймзоны в URL кодировать как `%2B`** — httpx с params=dict сделает сам).
-- Ответ: `{found, pages, per_page, page, items[]}`. Поля item: `id` (строка!), `name`, `area{id,name}`, `salary{from,to,currency,gross}` **и новое `salary_range` — читать salary_range с фолбэком на salary, брать только записи с mode MONTH** (словари salary_range_mode: MONTH/SHIFT/HOUR подтверждены), `experience{id}`, `schedule{id}`, `employment{id}`, `published_at` (`2026-07-17T12:34:56+0300`), `employer{id,name}`, `snippet{requirement,responsibility}` (внутри `<highlighttext>` — вырезать), `professional_roles`.
-- Деталь: `GET /vacancies/{id}` → + `description` (HTML → `re.sub(r"<[^>]+>", " ", html.unescape(d))`) и `key_skills: [{"name": "Python"}]`. key_skills, когда непустой — бесплатный ground truth для eval LLM.
-- `GET /dictionaries` (работает даже под баном поиска): валюты — **рубль = `RUR`** (не RUB), белорусский `BYR` → нормализуем в RUB/BYN; `rate` = единиц валюты за 1 RUR (KZT 5.997 на 18.07); experience/schedule/order_by значения — как в §3.3/§3.4.
-- **Рейт-лимиты: заголовков X-RateLimit/Retry-After у hh НЕТ. Санкция — молчаливый `403 {"errors":[{"type":"forbidden"}]}` по IP на эндпоинтах вакансий, длится часами** (справочники при этом работают). Отдельно существует документированная ошибка `captcha_required` с captcha_url. Правила клиента: 1 поток; пауза ≥1 с + джиттер; на 403 — backoff 60/300/900 с, максимум 3 цикла, затем graceful stop с ненулевым кодом; **через блок не молотить**.
-- `api.hh.kz` — алиас того же бэкенда; канон — api.hh.ru, страна через `area`, параметр host не использовать.
+Общее: no-auth, заголовок `User-Agent` из config, `httpx` timeout 20 c, 1 запрос на доску, пауза `FETCH_PAUSE_SEC`+джиттер. Пагинации нет — доска отдаётся целиком. Тексты описаний — вход LLM в том же запуске, в git не пишутся.
 
-## §5. Курсы валют и налоги
+- **Greenhouse.** `GET boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true` → `{jobs:[...], meta:{total}}`. Джоба: `id`, `title`, `location{name}` (свободный текст), `content` (**полный JD в escaped HTML** — `html.unescape` + strip tags), `first_published`, `updated_at` (ISO 8601), `departments[]`, `offices[]`, `absolute_url`, `metadata[]`. Зарплата: отдельного поля нет; изредка в тексте (US pay-transparency, ~7%) — парсить (§5, `salary.py`).
+- **Lever.** `GET api.lever.co/v0/postings/{slug}?mode=json` → **массив** постингов; `200 []` — доски нет/пусто; `404` — неизвестный slug. Джоба: `id`, `text` (title), `categories{commitment,location,team,allLocations[]}`, `descriptionPlain` (**готовый текст**), `lists[]`, `country`, `workplaceType` (`onsite|hybrid|remote`), `createdAt` (**epoch ms**), `hostedUrl`, опц. `salaryRange{min,max,currency,interval}` (часто пуст).
+- **Ashby.** `GET api.ashbyhq.com/posting-api/job-board/{slug}?includeCompensation=true` → `{jobs:[...]}`. Джоба: `id`, `title`, `location`, `address`, `isRemote` (**bool**), `workplaceType`, `employmentType`, `publishedAt` (ISO 8601), `descriptionPlain`, `jobUrl`, `compensation`. **Зарплата структурная и плотная:** `compensation.compensationTiers[].components[]` где `compensationType=="Salary"`: `{interval, currencyCode, minValue, maxValue}` + `scrapeableCompensationSalarySummary`.
 
-Каскад источников (проверены 18.07):
-1. **Primary: `GET {HH_BASE}/dictionaries`** → `currency[]` с rate (единиц за 1 RUR): `kzt_per_X = rate_KZT / rate_X`. Плюс: работает даже когда поиск под 403, ноль внешних зависимостей.
-2. Fallback: `https://open.er-api.com/v6/latest/KZT` (без ключа; rates = «X за 1 KZT», инвертировать).
-3. Fallback 2: `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/kzt.json`.
-4. Кэш `data/cache/fx_latest.json` (перезаписывается при каждом успехе; при возрасте >3 дней — `meta.fx.stale=true`, дашборд показывает пометку). Все источники мертвы и кэша нет → FxError, пайплайн падает.
+## §5. Курсы валют и нормализация зарплаты
 
-Налоги (упрощение, честно подписано в tax_note): KZT gross=true → ×0.90; RUB gross=true → ×0.87; gross∈{false,null} — как есть; прочие валюты — как есть. Порядок: gross→net в исходной валюте → конвертация в KZT → round().
+**Каскад курсов (base USD):** 1) `GET https://open.er-api.com/v6/latest/USD` (без ключа; `rates` = «валюты за 1 USD»; `usd = amount / rate_ccy`). 2) `GET https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json`. 3) Кэш `data/cache/fx_latest.json` (перезапись при успехе; возраст >3 дней → `meta.fx.stale=true`). Все мертвы и кэша нет → FxError, пайплайн падает. Курс и дата — в `meta.fx`.
+
+**Нормализация вилки (salary.py):**
+1. Достать `{min?, max?, currency, interval}` по источнику: Ashby — из `compensation` (компоненты Salary; при нескольких — самый широкий диапазон); Lever — `salaryRange`; Greenhouse — regex по тексту (`\$\s?\d{2,3}[,.]?\d{3}` пары, «USD/per year/annually»; при неоднозначности — не брать).
+2. Интервал→annual: `hour`×2080, `week`×52, `month`×12, `year`×1. Регистр/варианты («1 YEAR», «Annual», «hourly») нормализовать.
+3. Валюта→USD по `meta.fx`.
+4. `mid = COALESCE((min+max)/2, min, max)` (только min или только max → mid = это значение).
+5. Санитар: `SALARY_MIN_USD ≤ mid ≤ SALARY_MAX_USD`, иначе строка получает `has_salary=false`, salary_*_usd=NULL; счётчик отброшенных копится в лог и `meta.coverage`.
+
+Никаких налогов/net — международный найм котирует gross.
 
 ## §6. LLM-извлечение навыков
 
-### 6.1. Канонический каталог — ровно 61 навык (etl/skills_catalog.py; список исчерпывающий, НЕ редактировать)
+### 6.1. Канонический каталог — 61 навык (etl/skills_catalog.py, уже создан по §6.1 исходного плана; НЕ редактировать без bump PROMPT_VERSION + eval). Каталог источник-независим (техстек), переносится как есть. Расширение (Rust, Scala, Ruby, Swift, dbt, Snowflake, …) — Roadmap.
 
-```python
-SKILLS = {
-    "Python": ["python3", "питон"], "SQL": ["t-sql", "pl/sql"],
-    "JavaScript": ["js", "джаваскрипт"], "TypeScript": ["ts"],
-    "Java": ["джава"], "Kotlin": [], "Go": ["golang"], "C#": ["c sharp", "csharp"],
-    "C++": ["cpp"], "PHP": [], "1C": ["1с", "1с:предприятие", "1с предприятие", "1c:enterprise"],
-    "Bash": ["shell", "shell scripting"],
-    "pandas": [], "PyTorch": ["torch"], "TensorFlow": ["keras"],
-    "scikit-learn": ["sklearn", "scikit learn"],
-    "Machine Learning": ["ml", "машинное обучение", "deep learning", "глубокое обучение"],
-    "Computer Vision": ["cv", "компьютерное зрение", "opencv"],
-    "NLP": ["natural language processing", "обработка естественного языка"],
-    "LLM": ["genai", "generative ai", "large language models", "генеративный ии"],
-    "RAG": ["retrieval augmented generation"],
-    "LangChain": ["langgraph"], "MLOps": ["mlflow"],
-    "Airflow": ["apache airflow"], "Spark": ["apache spark", "pyspark"],
-    "Kafka": ["apache kafka"], "ClickHouse": [],
-    "Power BI": ["powerbi", "power-bi"], "Tableau": [], "Excel": ["ms excel", "microsoft excel"],
-    "Django": [], "FastAPI": ["fast api"], "Flask": [],
-    "Spring": ["spring boot"], "Node.js": ["nodejs", "node", "express", "nestjs", "nest.js"],
-    ".NET": ["dotnet", "asp.net", ".net core"], "REST API": ["rest", "restful"], "GraphQL": [],
-    "React": ["reactjs", "react.js", "next.js", "nextjs"],
-    "Vue": ["vuejs", "vue.js", "nuxt"], "Angular": [],
-    "HTML/CSS": ["html", "css", "html5", "css3", "верстка", "вёрстка", "адаптивная верстка"],
-    "Flutter": ["dart"], "React Native": ["react-native"],
-    "Docker": ["docker compose", "docker-compose"], "Kubernetes": ["k8s", "helm"],
-    "Linux": ["ubuntu", "unix"], "Git": ["github", "gitlab"],
-    "CI/CD": ["cicd", "ci cd", "gitlab ci", "github actions", "jenkins", "teamcity"],
-    "Terraform": [], "Nginx": [], "AWS": ["amazon web services"], "Grafana": ["prometheus"],
-    "PostgreSQL": ["postgres"], "MySQL": [], "MongoDB": ["mongo"], "Redis": [],
-    "MS SQL Server": ["ms sql", "mssql", "sql server", "microsoft sql server"],
-    "Elasticsearch": ["elastic", "opensearch"],
-    "n8n": [], "Selenium": ["selenium webdriver"],
-}
-CANONICAL = list(SKILLS)
-# ALIAS_TO_CANON: casefold-словарь канонов и алиасов; canonicalize(raw) — ТОЧНОЕ совпадение, не подстрока
-```
-Укрупнения (Next.js→React, Nest→Node.js, Keras→TensorFlow, Prometheus→Grafana, DL→ML) — задокументировать в README-методологии.
+### 6.2. Вызов Gemini (google-genai, gemini-2.5-flash-lite)
+RESPONSE_SCHEMA и PROMPT — как в этом репо (etl/skills.py стаб): OBJECT{items:[{id:INTEGER, skills:[STRING enum=CANONICAL]}]}; правила «только явные упоминания, каноническое написание, framework→язык». `generate_content(config=GenerateContentConfig(response_mime_type="application/json", response_schema=..., temperature=0, max_output_tokens=8192, thinking_config=ThinkingConfig(thinking_budget=0)))`. Батч 20 джоб (title + описание без HTML, обрезка 1500 симв.), пауза 8 с, дневной лимит 1200 джоб (≤900 вызовов/день), tenacity 3 попытки wait 30 с на 429/503; исчерпание → батч пропускается (доедет завтра через anti-join). `id` в батче = порядковый индекс внутри вызова, маппится обратно на job_uid. Ответные skills прогонять через canonicalize защитно.
 
-### 6.2. Вызов Gemini (SDK google-genai, модель gemini-2.5-flash-lite)
-
-```python
-RESPONSE_SCHEMA = {
-  "type": "OBJECT",
-  "properties": {"items": {"type": "ARRAY", "items": {
-      "type": "OBJECT",
-      "properties": {"id": {"type": "INTEGER"},
-                     "skills": {"type": "ARRAY", "items": {"type": "STRING", "enum": CANONICAL}}},
-      "required": ["id", "skills"]}}},
-  "required": ["items"],
-}
-
-PROMPT = """You label job postings with technology skills.
-Input: a JSON array of postings, each {"id": int, "title": str, "text": str}, in Russian or English.
-For EVERY posting return the skills from the allowed list that are EXPLICITLY mentioned in its title or text.
-Rules:
-- Use only skills from the allowed list, with exact canonical spelling.
-- Explicit mentions only ("питон" -> Python, "верстка" -> HTML/CSS). Do not infer skills from job title level, company type, or typical stacks.
-- Single allowed inference: a framework implies its language (Django/FastAPI/Flask -> also Python).
-- If nothing matches, return an empty skills array for that id.
-- Return every input id exactly once."""
-
-# generate_content(config=GenerateContentConfig(response_mime_type="application/json",
-#   response_schema=RESPONSE_SCHEMA, temperature=0, max_output_tokens=8192,
-#   thinking_config=ThinkingConfig(thinking_budget=0)))
-```
-
-Правила: батч 20 вакансий (title + текст: description без HTML, обрезка 1500 симв.; если деталей нет — snippet); пауза 8 с между вызовами; дневной лимит 1200 вакансий (60 вызовов; жёсткий потолок 900 вызовов/день не превышать никогда); tenacity 3 попытки, wait 30 с на 429/503; исчерпание → батч пропускается (доедет завтра через anti-join). Ответный skills прогонять через canonicalize защитно; id, отсутствующие в ответе, не пишутся (останутся в очереди).
-
-### 6.3. Ground truth бесплатно
-Для вакансий, у которых hh отдал непустой key_skills, писать обе строки source=key_skills (канонизированные) и source=llm — при агрегации DISTINCT(vacancy_id, skill); совпадение llm↔key_skills — это ещё и живая метрика качества (логировать jaccard в run-лог).
+### 6.3. Ground truth
+У ATS нет аналога key_skills. Навыки — только `source=llm`. Метрика качества — только eval (§6.4); jaccard(llm, key_skills) убран.
 
 ### 6.4. Мини-eval
-`data/eval/skills_eval.jsonl`, ровно 25 строк `{"id": int, "title": str, "text": str, "expected": ["Python", ...]}`. Отобрать после первого живого фетча стратифицированно (≥2 на каждый kz-ключ); разметить по правилам промпта; **владелец обязан глазами проверить разметку до коммита** (сказать ему об этом при сдаче этапа). Метрика micro-F1 по множествам, **порог ≥0.75** — assert в tests/test_eval_llm.py (@pytest.mark.llm_eval, при провале печатает по-вакансийный дифф). Живёт в ci.yml на push в main (2 вызова Gemini), авто-skip без ключа. Изменил промпт/каталог → обнови PROMPT_VERSION и прогони eval; провал — откат.
+`data/eval/skills_eval.jsonl`, 25 строк `{"id", "title", "text", "expected":[...]}`. Отобрать после первого живого фетча стратифицированно (разные источники/грейды/стек); разметить по правилам промпта; **владелец проверяет разметку глазами до коммита** (сказать при сдаче). Метрика micro-F1, **порог ≥0.75** — assert в test_eval_llm.py (@pytest.mark.llm_eval, авто-skip без ключа, при провале печатает по-джобный дифф). В ci.yml на push в main (2 вызова Gemini) — добавляется этапом 5. Изменил промпт/каталог → bump PROMPT_VERSION + прогон eval; провал — откат.
+
+### 6.5. Сид-лист компаний (data/seed_companies.json, ≥300)
+Курируемый список `[{source, slug, name}]` из публичных перечней компаний на Greenhouse/Lever/Ashby. Требования: ≥300 валидных досок; **заметная доля remote/EU** (не только US). **Валидность = живой ответ:** slug засчитывается, только если запрос вернул 200 и ≥1 джобу (Lever `[]` и Greenhouse/Ashby пустые — отбрасывать, логировать). Сборка и валидация — этап 1; список коммитится. Ручка объёма — правка файла.
 
 ## §7. Этапы и приёмки
 
-### Этап 0 — репозиторий, каркас и GO/NO-GO проверка доступа к hh
-1. В `~/projects/salary-radar-kz`: git init (ветка main), скелет из §3.1 (пустые модули с сигнатурами, pyproject, gitignore/gitattributes, вендоринг Chart.js), `pip install -e ".[dev]"`.
-2. `gh repo create midat-fx/salary-radar-kz --public --source=. --push` + `gh secret set GEMINI_API_KEY` (значение из ~/projects/deka/.env).
-3. Workflow `smoke.yml` (workflow_dispatch): `curl -s -o /dev/null -w '%{http_code}' -A "<UA из config>" "https://api.hh.ru/vacancies?text=python&area=40&per_page=1"` + печать тела при не-200. Запустить: `gh workflow run smoke.yml && gh run watch`.
-4. Параллельно проверить с Мака владельца: `python3 probe-scripts/retry_ban.py` (бан 18.07 мог уже спасть).
+### Этап 0 — репозиторий, каркас, разведка источника — ✅ ВЫПОЛНЕН (см. журнал)
+Каркас (git, skeleton, pyproject, vendored Chart.js, ruff+pytest зелёные), репо `tech-salary-radar` (public), GEMINI_API_KEY в Secrets, живая разведка 3 ATS с сырьём в `probe-scripts/ats-recon/`. Осталось (переходит в этап 1): вычистить hh-специфику из `etl/config.py` и стабов, переписать смоук под ATS, обновить README/UA.
 
-**ВЕТВЛЕНИЕ (зафиксировано, не изобретать другого):**
-- **A. Actions → 200:** основной путь. Весь ETL (инкремент и бэкфилл) живёт в Actions. Локальная разработка — на фикстурах.
-- **B. Actions → 403:** зарегистрировать приложение на dev.hh.ru НЕ пытаться самостоятельно — это действие владельца; СТОП и спросить. С app-токеном (`Authorization: Bearer`) повторить смоук; работает → секрет HH_APP_TOKEN, клиент шлёт заголовок при наличии env.
-- **C. B недоступна/не помогла:** Cloudflare Worker-прокси на аккаунте владельца (код 8 строк: fetch("https://api.hh.ru"+path+search) с пробросом UA; wrangler авторизован) + `HH_BASE=https://<proxy>.workers.dev` в pipeline env. Проверить смоуком через прокси. Внимание: IP Cloudflare тоже могут быть под 403 — если так, ветка D.
-- **D. Всё 403:** сбор только с CIS-egress. СТОП, эскалация владельцу (варианты: KZ/RU VPN на маке + launchd, self-hosted runner). Вслепую не строить.
+### Этап 1 — sources.py + fetch.py + сид-лист, на фикстурах
+1. Вычистить hh из `config.py` (§3.4), стабов (`fetch/normalize/fx/skills/aggregate/cli`), README (UA/имя), `smoke.yml` (проверять доступность 3 ATS вместо hh). Запись в журнал: «hh-специфика удалена».
+2. `sources.py`: `fetch_greenhouse/lever/ashby(client, slug)` → список нормализованных dict (общая схема §3.3); tenacity (retry TransportError/429/5xx, 404/пусто → []). `fetch.py`: `iter_jobs(client, seed)` — по сид-листу с паузой+джиттером, доклейка source/company.
+3. Фикстуры: обрезанные живые ответы (по 2–3 джобы) в `tests/fixtures/{greenhouse,lever,ashby}.json` (из `probe-scripts/ats-recon/sample_*.json`).
+4. Собрать и живьём провалидировать `data/seed_companies.json` (≥300, remote/EU-доля, §6.5).
+Тесты `test_sources.py` (httpx.MockTransport): парсинг 3 форматов, пустая/404 доска → [].
+*Приёмка:* pytest зелёный; `python -c` разовый `fetch_ashby(client,"ramp")` при живом доступе возвращает ≥1 джобу с compensation; `seed_companies.json` содержит ≥300 валидных, доля remote/EU задокументирована в журнале.
 
-В скелет включить один тест `tests/test_config.py`: импорт etl.config и etl.skills_catalog, `assert set(SEARCH_PLAN["ru"]) <= set(SEARCH_KEYS)`, `assert CANONICAL == list(SKILLS)` — иначе pytest на нуле тестов выходит кодом 5 и приёмка/CI красные.
-*Приёмка этапа 0:* repo на GitHub, `ruff check etl tests && pytest -q` зелёные (≥1 тест), смоук выполнен, выбранная ветка зафиксирована строкой в PLAN.md-журнале (дописать в конец файла: дата, ветка, код ответа).
+### Этап 2 — salary.py + fx.py + normalize.py
+salary: парсинг вилок (§5) по источникам, интервал→annual, →USD, coalesce, санитар с счётчиком. fx: каскад base USD, кэш. normalize: регион (§3.6), seniority из title, `job_uid`, дедуп, build_snapshot_rows/build_new_job_rows, запись партиций (идемпотентность).
+Тесты: Ashby $211.4K–$290.6K/YEAR → annual USD; hourly ×2080; GBP→USD по фикс-курсу; только-min → mid=min; mid вне границ → has_salary=false + счётчик; seniority по title; регион по location; дедуп; идемпотентность.
+*Приёмка (pytest, tests/test_cli_dry.py):* `run(client=MockTransport, data_dir=tmp_path)` создаёт 3 партиции; фикстуры дают ≥1 джобу с salary и ≥1 без. Фикстурные партиции только в tmp/tests, в `data/` не коммитятся; перед этапом 3 `git status data/` чист.
 
-### Этап 1 — fetch.py на фикстурах
-Реализовать клиент (§4): make_client (base_url=HH_BASE, UA, timeout 20 c), `_get_json` с tenacity (retry: TransportError/429/5xx, wait_exponential до 60 с, 5 попыток; 403 → CaptchaError без ретрая), search_page, search_all (пагинация ≤20 стр., дробление по experience при found>1900, при бакете>1900 — деление окна date_from/date_to пополам, пауза SEARCH_PAUSE_SEC+джиттер, доклейка `_search_key`/`_source_area`), fetch_details (≤DETAIL_LIMIT, пауза, CaptchaError → вернуть частичный dict с warning, пайплайн жив).
-Фикстуры: если доступ уже есть (ветка A и бан спал) — снять 1 живую страницу и 1 деталь скриптами probe-scripts (s2/s3) или прямым httpx-скриптом; если нет — сгенерировать правдоподобные фикстуры по схеме §4 и пометить TODO «заменить на живые при первом доступе».
-Тесты test_fetch.py на httpx.MockTransport: пагинация склеивается; found>1900 → вызовы с experience; 403 → CaptchaError; ретрай на 500.
-*Приёмка:* pytest зелёный; при живом доступе — `python -c` разовый search_page возвращает found>0.
+### Этап 3 — первый живой день
+Создаётся **pipeline.yml (минимальная версия)**: `workflow_dispatch` (inputs: llm_limit, skip_llm), `permissions:{contents:write, issues:write}`, checkout→setup-python→`pip install -e .`→`python -m etl.cli run`→commit+push. Этап 8 дополняет schedule/guard/canary.
+Запуск: `python -m etl.cli run --skip-llm`. Обязательный лог: таблица (source, компаний, джоб, с зарплатой) + размер партиций.
+*Приёмка:* snapshots-партиция дня, строк >5000; `SELECT count(*) WHERE has_salary AND salary_mid_usd IS NULL` = 0; `SELECT count(*) WHERE salary_mid_usd NOT BETWEEN 10000 AND 1500000` = 0; повторный запуск дня не меняет число строк; лог-таблица в журнал.
 
-### Этап 2 — normalize.py + fx.py
-normalize: strip_tags, normalize_currency (RUR→RUB, BYR→BYN), normalize_item (+salary_range с фолбэком на salary, только mode MONTH), build_snapshot_rows / build_new_vacancy_rows (дедуп по vacancy_id, приоритет — порядок SEARCH_KEYS), запись партиций (перезапись партиции дня целиком = идемпотентность).
-fx: каскад §5, gross_to_net, to_kzt, apply_fx.
-Тесты: валюты (RUR-вакансия 100k gross → RUB → ×0.87 → в KZT по фиксированному курсу), NULL-зарплата, дедуп двух ключей, идемпотентность записи.
-*Приёмка — выполняется pytest-тестом (tests/test_cli_dry.py):* внутренняя функция run() принимает client (httpx.Client с MockTransport на фикстурах) и data_dir (tmp_path); тест проверяет создание 3 партиций duckdb-запросом во ВРЕМЕННОЙ директории. Фикстура hh_detail.json обязана содержать непустой key_skills (иначе skills-партиции не будет). **Всё, порождённое фикстурами, живёт только в tests/ и tmp: в data/ фикстурные партиции не пишутся и не коммитятся никогда; перед этапом 3 убедиться, что `git status data/` чист.**
-
-### Этап 3 — первый живой день (в окружении выбранной ветки!)
-Здесь же создаётся **pipeline.yml в минимальной версии**: только `workflow_dispatch` (inputs: llm_limit, skip_llm), `permissions: {contents: write, issues: write}`, шаги checkout → setup-python → `pip install -e .` → `python -m etl.cli run` → commit+push. Этап 8 лишь дополняет его schedule/guard/canary/concurrency — отдельных одноразовых workflow не заводить.
-Запуск: `python -m etl.cli run --skip-llm` (в Actions через `gh workflow run pipeline.yml`, если ветка A). Обязательный лог: таблица found по каждой паре (страна, ключ) + размер партиций.
-*Приёмка:* snapshots-партиция дня существует, строк >500 (KZ+RU суммарно); `SELECT count(*) WHERE salary_from IS NOT NULL AND salary_currency IN ('KZT','RUB','USD','EUR') AND salary_kzt_net_from IS NULL` = 0; повторный запуск того же дня не меняет число строк; found-таблица записана в журнал PLAN.md.
-
-### Этап 4 — бэкфилл ретро-вакансий (35 дней)
-**Шаг 0 (разовое зафиксированное исключение из append-only; записать в журнал):** удалить vacancies-партицию, созданную этапом 3 (`git rm -r data/vacancies/dt=<дата-этапа-3>`, коммит `data: reset day-one vacancies for backfill`) — бэкфилл пересобирает весь пул с корректным first_seen. Snapshots не трогать.
-backfill.yml (workflow_dispatch, timeout 300 мин, `permissions: {contents: write, issues: write}`): циклом по дням `published_at` от сегодня−35 до **сегодня включительно**, `date_from/date_to` по одному дню, для каждого дня — обычный набор ключей; дедуп по vacancy_id: день id = min(published_at); собранные вакансии пишутся в vacancies/dt=<этот день>; снапшоты за прошлые даты НЕ фабрикуются (снапшот = только реальное наблюдение). Чекпойнт: после каждого дня-среза — commit+push (`data: backfill <дата>`); при 403 — backoff 60/300/900, 3 цикла, graceful stop; повторный запуск продолжает с последнего закоммиченного дня.
-Замечание: это даёт ретро-объёмы «новых по дням публикации» и стартовый пул для LLM; график активных стартует с этапа 3. Id из снапшота этапа 3, закрывшиеся к моменту бэкфилла, допустимо потерять (в latest.json они получат city_idx=−1).
-*Приёмка:* партиции vacancies за ~30-35 дат; суммарно ≥2000 уникальных id; `SELECT vacancy_id FROM vacancies GROUP BY 1 HAVING count(*)>1` → 0 строк; ран не падал финально (позволены зафиксированные в логе graceful-паузы).
+### Этап 4 — бэкфилл «новых» по дате публикации
+ATS отдают только открытые сейчас джобы, но с датой публикации (first_published/createdAt/publishedAt) на месяцы назад. **Шаг 0 (разовое исключение из append-only, в журнал):** удалить jobs-партицию этапа 3 (`git rm -r data/jobs/dt=<дата>`, коммит `data: reset day-one jobs for backfill`). backfill.yml (workflow_dispatch): один полный проход по сиду, каждый job_uid → в `jobs/dt=<дата публикации>` (survivorship: только ещё открытые; подписать). Snapshots за прошлое НЕ фабрикуются. Чекпойнт-коммит; повторный запуск идемпотентен по job_uid.
+*Приёмка:* jobs-партиции за ~30+ дат; ≥2000 уникальных job_uid; `GROUP BY job_uid HAVING count(*)>1` → 0; ран не падал.
 
 ### Этап 5 — skills.py + eval
-Реализация §6. **В LLM-батч попадают только вакансии, для которых в ЭТОМ ране получена деталь (description), либо деталь недоступна навсегда (404 = вакансия закрыта; тогда snippet).** Остальные остаются в очереди — anti-join доберёт. Первый прогон по бэкфилл-пулу — серией ежедневных workflow_dispatch (детали ≤DETAIL_LIMIT=400/день, свежайшие по first_seen первыми), пока очередь не опустеет: при пуле 2-5k это 5-12 дней; идёт параллельно этапам 6-9, не блокирует их. Затем собрать eval-набор (§6.4) → СТОП: показать владельцу разметку на проверку → закоммитить → **только теперь** включить llm-eval шаг в ci.yml (до этого ci.yml не передаёт GEMINI_API_KEY и не вызывает `pytest -m llm_eval`).
-*Приёмка (проверять после опустошения очереди):* `SELECT count(DISTINCT vacancy_id) FROM skills` ≥ 0.9 × количество вакансий; повторный run не увеличивает счётчик (кэш); `pytest -m llm_eval` — micro-F1 ≥ 0.75; jaccard(llm, key_skills) в логе ≥ 0.5.
+Реализация §6.2. В LLM-батч — только джобы с полученным в этом ране описанием; остальные ждут (anti-join доберёт). Первый прогон по бэкфилл-пулу — серией workflow_dispatch, свежайшие по first_seen первыми, пока очередь не опустеет. Затем eval-набор (§6.4) → СТОП: показать разметку владельцу → коммит → включить llm-eval в ci.yml.
+*Приёмка (после опустошения очереди):* `count(DISTINCT job_uid) FROM skills ≥ 0.9 ×` числа джоб; повторный run счётчик не растит; `pytest -m llm_eval` micro-F1 ≥ 0.75.
 
 ### Этап 6 — aggregate.py
-Только DuckDB SQL (views поверх `read_parquet('data/*/dt=*/part.parquet', hive_partitioning=true)`). Собирает §3.5: latest.json — по последнему снапшоту; **LEFT JOIN по vacancy_id с vacancies за всю историю (берём city и first_seen; при дублях id — строка с min(dt)); LEFT JOIN skills как `SELECT DISTINCT vacancy_id, skill WHERE skill IS NOT NULL` (отдельно — множество обработанных id для skills=null|[]); id без строки в vacancies → city_idx=−1, is_new=0**; плюс timeseries.json, meta.json (включая skill_premium §3.6 и top_employers по 10 на страну), badge.json.
-*Приёмка:* `python -m etl.cli aggregate && for f in site/data/*.json; do python -m json.tool "$f" > /dev/null || exit 1; done`; latest.rows >500; len(премий kz) ≥1; latest.json ≤2 МБ; в meta есть tax_note, attribution, fx.
+Только DuckDB SQL (views поверх `read_parquet('data/*/dt=*/part.parquet', hive_partitioning=true)`). latest.json по последнему снапшоту; LEFT JOIN jobs (company/first_seen/seniority/region при дублях — min(dt)); LEFT JOIN skills `DISTINCT job_uid, skill WHERE skill IS NOT NULL`; плюс timeseries.json, meta.json (skill_premium §3.6, top_companies по 10, coverage с dropped_salary_out_of_bounds), badge.json.
+*Приёмка:* `python -m etl.cli aggregate && for f in site/data/*.json; do python -m json.tool "$f">/dev/null||exit 1; done`; latest.rows >5000; len(премий) ≥1; latest.json ≤3 МБ; в meta есть salary_note, attribution, fx, coverage.
 
 ### Этап 7 — дашборд site/
-Одна страница, тёмная тема (фон #0E1117, карточки #161B22, границы #262D37, текст #E6EDF3, вторичный #8B949E, акцент #2DD4A7, серия-2 #4E9CF5, серия-3 #F5B950, негатив #F47067; шрифтовой стек "Inter, system-ui, -apple-system, sans-serif", у цифр tabular-nums; max-width 960px).
-Состав сверху вниз: шапка (SVG-радар + «Зарплатный радар», подзаголовок «IT-рынок Казахстана + AI-срез России · обновляется каждое утро», бейдж свежести: зелёный «данные обновлены сегодня HH:MM», янтарный «обновление задерживается» при >36 ч; ссылка-иконка GitHub) → hero 4 плитки (медианная ЗП среза; вакансий на радаре; самый прибыльный навык «LLM +42%»; новых за сутки; count-up 600 мс) → sticky-фильтры (страна сегмент KZ|RU default KZ; опыт select; город select: KZ Все/Алматы/Астана/Шымкент/Удалёнка, RU Все/Москва/СПб/Удалёнка/Другие) → 6 карточек-графиков → блок «Кто нанимает прямо сейчас» (чипы топ-10 работодателей → ссылки на hh) → футер (attribution из meta, tax_note, fx-строка, «работает на $0/мес: GitHub Actions + Cloudflare Pages + Gemini free tier», кнопка «Скачать данные (parquet)» → details с путём и копируемым DuckDB-запросом, «как это устроено →» на README#architecture, строка «радар работает N дней · M снимков данных»).
-Графики (заголовок + серый подзаголовок-методика + подпись «по N вакансиям с указанной ЗП · медиана · DD.MM»):
-1. «Сколько платят айтишникам в {Казахстане | России (AI/Data)}» (заголовок динамический по фильтру страны) — гистограмма mid. KZ: корзины по 100 тыс ₸, диапазон 0–2 млн, хвост «2 млн+». RU: mid → ₽ (÷ meta.fx.rub_kzt), корзины по 50 тыс ₽, диапазон 0–1 млн, хвост «1 млн+». Линии-аннотации: медиана (акцент), p25/p75 пунктир — в валюте среза.
-2. «Сколько платят без опыта, мидлу и сеньору» — столбцы по 4 бакетам, значения над столбцами, n= под осью; всегда все грейды (активный подсвечен), фильтр «опыт» его не режет.
-3. «Какие навыки добавляют к зарплате больше всего» — ФЛАГМАН: горизонтальные столбцы, топ-10 по premium_pct из meta.skill_premium[страна]; реагирует только на страну; тултип «С LLM: 1 250 000 ₸ (34 вак.) · без: 880 000 ₸ · +42%».
-4. «Какие навыки требуют чаще всего» — топ-15 (мобайл: топ-10) по доле вакансий, из latest.rows.
-5. «Где платят больше» — медианы по городам среза + Удалёнка; города с n<10 скрыть.
-6. «Как дышит рынок» — area активных + линия медианы (правая ось; появляется при ≥7 точках); реагирует только на страну; при <7 точек — водяная подпись «Радар набирает историю: день N из 7».
-Фильтры пересчитывают hero-плитки «медиана»/«вакансий на радаре»/«новых за сутки» (по is_new) и графики 1-2-4-5 на клиенте из latest.json; плитка «самый прибыльный навык» — только по стране (из meta). Пустые состояния — единая заглушка (иконка + строка + прогресс): графики 1/2/5 при <30 вакансий с ЗП в срезе; график 3 при <5 навыков прошедших порог; график 4 при <100 строк со skills≠null в срезе. Пустые оси не показывать никогда.
-Мобильная ≤480px: hero 2×2, скрыть p25/p75-подписи и правую ось графика 6, чипы в горизонтальный скролл, нет горизонтального скролла страницы на 375px.
-`<title>`: «Зарплатный радар: медиана {X} ₸ в IT Казахстана» (подставляет aggregate в index.html? НЕТ — title статичный + JS подставляет после fetch; проще и без шаблонизации). og:image = docs/screenshot-hero.png (абсолютный URL после первого деплоя), favicon — inline SVG.
-*Приёмка:* `python -m http.server -d site 8080` → все 6 карточек и hero рендерятся без ошибок консоли; фильтр «Шымкент + 6+ лет» показывает осмысленные заглушки; на 375px нет горизонтального скролла; вся типографика русская.
+Одна страница, тёмная тема (фон #0E1117, карточки #161B22, границы #262D37, текст #E6EDF3, вторичный #8B949E, акцент #2DD4A7, серия-2 #4E9CF5, серия-3 #F5B950, негатив #F47067; «Inter, system-ui, sans-serif»; цифры tabular-nums; max-width 960px).
+Сверху вниз: шапка (SVG-радар + «Радар навыков и зарплат», подзаголовок «мировой tech-найм глазами СНГ-разработчика · обновляется каждое утро», бейдж свежести, ссылка GitHub) → hero 4 плитки (медианная ЗП annual USD + «(~$X/мес)»; вакансий на радаре; самый прибыльный навык; новых за сутки; count-up 600 мс) → sticky-фильтры (регион сегмент Все/US/EU/Remote/Other; грейд select junior/mid/senior/lead) → 6 карточек-графиков → блок «Кто нанимает прямо сейчас» (чипы топ-10 компаний → ссылки на доски) → футер (attribution, salary_note, fx-строка, «$0/мес: GitHub Actions + Cloudflare Pages + Gemini free tier», «Скачать данные (parquet)» + DuckDB-запрос, «как устроено →» на README#architecture, «радар работает N дней · M снимков»).
+Графики (заголовок + серый подзаголовок-методика + подпись «по N вакансий с указанной вилкой · медиана · DD.MM»):
+1. «Сколько платят в tech-найме» — гистограмма annual USD (корзины по $25k, 0–$400k, хвост «$400k+»), аннотации медиана/p25/p75.
+2. «Сколько платят джуну, мидлу, сеньору, лиду» — столбцы по 4 грейдам, n= под осью; фильтр грейда не режет (все грейды, активный подсвечен).
+3. «Какие навыки добавляют к зарплате больше всего» — ФЛАГМАН: горизонтальные столбцы топ-10 по premium_pct из meta.skill_premium; реагирует только на регион? — нет: премия из meta глобальная (по грейдам), фильтры её не режут; тултип «С Rust: $210k (34 вак.) · без: $172k · +22%».
+4. «Какие навыки требуют чаще всего» — топ-15 (мобайл 10) по доле, из latest.rows.
+5. «Где платят больше» — медианы по региону (US/EU/Other) + Remote vs onsite; группы с n<10 скрыть.
+6. «Как дышит рынок» — area активных + линия медианы (правая ось при ≥7 точках); при <7 — водяная «день N из 7».
+Фильтры пересчитывают hero «медиана»/«вакансий»/«новых» и графики 1-2-4-5 на клиенте из latest.json; плитка «прибыльный навык» и график 3 — из meta (глобально). Пустые состояния — единая заглушка: 1/2/5 при <30 джоб с ЗП; 3 при <5 навыков; 4 при <100 строк со skills≠null. Пустые оси не показывать.
+Мобильная ≤480px: hero 2×2, скрыть p25/p75 и правую ось графика 6, чипы в скролл, нет горизонтального скролла на 375px.
+`<title>` статичный «Радар навыков и зарплат: медиана $X в tech-найме» + JS подставляет число после fetch. og:image=docs/screenshot-hero.png (абсолютный URL после деплоя), favicon inline SVG.
+*Приёмка:* `python -m http.server -d site 8080` → 6 карточек и hero без ошибок консоли; фильтр «EU + junior» даёт осмысленные заглушки; 375px без горизонтального скролла; типографика русская.
 
 ### Этап 8 — pipeline.yml + деплой
-**Деплой — git-интеграция Cloudflare Pages, БЕЗ wrangler в CI и без CF-секретов:** владелец (или исполнитель через wrangler CLI: `wrangler pages project create salary-radar --production-branch=main`, затем в дашборде CF подключить git-репо; если подключение git требует интерактива в браузере — СТОП, попросить владельца кликнуть) — build command пустой, output dir `site`, preview-деплои выключить.
-pipeline.yml: `on: schedule: [{cron: "47 1 * * *"}, {cron: "47 7 * * *"}] + workflow_dispatch(inputs: llm_limit)`; `permissions: {contents: write, issues: write}` (явный блок обнуляет неперечисленные скоупы — без issues:write умрёт алертинг); каждый шаг с gh — с `env: GH_TOKEN: ${{ github.token }}`; `concurrency: {group: daily-pipeline, cancel-in-progress: false}`; шаги: checkout (fetch-depth: 1) → setup-python (cache pip) → pip install -e . → **guard**: партиция snapshots за сегодня (Asia/Almaty) уже в репо → exit 0 → **canary**: `/vacancies?per_page=1` (при 403 → `gh issue create --title "hh blocked $(date -u +%F)"` и exit 1) → `python -m etl.cli run` (env GEMINI_API_KEY, HH_BASE если ветка C) → commit `data: YYYY-MM-DD` → push с ретраем: `for i in 1 2 3; do git push && break || git pull --rebase origin main; done`. **`[skip ci]` НЕ использовать** (Cloudflare Pages его уважает и не задеплоит сайт); вместо этого ci.yml: `on: push: {branches: [main], paths-ignore: ["data/**", "site/data/**"]}` + pull_request. На failure пайплайна — шаг `gh issue create` (хватает GITHUB_TOKEN).
-*Приёмка:* ручной workflow_dispatch создаёт коммит и через 1-3 мин обновляет прод-URL Pages (updated_at на сайте = сегодня); повторный запуск в тот же день выходит по guard без коммита; ci.yml не триггерится дата-коммитом.
+**Деплой — git-интеграция Cloudflare Pages, БЕЗ wrangler в CI:** `wrangler pages project create tech-salary-radar --production-branch=main`, в дашборде CF подключить git-репо (build command пустой, output dir `site`, preview выключить). Требует интерактива в браузере → СТОП, попросить владельца кликнуть.
+pipeline.yml: `on: schedule:[{cron:"47 1 * * *"},{cron:"47 7 * * *"}] + workflow_dispatch(inputs: llm_limit)`; `permissions:{contents:write, issues:write}`; каждый gh-шаг с `env: GH_TOKEN: ${{ github.token }}`; `concurrency:{group:daily-pipeline, cancel-in-progress:false}`; шаги: checkout(fetch-depth:1)→setup-python(cache pip)→pip install -e .→**guard** (снапшот за сегодня уже в репо → exit 0)→**canary** (по 1 запросу к каждому ATS; если все 3 недоступны → `gh issue create` + exit 1)→`python -m etl.cli run` (env GEMINI_API_KEY)→commit `data: YYYY-MM-DD`→push с ретраем (`for i in 1 2 3; do git push && break || git pull --rebase; done`). **`[skip ci]` НЕ использовать** (CF Pages его уважает); ci.yml: `on: push:{branches:[main], paths-ignore:["data/**","site/data/**"]} + pull_request`. На failure — `gh issue create`.
+*Приёмка:* ручной dispatch создаёт коммит и через 1–3 мин обновляет прод-URL (updated_at=сегодня); повторный запуск дня выходит по guard; ci.yml не триггерится дата-коммитом.
 
 ### Этап 9 — Docker + README + скриншоты
-Dockerfile: python:3.12-slim, pip install ., VOLUME /app/data /app/site, ENTRYPOINT `python -m etl.cli`, CMD `run`. Проверка при живом доступе к hh с локального IP: `docker build -t salary-radar . && docker run --rm -v "$PWD/data:/app/data" -v "$PWD/site:/app/site" salary-radar run --skip-llm` (при ветке C добавить `-e HH_BASE=…`, при B — `-e HH_APP_TOKEN=…`). **Если hh с локального IP недоступен — проверять контейнер офлайн-командой `... salary-radar aggregate`** (работает на закоммиченных parquet) — этого достаточно, к hh с забаненного IP не ходить. Помнить про воркэраунд docker-credential-desktop владельца: чистый DOCKER_CONFIG.
-README.md (EN): H1 + однострочник «Self-updating dashboard of the IT job market in Kazakhstan (+AI slice of Russia). Rebuilds itself every morning for $0/month» → бейджи (pipeline workflow, ci workflow, shields endpoint-бейдж vacancies tracked из site/data/badge.json по raw-URL, Python 3.12, MIT) → жирная ссылка на дашборд + 2 скриншота → What it does (3 пункта) → `## Architecture` с mermaid (cron → fetch hh API → parquet snapshots in git → DuckDB → JSON → Cloudflare Pages; якорь для «как это устроено») → Engineering highlights (LLM structured output + cache + eval F1≥0.75; parquet history versioned in git; DuckDB analytics; polite crawling: backoff, checkpoints; таблица $0-инфры) → Data & methodology (midpoint, только вакансии с ЗП, премия со стратификацией, survivorship-дисклеймер, «поиск по названию вакансии» дисклеймер; Download the data: путь + копируемый DuckDB-запрос по https raw) → Run locally (4 команды) → Roadmap (весь IT РФ, BY/UZ/KG, enbek.kz как второй источник, светлая тема, EN-версия) → License MIT.
-Скриншоты (после ≥1 дня данных): docs/screenshot-hero.png (первый экран), docs/screenshot-skills.png (график премий), 1600px, тёмные.
-*Приёмка:* docker-проверка (онлайн- или офлайн-вариант выше) проходит на чистом клоне; README рендерится с работающими бейджами; LICENSE MIT (© Midat Faizov).
+Dockerfile: python:3.12-slim, pip install ., VOLUME /app/data /app/site, ENTRYPOINT `python -m etl.cli`, CMD `run`. Проверка: `docker build -t tech-salary-radar . && docker run --rm -v "$PWD/data:/app/data" -v "$PWD/site:/app/site" tech-salary-radar aggregate` (офлайн, на закоммиченных parquet — источники живые, но онлайн-прогон не обязателен). Помнить про docker-credential-desktop (чистый DOCKER_CONFIG).
+README.md (EN): H1 + однострочник «Self-updating dashboard of the global tech job market — what skills companies hire for and how much they pay. Rebuilds itself every morning for $0/month» → бейджи (pipeline, ci, shields endpoint jobs-tracked, Python 3.12, MIT) → ссылка на дашборд + 2 скриншота → What it does → `## Architecture` mermaid (cron → Greenhouse/Lever/Ashby APIs → parquet snapshots in git → DuckDB → JSON → Cloudflare Pages) → Engineering highlights (multi-source ETL; LLM structured output+cache+eval F1≥0.75; parquet history in git; DuckDB; polite crawling; $0-инфра таблица) → Data & methodology (annual gross USD, только с вилкой, премия со стратификацией по seniority, survivorship-дисклеймер, seniority-из-title дисклеймер; Download the data) → Run locally → Roadmap (Remotive/Arbeitnow remote-срез, расширение каталога навыков, светлая тема, EN-версия, больше ATS) → License MIT.
+Скриншоты (после ≥1 дня): docs/screenshot-hero.png, docs/screenshot-skills.png, 1600px, тёмные.
+*Приёмка:* docker-проверка на чистом клоне; README рендерится с бейджами; LICENSE MIT (© Midat Faizov).
 
 ### Этап 10 — наблюдение и шеринг
-7 дней ничего не менять, смотреть зелёные раны (issues при сбоях чинить). **Гейт публикации: ≥7 подряд зелёных cron-ранов И ≥1000 вакансий в базе И водяная подпись графика 6 исчезла.** Потом: пост в @itmankz (черновик ниже), через 2-3 дня LinkedIn (EN, черновик ниже; приложить screenshot-skills.png, цифры подставить реальные).
-
-@itmankz:
-> Сделал бесплатный радар зарплат по IT-вакансиям Казахстана: каждое утро сам собирает свежие вакансии с hh, считает медианы по городам и грейдам и показывает, какие навыки реально добавляют к зарплате.
-> Без регистрации, код и данные открыты — parquet можно скачать и пересчитать по-своему.
-> → [ссылка]
-> Что добавить, чтобы было полезнее?
-
-LinkedIn:
-> How much does "LLM" in your skill set add to a salary in Kazakhstan? About +40%, according to my data.
-> I built Salary Radar — a self-updating dashboard of the IT job market in Kazakhstan (+AI slice of Russia). It rebuilds itself every morning and costs $0/month:
-> • Python ETL over the hh.ru API, daily parquet snapshots versioned in git
-> • Gemini structured output extracts skills from vacancy texts (cached + mini-eval)
-> • DuckDB analytics, Chart.js dashboard on Cloudflare Pages, GitHub Actions cron
-> Live (RU): [link] · Code & data: [repo]
-> Feedback welcome — especially on the skill-premium methodology.
+7 дней не менять, смотреть зелёные раны. **Гейт публикации: ≥7 подряд зелёных cron-ранов И ≥5000 джоб в базе И водяная подпись графика 6 исчезла.** Потом пост в @itmankz (RU) и через 2-3 дня LinkedIn (EN), цифры реальные, приложить screenshot-skills.png. Черновики — при сдаче этапа.
 
 ## §8. Жёсткие правила (нарушение = баг)
 
-1. Все запросы к hh: 1 поток, пауза ≥1 с + джиттер, UA из config. Параллелизм запрещён.
-2. 403/captcha: backoff 60/300/900, 3 цикла, graceful stop. Через блок не молотить. Каждый ран начинается с canary.
-3. В git — только parquet (zstd) и site/data/*.json. Raw JSON ответов и полные тексты описаний не коммитить никогда.
-4. Партиции append-only; переписывается только партиция текущего дня при повторном запуске.
-5. Ежедневный поиск — ВСЕГДА полный, без date_from: снапшот обязан быть полным активным срезом (found>1900 решается дроблением по experience/датам, §4). «Новые» = anti-join vacancy_id против всех data/vacancies/* (§3.3). date_from используется только внутри дробления глубины и в бэкфилле. Календарное «вчера» нигде не использовать.
-6. Gemini: только flash-lite, батч 20, текст ≤1500 симв., пауза 8 с, ≤900 вызовов/день, temperature 0, response_schema с enum. Перед вызовом — anti-join с кэшем skills.
-7. Изменение промпта/каталога → bump PROMPT_VERSION + прогон eval (F1 ≥ 0.75), иначе откат.
+1. Все запросы: заголовок UA из config, пауза `FETCH_PAUSE_SEC`+джиттер, 1 запрос на доску. Уважать 429/5xx (tenacity, backoff).
+2. В git — только parquet (zstd), `site/data/*.json`, `data/seed_companies.json`, `data/cache/fx_latest.json`. Сырой JSON API и полные тексты описаний не коммитить никогда (кроме обрезанных сэмплов в probe-scripts).
+3. Партиции append-only; переписывается только партиция текущего дня.
+4. Ежедневный проход — по всему сиду; снапшот = полный активный срез. «Новые» = anti-join job_uid против всех `data/jobs/*`. Календарное «вчера» не использовать.
+5. Зарплата всегда annual gross USD после нормализации+санитара; вне $10k–$1.5M → has_salary=false + счётчик в meta.
+6. Gemini: только flash-lite, батч 20, текст ≤1500, пауза 8 с, ≤900 вызовов/день, temperature 0, response_schema с enum. Перед вызовом — anti-join с кэшем skills.
+7. Изменение промпта/каталога → bump PROMPT_VERSION + eval (F1 ≥ 0.75), иначе откат.
 8. `[skip ci]` не использовать. CI отсекает дата-коммиты через paths-ignore.
-9. Дашборд читает только site/data/*.json (ассерт в CI: latest.json ≤ 2 МБ). Parquet в site/ не попадает.
-10. Тексты вакансий не публикуются нигде; на сайте только агрегаты; атрибуция hh в футере обязательна.
-11. Секреты: только GEMINI_API_KEY (+ HH_APP_TOKEN при ветке B). CF-токенов в CI нет (деплой git-интеграцией).
-12. Не менять решения §2-§6 без СТОП-вопроса владельцу.
+9. Дашборд читает только `site/data/*.json` (CI-ассерт latest.json ≤ 3 МБ). Parquet в site/ не попадает.
+10. Тексты вакансий не публикуются; на сайте только агрегаты; атрибуция источников в футере обязательна.
+11. Секреты: только GEMINI_API_KEY. CF-токенов в CI нет (деплой git-интеграцией).
+12. Не менять решения §2–§6 без СТОП-вопроса владельцу.
+13. «Проверено» = живой ответ в руках (§0.6).
 
-## §9. Известные ловушки (проверено разведкой)
+## §9. Известные ловушки
 
-- **hh банит по IP молча (403 без Retry-After) именно вакансионные эндпоинты; справочники работают.** 18.07 под баном был и домашний IP владельца (Анкара), и US-egress. Отсюда весь этап 0.
-- **Архив hh ≈ 35 дней** (отдаются только активные вакансии) — бэкфилл глубже невозможен; ретро имеет survivorship bias (подписывать).
-- Рубль в hh — код `RUR`; белорусский — `BYR`. Нормализовать при чтении.
-- Новое поле `salary_range` рядом со старым `salary` — читать новое с фолбэком, брать только mode=MONTH.
-- `+` в date_from URL-кодировать (%2B); в httpx params=dict это автоматически.
-- `<highlighttext>` в snippet — вырезать до записи.
-- id вакансии приходит строкой — приводить к int64.
-- GH Actions cron опаздывает до часа и может дропаться; в публичном репо отключается после 60 дней без коммитов — наши ежедневные коммиты держат его живым, но при мёртвом пайплайне >60 дней cron молча выключится (двойной отказ — поэтому gh issue при каждом failure).
-- Cloudflare Pages Free: 500 билдов/мес (у нас ~30-60), файл ≤25 MiB — ок.
-- er-api обновляется ~00:00-00:35 UTC — крон 01:47 UTC получает свежий курс.
-- Первый прогон LLM по бэкфиллу: 200-350 вызовов — внутри дня; не запускать одновременно с ci-eval.
-- docker-credential-desktop на маке владельца ломает pull — чистый DOCKER_CONFIG (грабля из vault).
+- **hh соискательский API закрыт 15.12.2025** — источник мёртв, не возвращаться (история в журнале).
+- ATS отдают только открытые сейчас джобы (нет архива) → бэкфилл «новых» имеет survivorship bias (подписывать); график активных стартует с этапа 3.
+- Lever: многие slug 404/переехали на другой ATS — сид валидировать живьём; `[]` ≠ ошибка.
+- Зарплата структурно плотная только у Ashby; у Greenhouse/Lever редка (US pay-transparency) → флагман и распределение зарплат считать по salary-subset, честно подписывать N.
+- Greenhouse `content` — escaped HTML, тексты в тегах; парсить пары `$NNN,NNN` осторожно (не путать с бонусами/equity).
+- Seniority из title — эвристика, шумная; помечать дисклеймером.
+- id/createdAt форматы разные (Lever epoch-ms, Ashby/GH ISO) — приводить к UTC timestamp.
+- GH Actions cron опаздывает до часа и дропается; репо без коммитов >60 дней глушит cron — ежедневные дата-коммиты держат живым, но при мёртвом пайплайне >60 дней cron выключится → gh issue при каждом failure.
+- Cloudflare Pages Free: 500 билдов/мес (у нас ~30–60), файл ≤25 MiB — ок.
+- er-api base USD обновляется ~00:00 UTC; крон 01:47 UTC берёт свежий курс.
+- docker-credential-desktop на маке ломает pull — чистый DOCKER_CONFIG (грабля из vault).
 
 ## §10. Roadmap (в README, НЕ делать в v1)
 
-Весь IT РФ · BY/UZ/KG · второй источник enbek.kz · светлая тема · EN-дашборд · компакция партиций старше года в Release assets · RSS/API.
+Remotive/Arbeitnow (remote-срез, есть зарплаты) · больше ATS (Workday, SmartRecruiters, Recruitee) · расширение каталога навыков (Rust/Scala/Ruby/Swift/dbt/Snowflake) · компакция партиций старше года в Release assets · светлая тема · EN-дашборд · RSS/API · срез по странам.
 
 ---
 ## Журнал исполнения (дописывать сюда)
-<!-- этап N: дата, ветка A/B/C/D, found-таблица, отклонения -->
+<!-- этап N: дата, отклонения, факты по живым ответам -->
 
 ### Этап 0 — 2026-07-18 — каркас готов, доступ к hh НЕ получен (СТОП на ветвлении)
 
@@ -491,39 +366,23 @@ LinkedIn:
 
 ### БЛОКЕР ПРОЕКТА — источник данных hh недоступен по политике (не IP-бан)
 
-Владелец выбрал ветку B и открыл форму создания приложения на dev.hh.ru. На форме — предупреждение: **«поддержка API для соискателей прекращена 15 декабря 2025»**; типы приложения — только работодательские («Только сотрудники работодателя» / «нескольких работодателей»). Публичный поиск вакансий `GET /vacancies` — это соискательский API.
+Владелец выбрал ветку B и открыл форму создания приложения на dev.hh.ru. На форме — предупреждение: **«поддержка API для соискателей прекращена 15 декабря 2025»**; типы приложения — только работодательские. Публичный поиск `GET /vacancies` — это соискательский API.
 
-Подтверждения (сходятся):
-1. Форма dev.hh.ru прямо сообщает о прекращении соискательского API 15.12.2025; соискательского типа приложения больше нет, только работодательские (доступ к своим вакансиям/откликам, не к рынку).
-2. **Разведка 18.07 НИ РАЗУ не получила вакансию:** `probe-scripts/kz_python.json`, `body2.json`, `curl_test.json`, `kzapi.json` = `{"errors":[{"type":"forbidden"}]}` (403). Реальные данные вернули только справочные эндпоинты: `areas.json` (2.3 МБ), `dict_probe.json`, `prof_roles.json`. §4 «API cookbook проверено разведкой» по полям вакансий — из документации hh, не из живых ответов.
-3. Три независимых egress (Actions/US-Azure, дом/Анкара, Cloudflare-Worker) — 403 на `/vacancies`, 200 на `/dictionaries`.
-4. Веб-источники (setka.ru, habr.com, threads) подтверждают: hh закрыл публичный соискательский API 15.12.2025 (борьба с автооткликами/ботами); выжили лишь сервисы на OAuth+эмуляции браузера.
+Подтверждения (сходятся): (1) форма dev.hh.ru о прекращении соискательского API 15.12.2025, соискательского типа приложения нет; (2) разведка 18.07 НИ РАЗУ не получила вакансию — `probe-scripts/kz_python.json`, `body2.json`, `curl_test.json`, `kzapi.json` = `{"errors":[{"type":"forbidden"}]}`; реальные данные вернули только справочники (`areas.json` 2.3 МБ, `dict_probe.json`, `prof_roles.json`); (3) три egress 403 на `/vacancies`, 200 на `/dictionaries`; (4) веб (setka.ru, habr.com, threads) подтверждает закрытие 15.12.2025.
 
-**Вывод: причина 403 — не временный IP-бан (§9), а системное прекращение соискательского API 7 месяцев назад.** Ветки A/B/C/D адресовали IP-бан и потому нерелевантны: ветка B (работодательское приложение) не даёт рынок вакансий; соискательского приложения не существует; прокси/CIS-egress не открывают отключённый API. Это «скрытый технический киллер» (vault-паттерн), всплывший на этапе 0 — до первой строки продуктового кода.
+**Вывод: 403 — не временный IP-бан, а системное прекращение соискательского API.** Ветки A/B/C/D нерелевантны. «Скрытый технический киллер», всплывший на этапе 0 до продуктового кода. Обнуляется §2 → решение владельца.
 
-**Следствие для плана: обнуляется §2 («источник данных v1 — только hh») и весь ETL-премис. Требуется решение владельца (§8 правило 12) — этап 0 остановлен на GO/NO-GO с исходом NO-GO по источнику.** Запасной источник из Roadmap §10 — **enbek.kz** (госбиржа труда): доступ бесплатный, IT-вакансии есть (~сотни), но публичного API для разработчиков в открытом виде не найдено (возможны открытые датасеты data.egov.kz или парсинг), объёмы << hh, качество зарплат/текстов под флагманский график «премия навыка» под вопросом. Каркас (etl-структура, DuckDB, LLM-извлечение навыков, дашборд) переносим на другой источник — не пропадает; заменяется только fetch-слой. Варианты эскалации: (1) валидационный спайк enbek.kz/открытые данные КЗ (сохраняет KZ-дифференциатор); (2) переориентация на публичные job-board API (Greenhouse/Lever/Ashby/Remotive/Arbeitnow — те же чек-боксы портфолио, но теряется «Казахстан»); (3) отложить salary-radar, взять другой проект из бэклога. Жду решения.
+### Спайк enbek.kz (владелец выбрал вариант 1) — вердикт NO-GO
 
-### Валидационный спайк enbek.kz + data.egov.kz (владелец выбрал вариант 1) — вердикт NO-GO
-
-Разведка живьём 18.07 (enbek.kz достижим из Анкары, geo-блока нет; nginx+Laravel+Livewire; server-rendered, не JSON-API SPA). Каждая карточка вакансии несёт schema.org **JSON-LD JobPosting**: `title, description, baseSalary{currency KZT, unitText MONTH}, jobLocation, experienceRequirements, educationRequirements, skills`.
-
-Go/no-go по критериям владельца:
-1. **Объём IT.** Всего на бирже **53 410 вакансий / 24 518 объявлений**. Фасет-отрасль **«IT и телекоммуникации» = 490**; `?prof=программист` = **141**. Топ проф-областей: Образование 5 821, Медицина 2 800, Производство 2 166, без квалификации 2 112, Транспорт 1 430 — IT в топе нет. Порядок ~490 IT+телеком против hh-предпосылки плана 5–8k активных KZ IT — в ~15× меньше; дневной приток IT единицы-десятки. Дистанционных на всей бирже — 39.
-2. **Доля с зарплатой ≈ 100%** (сильный плюс). Все 24 518 объявлений попадают в зарплатные корзины (<100k 1 785; 100–200k 9 912; 200–300k 6 570; 300–500k 4 667; >500k 1 584) — госбиржа, зарплата обязательна. НО распределение смещено вниз: медиана всей биржи в 100–300k. IT-примеры — госсекторные и бюджетные: сторож 150–200k, инженер-программист 158–190k, Тараз 180–240k, «программист приложений» в госцентре 530k, «1С для начинающих». Это НЕ коммерческий рынок (hh-мидл Алматы 600k–1.5M+). Медиана «IT-зарплат КЗ» по enbek была бы нерепрезентативна и вводила бы в заблуждение.
-3. **Полные тексты есть** (~4.7–5.7k символов в HTML-теле карточки), но: JSON-LD `description` тонкий; JSON-LD `skills` часто мусор (пример: `"4591150282e496"` — хэш, не навык); тексты формульно-госсекторные, бедные на техстек. Под LLM-извлечение сгодятся, но ценность низкая при малом объёме.
-4. **Доступ/ToS — красный флаг.** Официального открытого dev-API (как было у hh) нет. `data.egov.kz` — API только с ключом и, как правило, агрегаты (счётчики по регионам/профессиям), не пофайловые вакансии с текстом. Единственный пофайловый доступ — HTML-страницы: `/search/vacancy` фильтруется через **Livewire-XHR** (нет чистого query-API), а SEO-страницы `/ru/вакансии/…?prof=` дают server-side счётчики, НО **`robots.txt` явно запрещает `/*/search/*` и `/*/вакансии/*`** — прод-краулер нарушает robots enbek. Это подрывает саму позицию плана «честный открытый API, не верь на слово — скачай parquet».
-
-**Вердикт по флагману «премия навыка»: НЕ жизнеспособен.** ~150–300 реальных IT-dev-объявлений (госсектор-хэви), разбитые по городам × 4 грейда × навык с порогами §3.6 (≥8 с навыком И ≥8 без, ≥15 с ЗП на навык) → почти ни один навык не наберёт ячейку; база зарплат нерепрезентативна.
-
-**Итог спайка: enbek.kz как замена источника — NO-GO** (объём ~15× ниже, база зарплат госсекторно-смещённая/нерепрезентативная, флагман невозможен, прод-парсинг против robots, официального API нет). Плюсы (зарплата ~100%, есть JSON-LD и тексты) не перевешивают. Рекомендация исполнителя = предодобренный владельцем fallback: **вариант 2 — рефрейм на публичные job-board API** (Greenhouse/Lever/Ashby boards — no-auth, полные тексты; Remotive/Arbeitnow — есть зарплаты). Инженерная часть (Python ETL, parquet-в-git, DuckDB, LLM+eval, cron, дашборд, премия навыка) сохраняется полностью; теряется «Казахстан» → перепозиционирование в «Remote/Global IT salary & skills radar». Ждёт подтверждения владельца.
+enbek.kz достижим из Анкары (nginx+Laravel+Livewire, server-rendered; JSON-LD JobPosting в каждой карточке). По критериям: (1) IT-объём — «IT и телекоммуникации» 490, `?prof=программист` 141 (всего биржа 53 410; IT не в топе проф-областей) — ~15× ниже hh-предпосылки; (2) зарплата ~100% заполнена, НО госсекторно-смещена (инженер-программист 158–190k, 1С для начинающих, госцентр 530k) — нерепрезентативно для коммерческого рынка; (3) тексты есть (~5k симв.), но JSON-LD `skills` часто мусор (`"4591150282e496"`); (4) официального dev-API нет, data.egov.kz — ключ+агрегаты, пофайлово только HTML через Livewire, `robots.txt` запрещает `/search/*` и `/вакансии/*` → прод-парсинг против robots. Флагман невозможен (мало ячеек). **NO-GO.**
 
 ### РЕФРЕЙМ ПРИНЯТ — источник: публичные ATS-доски (Greenhouse/Lever/Ashby)
 
-Владелец выбрал вариант 1 (Greenhouse/Lever/Ashby) с уточнениями: сид ≥300 компаний конфигом (заметная доля remote/EU); дашборд русский, позиция «мировой tech-найм глазами СНГ-разработчика — что учить и сколько приносит»; флагман — по подмножеству с вилкой («по N вакансий с указанной вилкой»); Remotive/Arbeitnow — в roadmap; **репо переименован `salary-radar-kz` → `tech-salary-radar`** (redirects сохранены, remote обновлён), дашборд «Радар навыков и зарплат»; всю hh-специфику (RUR, area-id, salary_range, налоги КЗ/РФ) вычистить; cookbook — только по живым ответам, сырьё в репо.
+Владелец выбрал вариант 1 с уточнениями (см. §2): сид ≥300 (remote/EU-доля), дашборд русский, позиция «мировой tech-найм глазами СНГ-разработчика», флагман по salary-subset, Remotive/Arbeitnow → roadmap, зарплата annual gross USD (месячное в скобках, интервалы ×2080/×12/×52, санитар $10k–$1.5M, FX base USD, подпись методики), **репо переименован `salary-radar-kz` → `tech-salary-radar`** (redirects, remote обновлён), дашборд «Радар навыков и зарплат». hh-специфика — на вычистку (этап 1). Cookbook — по живым ответам, сырьё в `probe-scripts/ats-recon/`.
 
-**Живая разведка ATS 18.07 (сырьё: `probe-scripts/ats-recon/` — COOKBOOK.md + trimmed `sample_*.json`; полные дампы не коммитим по §8-правилу «raw JSON не в git»).** Все три API достижимы из Анкары, no-auth, 200:
-- **Greenhouse** `boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true`: stripe 524, databricks 789, cloudflare 263, airbnb 195, gitlab 167, figma 169, coinbase 151. Поля: `title, location{name}, content` (полный HTML JD ~3k симв.), `first_published, updated_at`. Зарплата редка (~7%, в тексте).
-- **Lever** `api.lever.co/v0/postings/{company}?mode=json`: palantir 274, matchgroup 83 (многие слаги 404/пусто — курировать). Поля: `text, categories{location,team,commitment}, descriptionPlain, lists, workplaceType(onsite/hybrid/remote), createdAt(epoch ms)`. `salaryRange` часто пуст (palantir 0/274).
-- **Ashby** `api.ashbyhq.com/posting-api/job-board/{name}?includeCompensation=true`: openai 723, notion 141, ramp 125, replit 94, linear 24. Поля: `title, location, isRemote(bool), employmentType, publishedAt, descriptionPlain, compensation`. **`compensation` структурная и плотная: ramp 125/125** (`components[]`: compensationType Salary, interval 1 YEAR, currencyCode, minValue/maxValue). Ashby — рабочая лошадка по зарплате.
+**Живая разведка ATS 18.07** (сырьё: `probe-scripts/ats-recon/COOKBOOK.md` + `sample_greenhouse_gitlab.json`, `sample_lever_matchgroup.json`, `sample_ashby_linear.json`). Все три no-auth, 200 из Анкары:
+- **Greenhouse**: stripe 524, databricks 789, cloudflare 263, airbnb 195, gitlab 167, figma 169, coinbase 151. Полный `content`, `first_published/updated_at`. Зарплата ~7% (в тексте).
+- **Lever**: palantir 274, matchgroup 83 (многие slug 404 — курировать). `descriptionPlain`, `workplaceType`, `createdAt` epoch-ms. `salaryRange` часто пуст.
+- **Ashby**: openai 723, notion 141, ramp 125, replit 94, linear 24. `descriptionPlain`, `isRemote`, **`compensation` плотная (ramp 125/125)**: components Salary с interval/currency/min/max.
 
-Вывод разведки: объём — тысячи живых IT-ролей с курируемого сида; текст есть везде; структурная зарплата — в основном Ashby (+ редкие US-transparency у GH/Lever) → флагман на salary-subset. Дедуп-ключ (source, company, job_id); пагинация не нужна; вежливость — 1 запрос на доску/день. Следующий шаг: переписать §1–§7 под ATS (data model, методика, сид-лист), затем обновить каркас (config/fetch). hh-специфика — на вычистку.
+PLAN переписан под ATS (§1–§10): USD-методика, seniority-из-title, регион US/EU/other, salary.py, sources.py, сид-лист §6.5. Каталог навыков (61) и каркас переносятся. Следующий шаг — этап 1 (вычистить hh-специфику из config/стабов/smoke, sources.py+fetch.py, собрать и живьём провалидировать сид ≥300).
