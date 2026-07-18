@@ -29,11 +29,12 @@ _MID = re.compile(r"\b(mid|middle|mid[- ]level|intermediate)\b", re.I)
 
 _MGMT = re.compile(r"\b(manager|director|vp|vice president|head of|chief|cto|ceo|cio|cfo|coo)\b", re.I)
 
-# hard deny wins over an allow-signal (eng-adjacent-but-not-dev, PM, design)
+# hard deny wins over an allow-signal (eng-adjacent-but-not-dev, PM, design, GTM)
 _HARD_DENY = re.compile(r"\b(product manager|program manager|product owner|technical program|"
                         r"designer|ux designer|ui designer|product designer|graphic designer|"
                         r"design lead|sales engineer|solutions engineer|solutions consultant|"
-                        r"sales development|account executive|account manager)\b", re.I)
+                        r"sales development|account executive|account manager|partnerships|"
+                        r"go[- ]to[- ]market|\bgtm\b)\b", re.I)
 # soft deny only applies when the title carries NO allow (tech) signal
 _SOFT_DENY = re.compile(r"\b(sales|recruit|talent|\bhr\b|people ops|human resources|legal|counsel|"
                         r"finance|accounting|marketing|content|community|customer success|"
