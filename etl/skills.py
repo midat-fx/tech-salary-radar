@@ -1,4 +1,7 @@
-"""Skill extraction: key_skills ground truth + Gemini structured output, cached (PLAN.md §6, stage 5)."""
+"""Skill extraction via Gemini structured output, cached (PLAN.md §6, stage 5).
+
+ATS boards have no free key_skills ground truth, so skills come only from the LLM (source='llm').
+"""
 
 RESPONSE_SCHEMA = None  # built from CANONICAL in stage 5 (see PLAN.md §6.2)
 
@@ -13,16 +16,11 @@ Rules:
 - Return every input id exactly once."""
 
 
-def extract_key_skills(detail):
-    """Canonicalize hh key_skills from a vacancy detail (free ground truth)."""
-    raise NotImplementedError
-
-
 def extract_llm(batch):
-    """Call Gemini on a batch of postings; return {id: [canonical skills]}."""
+    """Call Gemini on a batch of postings; return {index: [canonical skills]} for the batch."""
     raise NotImplementedError
 
 
 def pending_queue(data_dir):
-    """anti-join vacancies - skills: ids not yet processed by the extractor."""
+    """anti-join jobs - skills: job_uids not yet processed by the extractor."""
     raise NotImplementedError
