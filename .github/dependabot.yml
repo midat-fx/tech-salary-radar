@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # A nightly `pip install -e .` runs outside CI: a breaking major release of pandas/duckdb would
+  # surface as a dead pipeline, not a red build. Weekly PRs keep upgrades visible and reviewable.
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
