@@ -1,1 +1,1 @@
-{"date": "2026-07-19", "filtered_non_tech": 10035, "dropped_oob": 72}
+{"date": "2026-07-20", "by_source": {"ashby": 1814, "greenhouse": 4248, "lever": 422}, "filtered_non_tech": 10016, "dropped_oob": 1, "gh_pairs_rejected": 203, "ashby_currency_conflicts": 14, "ratio_guard_dropped": 0, "llm_empty_results": 387, "llm_missing_ids": 0, "llm_failed_batches": 0, "llm_queue_depth": 4574, "llm_extracted": 900, "llm_companies": 89}
