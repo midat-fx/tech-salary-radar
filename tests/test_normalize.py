@@ -29,7 +29,9 @@ def test_is_management():
 def test_role_filter():
     assert passes_role_filter("Backend Engineer") is True
     assert passes_role_filter("Data Scientist") is True
+    assert passes_role_filter("Software Engineer, Accounting") is True   # eng wins over soft-deny
     assert passes_role_filter("Account Executive") is False
+    assert passes_role_filter("Sales Engineer") is False         # eng-adjacent hard-deny
     assert passes_role_filter("Product Manager") is False        # PM excluded
     assert passes_role_filter("Product Designer") is False       # design excluded
     assert passes_role_filter("Office Coordinator", department="Engineering") is False
