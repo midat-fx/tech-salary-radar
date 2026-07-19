@@ -1,0 +1,4912 @@
+[
+  {
+    "name": "abridge",
+    "ats": "ashby",
+    "slug": "abridge",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 44,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "anyscale",
+    "ats": "ashby",
+    "slug": "anyscale",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 20,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "anysphere",
+    "ats": "ashby",
+    "slug": "anysphere",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "arc",
+    "ats": "ashby",
+    "slug": "arc",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "arize",
+    "ats": "ashby",
+    "slug": "arize",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "ashby",
+    "ats": "ashby",
+    "slug": "ashby",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 62,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "assorthealth",
+    "ats": "ashby",
+    "slug": "assorthealth",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 33,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "atomic-financial",
+    "ats": "ashby",
+    "slug": "atomic-financial",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "axiom-co",
+    "ats": "ashby",
+    "slug": "axiom-co",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "barnes",
+    "ats": "ashby",
+    "slug": "barnes",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 88,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "baseten",
+    "ats": "ashby",
+    "slug": "baseten",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 72,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "bedrock-robotics",
+    "ats": "ashby",
+    "slug": "bedrock-robotics",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 29,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "biggergames",
+    "ats": "ashby",
+    "slug": "biggergames",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 12,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "braintrust",
+    "ats": "ashby",
+    "slug": "braintrust",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 25,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "browserbase",
+    "ats": "ashby",
+    "slug": "browserbase",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "character",
+    "ats": "ashby",
+    "slug": "character",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 16,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "charm",
+    "ats": "ashby",
+    "slug": "charm",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "ciroos",
+    "ats": "ashby",
+    "slug": "ciroos",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "civicmarketplace",
+    "ats": "ashby",
+    "slug": "civicmarketplace",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "clay",
+    "ats": "ashby",
+    "slug": "clay",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "clearvector",
+    "ats": "ashby",
+    "slug": "clearvector",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "cohere",
+    "ats": "ashby",
+    "slug": "cohere",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 138,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "column",
+    "ats": "ashby",
+    "slug": "column",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 18,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "comet",
+    "ats": "ashby",
+    "slug": "comet",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "cosuno",
+    "ats": "ashby",
+    "slug": "cosuno",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "crux",
+    "ats": "ashby",
+    "slug": "crux",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "cryptio",
+    "ats": "ashby",
+    "slug": "cryptio",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "cursor",
+    "ats": "ashby",
+    "slug": "cursor",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 120,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "dataleap",
+    "ats": "ashby",
+    "slug": "dataleap",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "decagon",
+    "ats": "ashby",
+    "slug": "decagon",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 114,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "deepgram",
+    "ats": "ashby",
+    "slug": "deepgram",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 70,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "doppler",
+    "ats": "ashby",
+    "slug": "doppler",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "drata",
+    "ats": "ashby",
+    "slug": "drata",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 57,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "e2b",
+    "ats": "ashby",
+    "slug": "e2b",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "easypost",
+    "ats": "ashby",
+    "slug": "easypost",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "eleven",
+    "ats": "ashby",
+    "slug": "eleven",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "elevenlabs",
+    "ats": "ashby",
+    "slug": "elevenlabs",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 195,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "eztexting",
+    "ats": "ashby",
+    "slug": "eztexting",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "fig",
+    "ats": "ashby",
+    "slug": "fig",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "fireworks",
+    "ats": "ashby",
+    "slug": "fireworks",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "fitt",
+    "ats": "ashby",
+    "slug": "fitt",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 19,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "flaglerhealth",
+    "ats": "ashby",
+    "slug": "flaglerhealth",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 17,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "flagsmith",
+    "ats": "ashby",
+    "slug": "flagsmith",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "flint",
+    "ats": "ashby",
+    "slug": "flint",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "flyio",
+    "ats": "ashby",
+    "slug": "flyio",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gem",
+    "ats": "ashby",
+    "slug": "gem",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "greenhouse-software",
+    "ats": "ashby",
+    "slug": "greenhouse-software",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "harvey",
+    "ats": "ashby",
+    "slug": "harvey",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 338,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "highbeam",
+    "ats": "ashby",
+    "slug": "highbeam",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "horizon3ai",
+    "ats": "ashby",
+    "slug": "horizon3ai",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 86,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "humanloop",
+    "ats": "ashby",
+    "slug": "humanloop",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "infisical",
+    "ats": "ashby",
+    "slug": "infisical",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "inngest",
+    "ats": "ashby",
+    "slug": "inngest",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "june",
+    "ats": "ashby",
+    "slug": "june",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "knot",
+    "ats": "ashby",
+    "slug": "knot",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 12,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "konvu",
+    "ats": "ashby",
+    "slug": "konvu",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "labelbox",
+    "ats": "ashby",
+    "slug": "labelbox",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "langchain",
+    "ats": "ashby",
+    "slug": "langchain",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 95,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "ledger",
+    "ats": "ashby",
+    "slug": "ledger",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 10,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "lightning",
+    "ats": "ashby",
+    "slug": "lightning",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 13,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "lightsource",
+    "ats": "ashby",
+    "slug": "lightsource",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "linear",
+    "ats": "ashby",
+    "slug": "linear",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 24,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "liquid-ai",
+    "ats": "ashby",
+    "slug": "liquid-ai",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 17,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "llamaindex",
+    "ats": "ashby",
+    "slug": "llamaindex",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "madecard",
+    "ats": "ashby",
+    "slug": "madecard",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "mercor",
+    "ats": "ashby",
+    "slug": "mercor",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 71,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "modal",
+    "ats": "ashby",
+    "slug": "modal",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 32,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "moxie",
+    "ats": "ashby",
+    "slug": "moxie",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "navan",
+    "ats": "ashby",
+    "slug": "navan",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "neon",
+    "ats": "ashby",
+    "slug": "neon",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "normal",
+    "ats": "ashby",
+    "slug": "normal",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "notion",
+    "ats": "ashby",
+    "slug": "notion",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 141,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "ntegrity",
+    "ats": "ashby",
+    "slug": "ntegrity",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 5,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "openai",
+    "ats": "ashby",
+    "slug": "openai",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 723,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "pachama",
+    "ats": "ashby",
+    "slug": "pachama",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "patch",
+    "ats": "ashby",
+    "slug": "patch",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "perplexity",
+    "ats": "ashby",
+    "slug": "perplexity",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 84,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "persefoni",
+    "ats": "ashby",
+    "slug": "persefoni",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "pika",
+    "ats": "ashby",
+    "slug": "pika",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 10,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "pinecone",
+    "ats": "ashby",
+    "slug": "pinecone",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "plain",
+    "ats": "ashby",
+    "slug": "plain",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 12,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "posthog",
+    "ats": "ashby",
+    "slug": "posthog",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 20,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "predibase",
+    "ats": "ashby",
+    "slug": "predibase",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "puzzle",
+    "ats": "ashby",
+    "slug": "puzzle",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "qdrant",
+    "ats": "ashby",
+    "slug": "qdrant",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "railway",
+    "ats": "ashby",
+    "slug": "railway",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "ramp",
+    "ats": "ashby",
+    "slug": "ramp",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 125,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "relay",
+    "ats": "ashby",
+    "slug": "relay",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 27,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "render",
+    "ats": "ashby",
+    "slug": "render",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 31,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "replicate",
+    "ats": "ashby",
+    "slug": "replicate",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "replit",
+    "ats": "ashby",
+    "slug": "replit",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 94,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "rho",
+    "ats": "ashby",
+    "slug": "rho",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 35,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "root-access",
+    "ats": "ashby",
+    "slug": "root-access",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "runway",
+    "ats": "ashby",
+    "slug": "runway",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "sardine",
+    "ats": "ashby",
+    "slug": "sardine",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 35,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "secureframe",
+    "ats": "ashby",
+    "slug": "secureframe",
+    "status": "empty",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "shippo",
+    "ats": "ashby",
+    "slug": "shippo",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "sierra",
+    "ats": "ashby",
+    "slug": "sierra",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 156,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "snorkel",
+    "ats": "ashby",
+    "slug": "snorkel",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "space44",
+    "ats": "ashby",
+    "slug": "space44",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 5,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "sprinto",
+    "ats": "ashby",
+    "slug": "sprinto",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "statsig",
+    "ats": "ashby",
+    "slug": "statsig",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "summerhealth",
+    "ats": "ashby",
+    "slug": "summerhealth",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "suno",
+    "ats": "ashby",
+    "slug": "suno",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 63,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "supabase",
+    "ats": "ashby",
+    "slug": "supabase",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 55,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "surge",
+    "ats": "ashby",
+    "slug": "surge",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "sylvera",
+    "ats": "ashby",
+    "slug": "sylvera",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "synthesia",
+    "ats": "ashby",
+    "slug": "synthesia",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 72,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "teleport",
+    "ats": "ashby",
+    "slug": "teleport",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "tenjin",
+    "ats": "ashby",
+    "slug": "tenjin",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "titan-msp",
+    "ats": "ashby",
+    "slug": "titan-msp",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 17,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "turso",
+    "ats": "ashby",
+    "slug": "turso",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "uberall",
+    "ats": "ashby",
+    "slug": "uberall",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "unit0",
+    "ats": "ashby",
+    "slug": "unit0",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "unleash",
+    "ats": "ashby",
+    "slug": "unleash",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "vanta",
+    "ats": "ashby",
+    "slug": "vanta",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 106,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "venn",
+    "ats": "ashby",
+    "slug": "venn",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 16,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "vitvio",
+    "ats": "ashby",
+    "slug": "vitvio",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "vlogic",
+    "ats": "ashby",
+    "slug": "vlogic",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "wandb",
+    "ats": "ashby",
+    "slug": "wandb",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "watershed",
+    "ats": "ashby",
+    "slug": "watershed",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 42,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "weaviate",
+    "ats": "ashby",
+    "slug": "weaviate",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "wheel",
+    "ats": "ashby",
+    "slug": "wheel",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "wirescreen",
+    "ats": "ashby",
+    "slug": "wirescreen",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 7,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "workerbase",
+    "ats": "ashby",
+    "slug": "workerbase",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 5,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "worldly",
+    "ats": "ashby",
+    "slug": "worldly",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "writer",
+    "ats": "ashby",
+    "slug": "writer",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 53,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "xata",
+    "ats": "ashby",
+    "slug": "xata",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "zania",
+    "ats": "ashby",
+    "slug": "zania",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "zilliz",
+    "ats": "ashby",
+    "slug": "zilliz",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "zip",
+    "ats": "ashby",
+    "slug": "zip",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 134,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "11x",
+    "ats": "greenhouse",
+    "slug": "11x",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "acog",
+    "ats": "greenhouse",
+    "slug": "acog",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "adept",
+    "ats": "greenhouse",
+    "slug": "adept",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "affirm",
+    "ats": "greenhouse",
+    "slug": "affirm",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 171,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "agilityrobotics",
+    "ats": "greenhouse",
+    "slug": "agilityrobotics",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 54,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "agilize",
+    "ats": "greenhouse",
+    "slug": "agilize",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "airbnb",
+    "ats": "greenhouse",
+    "slug": "airbnb",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 195,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "airbyte",
+    "ats": "greenhouse",
+    "slug": "airbyte",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "airtable",
+    "ats": "greenhouse",
+    "slug": "airtable",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 35,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "aiven",
+    "ats": "greenhouse",
+    "slug": "aiven",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "alaika",
+    "ats": "greenhouse",
+    "slug": "alaika",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "alayacare",
+    "ats": "greenhouse",
+    "slug": "alayacare",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 22,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "alchemy",
+    "ats": "greenhouse",
+    "slug": "alchemy",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "altruist",
+    "ats": "greenhouse",
+    "slug": "altruist",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 50,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "amplitude",
+    "ats": "greenhouse",
+    "slug": "amplitude",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 44,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "anthropic",
+    "ats": "greenhouse",
+    "slug": "anthropic",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 411,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "applytosuno",
+    "ats": "greenhouse",
+    "slug": "applytosuno",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "apptronik",
+    "ats": "greenhouse",
+    "slug": "apptronik",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 98,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "aquaticcapitalmanagement",
+    "ats": "greenhouse",
+    "slug": "aquaticcapitalmanagement",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "arcoeducacao",
+    "ats": "greenhouse",
+    "slug": "arcoeducacao",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 200,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "asana",
+    "ats": "greenhouse",
+    "slug": "asana",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 140,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "assemblyai",
+    "ats": "greenhouse",
+    "slug": "assemblyai",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "auviknetworks",
+    "ats": "greenhouse",
+    "slug": "auviknetworks",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 13,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "barbarian",
+    "ats": "greenhouse",
+    "slug": "barbarian",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "bcomsolutions",
+    "ats": "greenhouse",
+    "slug": "bcomsolutions",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "benchling",
+    "ats": "greenhouse",
+    "slug": "benchling",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "betterhelpcom",
+    "ats": "greenhouse",
+    "slug": "betterhelpcom",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 17,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "betterment",
+    "ats": "greenhouse",
+    "slug": "betterment",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 35,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "blockchain",
+    "ats": "greenhouse",
+    "slug": "blockchain",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 34,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "bolt",
+    "ats": "greenhouse",
+    "slug": "bolt",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "bombas",
+    "ats": "greenhouse",
+    "slug": "bombas",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 13,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "box",
+    "ats": "greenhouse",
+    "slug": "box",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "bpcs",
+    "ats": "greenhouse",
+    "slug": "bpcs",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 20,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "brex",
+    "ats": "greenhouse",
+    "slug": "brex",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 250,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "brightai",
+    "ats": "greenhouse",
+    "slug": "brightai",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 13,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "bubble",
+    "ats": "greenhouse",
+    "slug": "bubble",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "buffer",
+    "ats": "greenhouse",
+    "slug": "buffer",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "canva",
+    "ats": "greenhouse",
+    "slug": "canva",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "capacities",
+    "ats": "greenhouse",
+    "slug": "capacities",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "caseguard",
+    "ats": "greenhouse",
+    "slug": "caseguard",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "ccahremote",
+    "ats": "greenhouse",
+    "slug": "ccahremote",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "celonis",
+    "ats": "greenhouse",
+    "slug": "celonis",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 232,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "cerebral",
+    "ats": "greenhouse",
+    "slug": "cerebral",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "chainalysis",
+    "ats": "greenhouse",
+    "slug": "chainalysis",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "checkr",
+    "ats": "greenhouse",
+    "slug": "checkr",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 60,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "chegg",
+    "ats": "greenhouse",
+    "slug": "chegg",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "chime",
+    "ats": "greenhouse",
+    "slug": "chime",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 67,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "chroma",
+    "ats": "greenhouse",
+    "slug": "chroma",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "circle",
+    "ats": "greenhouse",
+    "slug": "circle",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "circleci",
+    "ats": "greenhouse",
+    "slug": "circleci",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 10,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "clickhouse",
+    "ats": "greenhouse",
+    "slug": "clickhouse",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 173,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "cloudchamberfr",
+    "ats": "greenhouse",
+    "slug": "cloudchamberfr",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "cloudflare",
+    "ats": "greenhouse",
+    "slug": "cloudflare",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 263,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "cockroachlabs",
+    "ats": "greenhouse",
+    "slug": "cockroachlabs",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 36,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "coda",
+    "ats": "greenhouse",
+    "slug": "coda",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "coinbase",
+    "ats": "greenhouse",
+    "slug": "coinbase",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 151,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "confluent",
+    "ats": "greenhouse",
+    "slug": "confluent",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "consensys",
+    "ats": "greenhouse",
+    "slug": "consensys",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "contentful",
+    "ats": "greenhouse",
+    "slug": "contentful",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 28,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "copy",
+    "ats": "greenhouse",
+    "slug": "copy",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "corepilot",
+    "ats": "greenhouse",
+    "slug": "corepilot",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "cottonwoodresidential",
+    "ats": "greenhouse",
+    "slug": "cottonwoodresidential",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 54,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "coursera",
+    "ats": "greenhouse",
+    "slug": "coursera",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "cultureamp",
+    "ats": "greenhouse",
+    "slug": "cultureamp",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 23,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "cyware",
+    "ats": "greenhouse",
+    "slug": "cyware",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "databricks",
+    "ats": "greenhouse",
+    "slug": "databricks",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 789,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "datadog",
+    "ats": "greenhouse",
+    "slug": "datadog",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 416,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "datasocietyresearchinstitute",
+    "ats": "greenhouse",
+    "slug": "datasocietyresearchinstitute",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "deliveroo",
+    "ats": "greenhouse",
+    "slug": "deliveroo",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "democracypreppublicschools",
+    "ats": "greenhouse",
+    "slug": "democracypreppublicschools",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 30,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "digitalextremes",
+    "ats": "greenhouse",
+    "slug": "digitalextremes",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "digitalocean",
+    "ats": "greenhouse",
+    "slug": "digitalocean",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "discord",
+    "ats": "greenhouse",
+    "slug": "discord",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 52,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "docplanner",
+    "ats": "greenhouse",
+    "slug": "docplanner",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "docusign",
+    "ats": "greenhouse",
+    "slug": "docusign",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "doordash",
+    "ats": "greenhouse",
+    "slug": "doordash",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "dropbox",
+    "ats": "greenhouse",
+    "slug": "dropbox",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 36,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "ducerapartners",
+    "ats": "greenhouse",
+    "slug": "ducerapartners",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "duolingo",
+    "ats": "greenhouse",
+    "slug": "duolingo",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 63,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "eamesinstitute",
+    "ats": "greenhouse",
+    "slug": "eamesinstitute",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "elastic",
+    "ats": "greenhouse",
+    "slug": "elastic",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 177,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "envoymortgage",
+    "ats": "greenhouse",
+    "slug": "envoymortgage",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "epicgames",
+    "ats": "greenhouse",
+    "slug": "epicgames",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 121,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "everagtester",
+    "ats": "greenhouse",
+    "slug": "everagtester",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "exadelinc",
+    "ats": "greenhouse",
+    "slug": "exadelinc",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 78,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "faire",
+    "ats": "greenhouse",
+    "slug": "faire",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 75,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "fastly",
+    "ats": "greenhouse",
+    "slug": "fastly",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 54,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "figma",
+    "ats": "greenhouse",
+    "slug": "figma",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 169,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "fireblocks",
+    "ats": "greenhouse",
+    "slug": "fireblocks",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 61,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "fivetran",
+    "ats": "greenhouse",
+    "slug": "fivetran",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 162,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "flatironenergy",
+    "ats": "greenhouse",
+    "slug": "flatironenergy",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 7,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "flexport",
+    "ats": "greenhouse",
+    "slug": "flexport",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 150,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "flywheeldigital",
+    "ats": "greenhouse",
+    "slug": "flywheeldigital",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "framer",
+    "ats": "greenhouse",
+    "slug": "framer",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gatikaiinc",
+    "ats": "greenhouse",
+    "slug": "gatikaiinc",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 60,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gemini",
+    "ats": "greenhouse",
+    "slug": "gemini",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 35,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "ghost",
+    "ats": "greenhouse",
+    "slug": "ghost",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 5,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gitlab",
+    "ats": "greenhouse",
+    "slug": "gitlab",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 167,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "gitpod",
+    "ats": "greenhouse",
+    "slug": "gitpod",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "glean",
+    "ats": "greenhouse",
+    "slug": "glean",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gocardless",
+    "ats": "greenhouse",
+    "slug": "gocardless",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 34,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "golin",
+    "ats": "greenhouse",
+    "slug": "golin",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 7,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "gong",
+    "ats": "greenhouse",
+    "slug": "gong",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gonyc",
+    "ats": "greenhouse",
+    "slug": "gonyc",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gopuff",
+    "ats": "greenhouse",
+    "slug": "gopuff",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "grafanalabs",
+    "ats": "greenhouse",
+    "slug": "grafanalabs",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 114,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "grammarly",
+    "ats": "greenhouse",
+    "slug": "grammarly",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "groma",
+    "ats": "greenhouse",
+    "slug": "groma",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gusto",
+    "ats": "greenhouse",
+    "slug": "gusto",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 74,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "harrowhealth",
+    "ats": "greenhouse",
+    "slug": "harrowhealth",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 32,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "hashicorp",
+    "ats": "greenhouse",
+    "slug": "hashicorp",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "hex",
+    "ats": "greenhouse",
+    "slug": "hex",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "hibu",
+    "ats": "greenhouse",
+    "slug": "hibu",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 134,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "highnote",
+    "ats": "greenhouse",
+    "slug": "highnote",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "hootsuite",
+    "ats": "greenhouse",
+    "slug": "hootsuite",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 16,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "hotmartcareersbr",
+    "ats": "greenhouse",
+    "slug": "hotmartcareersbr",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 14,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "huggingface",
+    "ats": "greenhouse",
+    "slug": "huggingface",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "huntress",
+    "ats": "greenhouse",
+    "slug": "huntress",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 33,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "hyliion",
+    "ats": "greenhouse",
+    "slug": "hyliion",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 10,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "ibuglobal",
+    "ats": "greenhouse",
+    "slug": "ibuglobal",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "imbibeinc",
+    "ats": "greenhouse",
+    "slug": "imbibeinc",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "imbue",
+    "ats": "greenhouse",
+    "slug": "imbue",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "increase",
+    "ats": "greenhouse",
+    "slug": "increase",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "insomniac",
+    "ats": "greenhouse",
+    "slug": "insomniac",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "instacart",
+    "ats": "greenhouse",
+    "slug": "instacart",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 126,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "jasper",
+    "ats": "greenhouse",
+    "slug": "jasper",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "jointqg",
+    "ats": "greenhouse",
+    "slug": "jointqg",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "khanacademy",
+    "ats": "greenhouse",
+    "slug": "khanacademy",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 26,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "kinexus",
+    "ats": "greenhouse",
+    "slug": "kinexus",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "klarna",
+    "ats": "greenhouse",
+    "slug": "klarna",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "kraken",
+    "ats": "greenhouse",
+    "slug": "kraken",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "lattice",
+    "ats": "greenhouse",
+    "slug": "lattice",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 10,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "launchdarkly",
+    "ats": "greenhouse",
+    "slug": "launchdarkly",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 35,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "lightningai",
+    "ats": "greenhouse",
+    "slug": "lightningai",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 33,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "lisc",
+    "ats": "greenhouse",
+    "slug": "lisc",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "lithic",
+    "ats": "greenhouse",
+    "slug": "lithic",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "locusrobotics",
+    "ats": "greenhouse",
+    "slug": "locusrobotics",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "lucenia",
+    "ats": "greenhouse",
+    "slug": "lucenia",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "lyft",
+    "ats": "greenhouse",
+    "slug": "lyft",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 156,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "marqeta",
+    "ats": "greenhouse",
+    "slug": "marqeta",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 39,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "mem",
+    "ats": "greenhouse",
+    "slug": "mem",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mercury",
+    "ats": "greenhouse",
+    "slug": "mercury",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 54,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "messagebird",
+    "ats": "greenhouse",
+    "slug": "messagebird",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mews",
+    "ats": "greenhouse",
+    "slug": "mews",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mintel",
+    "ats": "greenhouse",
+    "slug": "mintel",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "miro",
+    "ats": "greenhouse",
+    "slug": "miro",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mistral",
+    "ats": "greenhouse",
+    "slug": "mistral",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mixpanel",
+    "ats": "greenhouse",
+    "slug": "mixpanel",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 39,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "modern",
+    "ats": "greenhouse",
+    "slug": "modern",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mollie",
+    "ats": "greenhouse",
+    "slug": "mollie",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mongodb",
+    "ats": "greenhouse",
+    "slug": "mongodb",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 389,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "monzo",
+    "ats": "greenhouse",
+    "slug": "monzo",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 69,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "muckrack",
+    "ats": "greenhouse",
+    "slug": "muckrack",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "nabis",
+    "ats": "greenhouse",
+    "slug": "nabis",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 32,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "nadiacare",
+    "ats": "greenhouse",
+    "slug": "nadiacare",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "neurahealth",
+    "ats": "greenhouse",
+    "slug": "neurahealth",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "newrelic",
+    "ats": "greenhouse",
+    "slug": "newrelic",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 68,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "newsbreak",
+    "ats": "greenhouse",
+    "slug": "newsbreak",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 21,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "nextrollsales",
+    "ats": "greenhouse",
+    "slug": "nextrollsales",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "nianticlabs",
+    "ats": "greenhouse",
+    "slug": "nianticlabs",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "nmcareers",
+    "ats": "greenhouse",
+    "slug": "nmcareers",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "novatize",
+    "ats": "greenhouse",
+    "slug": "novatize",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "ohalogenetics",
+    "ats": "greenhouse",
+    "slug": "ohalogenetics",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 20,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "okta",
+    "ats": "greenhouse",
+    "slug": "okta",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 347,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "oneacrefundburundi",
+    "ats": "greenhouse",
+    "slug": "oneacrefundburundi",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "outreach",
+    "ats": "greenhouse",
+    "slug": "outreach",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "ownwell",
+    "ats": "greenhouse",
+    "slug": "ownwell",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "pagerduty",
+    "ats": "greenhouse",
+    "slug": "pagerduty",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 18,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "patreon",
+    "ats": "greenhouse",
+    "slug": "patreon",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "paypaysec",
+    "ats": "greenhouse",
+    "slug": "paypaysec",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 17,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "personio",
+    "ats": "greenhouse",
+    "slug": "personio",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "phantom",
+    "ats": "greenhouse",
+    "slug": "phantom",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "pieinsurance",
+    "ats": "greenhouse",
+    "slug": "pieinsurance",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 22,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "piermontbank",
+    "ats": "greenhouse",
+    "slug": "piermontbank",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "pilot",
+    "ats": "greenhouse",
+    "slug": "pilot",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "pitchbookdata",
+    "ats": "greenhouse",
+    "slug": "pitchbookdata",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 57,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "planetscale",
+    "ats": "greenhouse",
+    "slug": "planetscale",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "pleo",
+    "ats": "greenhouse",
+    "slug": "pleo",
+    "status": "empty",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "pluspower",
+    "ats": "greenhouse",
+    "slug": "pluspower",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "privategdcareers",
+    "ats": "greenhouse",
+    "slug": "privategdcareers",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "prometheusrealestategroup",
+    "ats": "greenhouse",
+    "slug": "prometheusrealestategroup",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 38,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "quadraturecapital",
+    "ats": "greenhouse",
+    "slug": "quadraturecapital",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "quizlet",
+    "ats": "greenhouse",
+    "slug": "quizlet",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "reddit",
+    "ats": "greenhouse",
+    "slug": "reddit",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 198,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "redventures",
+    "ats": "greenhouse",
+    "slug": "redventures",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 61,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "reflect",
+    "ats": "greenhouse",
+    "slug": "reflect",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "reliant",
+    "ats": "greenhouse",
+    "slug": "reliant",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "retool",
+    "ats": "greenhouse",
+    "slug": "retool",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "revolut",
+    "ats": "greenhouse",
+    "slug": "revolut",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "rhombuspower",
+    "ats": "greenhouse",
+    "slug": "rhombuspower",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 25,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "rippling",
+    "ats": "greenhouse",
+    "slug": "rippling",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "robinhood",
+    "ats": "greenhouse",
+    "slug": "robinhood",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 111,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "robloxcorporation",
+    "ats": "greenhouse",
+    "slug": "robloxcorporation",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "samsara",
+    "ats": "greenhouse",
+    "slug": "samsara",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 337,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "scale",
+    "ats": "greenhouse",
+    "slug": "scale",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "segment",
+    "ats": "greenhouse",
+    "slug": "segment",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "simplextrading",
+    "ats": "greenhouse",
+    "slug": "simplextrading",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 5,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "simpplr",
+    "ats": "greenhouse",
+    "slug": "simpplr",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "smarterdxprivate",
+    "ats": "greenhouse",
+    "slug": "smarterdxprivate",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "snowflake",
+    "ats": "greenhouse",
+    "slug": "snowflake",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "sofi",
+    "ats": "greenhouse",
+    "slug": "sofi",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 64,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "solutionsbytext",
+    "ats": "greenhouse",
+    "slug": "solutionsbytext",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "sonymusicentertainment",
+    "ats": "greenhouse",
+    "slug": "sonymusicentertainment",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 155,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "sourcegraph",
+    "ats": "greenhouse",
+    "slug": "sourcegraph",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "sparetech",
+    "ats": "greenhouse",
+    "slug": "sparetech",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "squarespace",
+    "ats": "greenhouse",
+    "slug": "squarespace",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "stitchfix",
+    "ats": "greenhouse",
+    "slug": "stitchfix",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 13,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "striiminc",
+    "ats": "greenhouse",
+    "slug": "striiminc",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 5,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "stripe",
+    "ats": "greenhouse",
+    "slug": "stripe",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 524,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "substack",
+    "ats": "greenhouse",
+    "slug": "substack",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "suki",
+    "ats": "greenhouse",
+    "slug": "suki",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "sumup",
+    "ats": "greenhouse",
+    "slug": "sumup",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 381,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "supersod",
+    "ats": "greenhouse",
+    "slug": "supersod",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 12,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "sustainment",
+    "ats": "greenhouse",
+    "slug": "sustainment",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "syndigo",
+    "ats": "greenhouse",
+    "slug": "syndigo",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 16,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "synerg",
+    "ats": "greenhouse",
+    "slug": "synerg",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 32,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "tailscale",
+    "ats": "greenhouse",
+    "slug": "tailscale",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 38,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "talkspacetherapist",
+    "ats": "greenhouse",
+    "slug": "talkspacetherapist",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 48,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "tana",
+    "ats": "greenhouse",
+    "slug": "tana",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "teachstone",
+    "ats": "greenhouse",
+    "slug": "teachstone",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "teamrubicon",
+    "ats": "greenhouse",
+    "slug": "teamrubicon",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "temporal",
+    "ats": "greenhouse",
+    "slug": "temporal",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "tenet3",
+    "ats": "greenhouse",
+    "slug": "tenet3",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "theperfectworkout",
+    "ats": "greenhouse",
+    "slug": "theperfectworkout",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 16,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "thrivedigital",
+    "ats": "greenhouse",
+    "slug": "thrivedigital",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "together",
+    "ats": "greenhouse",
+    "slug": "together",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "treasury",
+    "ats": "greenhouse",
+    "slug": "treasury",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "trustpilot",
+    "ats": "greenhouse",
+    "slug": "trustpilot",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 42,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "twilio",
+    "ats": "greenhouse",
+    "slug": "twilio",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 165,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "twitch",
+    "ats": "greenhouse",
+    "slug": "twitch",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 65,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "typeface",
+    "ats": "greenhouse",
+    "slug": "typeface",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 19,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "typeform",
+    "ats": "greenhouse",
+    "slug": "typeform",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 10,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "ultimagenomics",
+    "ats": "greenhouse",
+    "slug": "ultimagenomics",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 16,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "uniswaplabs",
+    "ats": "greenhouse",
+    "slug": "uniswaplabs",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "unit",
+    "ats": "greenhouse",
+    "slug": "unit",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "unity",
+    "ats": "greenhouse",
+    "slug": "unity",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "unlockhealth",
+    "ats": "greenhouse",
+    "slug": "unlockhealth",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "uvimco",
+    "ats": "greenhouse",
+    "slug": "uvimco",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "veir",
+    "ats": "greenhouse",
+    "slug": "veir",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "verkada",
+    "ats": "greenhouse",
+    "slug": "verkada",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 283,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "vitta",
+    "ats": "greenhouse",
+    "slug": "vitta",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "warp",
+    "ats": "greenhouse",
+    "slug": "warp",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "watsonsfriendsah",
+    "ats": "greenhouse",
+    "slug": "watsonsfriendsah",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "webflow",
+    "ats": "greenhouse",
+    "slug": "webflow",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 26,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "weightsandbiases",
+    "ats": "greenhouse",
+    "slug": "weightsandbiases",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "whatnot",
+    "ats": "greenhouse",
+    "slug": "whatnot",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "wise",
+    "ats": "greenhouse",
+    "slug": "wise",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "wolt",
+    "ats": "greenhouse",
+    "slug": "wolt",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 283,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "workato",
+    "ats": "greenhouse",
+    "slug": "workato",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 162,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "workleapfr",
+    "ats": "greenhouse",
+    "slug": "workleapfr",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 15,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "yoodliinc",
+    "ats": "greenhouse",
+    "slug": "yoodliinc",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 18,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "zapier",
+    "ats": "greenhouse",
+    "slug": "zapier",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "zephyrhome",
+    "ats": "greenhouse",
+    "slug": "zephyrhome",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "zind-erprogram",
+    "ats": "greenhouse",
+    "slug": "zind-erprogram",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 16,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "acceldata",
+    "ats": "lever",
+    "slug": "acceldata",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 47,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "amityfdn",
+    "ats": "lever",
+    "slug": "amityfdn",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 130,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "andela",
+    "ats": "lever",
+    "slug": "andela",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "apollo",
+    "ats": "lever",
+    "slug": "apollo",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "applydigital",
+    "ats": "lever",
+    "slug": "applydigital",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 24,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "appsamurai",
+    "ats": "lever",
+    "slug": "appsamurai",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "atlassian",
+    "ats": "lever",
+    "slug": "atlassian",
+    "status": "empty",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "atomcomputing",
+    "ats": "lever",
+    "slug": "atomcomputing",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 28,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "attentive",
+    "ats": "lever",
+    "slug": "attentive",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "basis",
+    "ats": "lever",
+    "slug": "basis",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "beautiful",
+    "ats": "lever",
+    "slug": "beautiful",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "benchsci",
+    "ats": "lever",
+    "slug": "benchsci",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "biorender",
+    "ats": "lever",
+    "slug": "biorender",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "brave",
+    "ats": "lever",
+    "slug": "brave",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "bunny",
+    "ats": "lever",
+    "slug": "bunny",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "cambly",
+    "ats": "lever",
+    "slug": "cambly",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "caseware",
+    "ats": "lever",
+    "slug": "caseware",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 38,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "celerion",
+    "ats": "lever",
+    "slug": "celerion",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 31,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "census",
+    "ats": "lever",
+    "slug": "census",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "colibrigroup",
+    "ats": "lever",
+    "slug": "colibrigroup",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 26,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "commoncause",
+    "ats": "lever",
+    "slug": "commoncause",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "deel",
+    "ats": "lever",
+    "slug": "deel",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "descript",
+    "ats": "lever",
+    "slug": "descript",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "duckduckgo",
+    "ats": "lever",
+    "slug": "duckduckgo",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "eventbrite",
+    "ats": "lever",
+    "slug": "eventbrite",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "fantasy",
+    "ats": "lever",
+    "slug": "fantasy",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "fingerprint",
+    "ats": "lever",
+    "slug": "fingerprint",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "finix",
+    "ats": "lever",
+    "slug": "finix",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "fly",
+    "ats": "lever",
+    "slug": "fly",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "gamma",
+    "ats": "lever",
+    "slug": "gamma",
+    "status": "empty",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "getlago",
+    "ats": "lever",
+    "slug": "getlago",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "ghsmartjobs",
+    "ats": "lever",
+    "slug": "ghsmartjobs",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "github",
+    "ats": "lever",
+    "slug": "github",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "go-cloudforce",
+    "ats": "lever",
+    "slug": "go-cloudforce",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 11,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "hasura",
+    "ats": "lever",
+    "slug": "hasura",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "hightouch",
+    "ats": "lever",
+    "slug": "hightouch",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "hometap",
+    "ats": "lever",
+    "slug": "hometap",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "insomniacdesign",
+    "ats": "lever",
+    "slug": "insomniacdesign",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "kayak",
+    "ats": "lever",
+    "slug": "kayak",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "kickmaker",
+    "ats": "lever",
+    "slug": "kickmaker",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 20,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "kickstarter",
+    "ats": "lever",
+    "slug": "kickstarter",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "kong",
+    "ats": "lever",
+    "slug": "kong",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "leadgenius",
+    "ats": "lever",
+    "slug": "leadgenius",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "leantaas",
+    "ats": "lever",
+    "slug": "leantaas",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "lessen",
+    "ats": "lever",
+    "slug": "lessen",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 46,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "loom",
+    "ats": "lever",
+    "slug": "loom",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "matchgroup",
+    "ats": "lever",
+    "slug": "matchgroup",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 83,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "mercadolibre",
+    "ats": "lever",
+    "slug": "mercadolibre",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "metabase",
+    "ats": "lever",
+    "slug": "metabase",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 19,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "mmhmm",
+    "ats": "lever",
+    "slug": "mmhmm",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "modern-treasury",
+    "ats": "lever",
+    "slug": "modern-treasury",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "mozilla",
+    "ats": "lever",
+    "slug": "mozilla",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "multiplier",
+    "ats": "lever",
+    "slug": "multiplier",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "multiplylabs",
+    "ats": "lever",
+    "slug": "multiplylabs",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "nerdwallet",
+    "ats": "lever",
+    "slug": "nerdwallet",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "netflix",
+    "ats": "lever",
+    "slug": "netflix",
+    "status": "empty",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "newwestern",
+    "ats": "lever",
+    "slug": "newwestern",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 29,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "nimbletalent",
+    "ats": "lever",
+    "slug": "nimbletalent",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "nitra",
+    "ats": "lever",
+    "slug": "nitra",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 63,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "noodle",
+    "ats": "lever",
+    "slug": "noodle",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 7,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "nubank",
+    "ats": "lever",
+    "slug": "nubank",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "omnidian",
+    "ats": "lever",
+    "slug": "omnidian",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "outlast",
+    "ats": "lever",
+    "slug": "outlast",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 12,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "oyster",
+    "ats": "lever",
+    "slug": "oyster",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "palantir",
+    "ats": "lever",
+    "slug": "palantir",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 274,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "paramedicservices",
+    "ats": "lever",
+    "slug": "paramedicservices",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 13,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "pibenchmark",
+    "ats": "lever",
+    "slug": "pibenchmark",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 7,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "pitch",
+    "ats": "lever",
+    "slug": "pitch",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "plaid",
+    "ats": "lever",
+    "slug": "plaid",
+    "status": "empty",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "playplay",
+    "ats": "lever",
+    "slug": "playplay",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": true,
+    "has_remote": false
+  },
+  {
+    "name": "postman",
+    "ats": "lever",
+    "slug": "postman",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "productventures",
+    "ats": "lever",
+    "slug": "productventures",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 3,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "project-healthy-minds",
+    "ats": "lever",
+    "slug": "project-healthy-minds",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "protonmail",
+    "ats": "lever",
+    "slug": "protonmail",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "quora",
+    "ats": "lever",
+    "slug": "quora",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "remote",
+    "ats": "lever",
+    "slug": "remote",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "remotecom",
+    "ats": "lever",
+    "slug": "remotecom",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "rocketcommunications",
+    "ats": "lever",
+    "slug": "rocketcommunications",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "rudderstack",
+    "ats": "lever",
+    "slug": "rudderstack",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "scaleapi",
+    "ats": "lever",
+    "slug": "scaleapi",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "sfmoma",
+    "ats": "lever",
+    "slug": "sfmoma",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 5,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "shakacode",
+    "ats": "lever",
+    "slug": "shakacode",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "shopify",
+    "ats": "lever",
+    "slug": "shopify",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "signalapp",
+    "ats": "lever",
+    "slug": "signalapp",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "solfl",
+    "ats": "lever",
+    "slug": "solfl",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 9,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "spaceback",
+    "ats": "lever",
+    "slug": "spaceback",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 1,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "spotify",
+    "ats": "lever",
+    "slug": "spotify",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 111,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "starcompliance",
+    "ats": "lever",
+    "slug": "starcompliance",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 4,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "swanest",
+    "ats": "lever",
+    "slug": "swanest",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "teamsnap",
+    "ats": "lever",
+    "slug": "teamsnap",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 6,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "techquarter",
+    "ats": "lever",
+    "slug": "techquarter",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 7,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "temporal-technologies",
+    "ats": "lever",
+    "slug": "temporal-technologies",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "thumbtack",
+    "ats": "lever",
+    "slug": "thumbtack",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "tome",
+    "ats": "lever",
+    "slug": "tome",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "toptal",
+    "ats": "lever",
+    "slug": "toptal",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 19,
+    "has_eu": true,
+    "has_remote": true
+  },
+  {
+    "name": "tor",
+    "ats": "lever",
+    "slug": "tor",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "tray",
+    "ats": "lever",
+    "slug": "tray",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "turing",
+    "ats": "lever",
+    "slug": "turing",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "tyk",
+    "ats": "lever",
+    "slug": "tyk",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "unit-finance",
+    "ats": "lever",
+    "slug": "unit-finance",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "vercel",
+    "ats": "lever",
+    "slug": "vercel",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "voleon",
+    "ats": "lever",
+    "slug": "voleon",
+    "status": "empty",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "wahi",
+    "ats": "lever",
+    "slug": "wahi",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 8,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "workmotion",
+    "ats": "lever",
+    "slug": "workmotion",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  },
+  {
+    "name": "yardstick",
+    "ats": "lever",
+    "slug": "yardstick",
+    "status": "active",
+    "added": "2026-07-18",
+    "n_jobs": 2,
+    "has_eu": false,
+    "has_remote": true
+  },
+  {
+    "name": "yelp",
+    "ats": "lever",
+    "slug": "yelp",
+    "status": "dead",
+    "added": "2026-07-18",
+    "n_jobs": 0,
+    "has_eu": false,
+    "has_remote": false
+  }
+]
