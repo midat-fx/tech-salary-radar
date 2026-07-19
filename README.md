@@ -38,7 +38,8 @@ flowchart LR
 ## Engineering highlights
 
 - **Multi-source ETL** over three ATS APIs with a single normalized schema, polite crawling (one request per board, backoff, dead-board tolerance).
-- **LLM structured output** (Gemini, enum-constrained JSON) to extract a canonical skill catalog from free-text JDs — **cached** (never re-extracted) with a **mini-eval gate** (micro-F1 ≥ 0.75 in CI).
+- **LLM structured output** (Gemini, enum-constrained JSON) to extract a canonical skill catalog from free-text JDs — **cached** (never re-extracted), with a **two-layer quality gate**: a deterministic linter proves every eval label is literally present in the text, then a live micro-F1 ≥ 0.75 gate runs in CI (currently 0.86).
+- **Guardrails against silent data corruption:** a volume guard refuses to commit a day where a source collapsed vs its 7-day median, plausibility guards reject benefit/funding amounts parsed as pay, and a circuit breaker skips a whole ATS after repeated failures.
 - **Parquet history versioned in git** — the whole dataset is downloadable and recomputable; no database to run.
 - **DuckDB** analytics straight over the parquet partitions.
 - **$0/month infrastructure:**
@@ -54,10 +55,11 @@ flowchart LR
 
 - **Salary** is annual **gross** USD. Intervals are annualized (hourly ×2080, weekly ×52, monthly ×12); non-USD is converted daily. Midpoint = `COALESCE((min+max)/2, min, max)`. Rows outside $10k–$1.5M are dropped as parse errors.
 - Only jobs **with a stated salary band** feed the salary charts — labeled *"по N вакансий с указанной вилкой."* Salary bands are dense on Ashby and sparse elsewhere (US pay-transparency), so the current base skews US; the EU stratum fills in as data grows.
-- **Skill premium** is stratified by **grade × region** to avoid confounding a skill's value with where/at what level it appears.
+- **Skill premium** is stratified by **grade × region** to avoid confounding a skill's value with where/at what level it appears. Only jobs the extractor has actually labelled take part — an unlabelled job is not evidence that a skill is absent. Each premium ships a **stratified-bootstrap 95% CI**; bars whose interval crosses zero are dimmed on the dashboard as statistically insignificant.
 - **Management roles** (Manager/Director/VP/…) are excluded from all salary statistics.
-- **Seniority** is a heuristic from the job title; roles with no level marker are a separate `Без уровня` bucket (not merged into mid).
+- **Seniority** is a heuristic from the job title (`Senior`, `Staff`, `Engineer II`…); roles with no level marker are a separate `Без уровня` bucket, never merged into mid. Ambiguous level codes (`L5`, `IC3`, `Engineer I/III`) stay unspecified rather than being guessed.
 - **Survivorship bias:** ATS boards expose only currently-open roles, so historical "new by publish date" reflects only still-open jobs.
+- **Known limits, stated plainly:** salary bands are dense on Ashby and sparse on Greenhouse/Lever, so the salary base skews US; skill coverage is the labelled subset (the dashboard prints the exact %); a job description often lists the *company* stack rather than the role's, which inflates common skills.
 - **Download the data:**
   ```bash
   duckdb -c "SELECT seniority, median(salary_mid_usd) FROM read_parquet('data/snapshots/*/part.parquet') WHERE has_salary AND NOT is_management GROUP BY 1"
