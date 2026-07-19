@@ -1,0 +1,93 @@
+name: pipeline
+
+# Daily ETL: fetch ATS boards -> parquet snapshots -> aggregate JSON -> commit.
+# Cloudflare Pages deploys from the git push (git integration, no CF token in CI).
+on:
+  schedule:
+    - cron: "47 1 * * *"
+    - cron: "47 7 * * *"
+  workflow_dispatch:
+    inputs:
+      llm_limit:
+        description: "max jobs to send to the LLM this run"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: daily-pipeline
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      TZ: Asia/Almaty
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e .
+
+      - name: Guard — today's snapshot already committed?
+        id: guard
+        run: |
+          dt=$(date +%F)
+          if [ -d "data/snapshots/dt=${dt}" ]; then
+            echo "snapshot for ${dt} exists — nothing to do"
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Canary — ATS boards reachable?
+        if: steps.guard.outputs.skip != '1'
+        run: |
+          UA="tech-salary-radar/1.0 (+https://github.com/midat-fx/tech-salary-radar; midat.faizov@gmail.com)"
+          ok=0
+          for u in \
+            "https://boards-api.greenhouse.io/v1/boards/stripe/jobs" \
+            "https://api.lever.co/v0/postings/palantir?mode=json" \
+            "https://api.ashbyhq.com/posting-api/job-board/ramp"; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -A "$UA" "$u")
+            echo "$u -> $code"
+            [ "$code" = "200" ] && ok=1
+          done
+          if [ "$ok" != "1" ]; then
+            gh issue create --title "ATS boards unreachable $(date -u +%F)" \
+              --body "All three ATS canary probes failed in the daily pipeline." || true
+            exit 1
+          fi
+
+      - name: ETL run + aggregate
+        if: steps.guard.outputs.skip != '1'
+        run: |
+          python -m etl.cli run ${{ github.event.inputs.llm_limit && format('--llm-limit {0}', github.event.inputs.llm_limit) || '' }}
+          python -m etl.cli aggregate
+
+      - name: Commit & push
+        if: steps.guard.outputs.skip != '1'
+        run: |
+          git config user.name "Midat Faizov"
+          git config user.email "midat.faizov@gmail.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes"; exit 0
+          fi
+          git commit -m "data: $(date +%F)"
+          for i in 1 2 3; do
+            git push && break || git pull --rebase origin main
+          done
+
+      - name: Alert on failure
+        if: failure()
+        run: |
+          gh issue create --title "pipeline failed $(date -u +%F)" \
+            --body "The daily pipeline failed. See run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
