@@ -1,0 +1,53 @@
+name: llm-eval
+
+# Quality gate for skill extraction (PLAN.md §6.4): micro-F1 >= 0.75 on the reviewed eval set.
+# A separate workflow on purpose: ci.yml uses paths-ignore ["data/**"], which would hide the very
+# pushes that change data/eval/**, and per-job path filters do not exist in Actions.
+on:
+  push:
+    paths:
+      - "etl/skills*.py"
+      - "data/eval/**"
+      - "tests/test_eval_llm.py"
+      - "tests/test_eval_labels.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+
+      - name: Label linter (no LLM)
+        run: pytest -q tests/test_eval_labels.py
+
+      - name: Live eval gate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          WRITE_EVAL_BADGE: "1"
+        run: |
+          pytest -q -m llm_eval -s | tee eval.log
+          {
+            echo '### Skill extraction eval'
+            grep -E 'micro-F1' eval.log || true
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the badge
+        run: |
+          git config user.name "Midat Faizov"
+          git config user.email "midat.faizov@gmail.com"
+          git add site/data/eval_badge.json
+          if git diff --cached --quiet; then echo "badge unchanged"; exit 0; fi
+          git commit -m "data: eval badge"
+          # ci.yml ignores site/data/**, so this commit cannot retrigger a build loop
+          for i in 1 2 3; do git push && exit 0; git pull --rebase origin main || true; done
+          echo "push failed after 3 attempts"; exit 1
