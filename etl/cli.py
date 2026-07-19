@@ -1,6 +1,7 @@
 """Command-line entry point: python -m etl.cli run|backfill|aggregate."""
 
 import argparse
+import json
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -27,8 +28,8 @@ def existing_job_uids(data_dir):
     return {r[0] for r in duckdb.sql(q).fetchall()}
 
 
-def run(client, seed, data_dir, dt, pause=None, log=print):
-    """Testable core: fetch -> fx -> normalize -> write snapshots/jobs partitions. Returns summary."""
+def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_limit=None):
+    """Testable core: fetch -> fx -> normalize -> write partitions (+ optional skills). Returns summary."""
     kwargs = {"log": log} if pause is None else {"log": log, "pause": pause}
     jobs = list(iter_jobs(client, seed, **kwargs))
     rates = fetch_rates(client, data_dir)
@@ -36,16 +37,33 @@ def run(client, seed, data_dir, dt, pause=None, log=print):
     snap, new, stats = result["snapshot_rows"], result["new_rows"], result["stats"]
     write_partition(snap, data_dir, "snapshots", dt)
     write_partition(new, data_dir, "jobs", dt)
+
+    skill_rows = 0
+    if not skip_llm:
+        from etl.normalize import passes_role_filter
+        from etl.skills import extract_for_jobs, processed_uids
+        tech = [j for j in jobs if passes_role_filter(j.get("title"), j.get("department"))]
+        limit = llm_limit if llm_limit is not None else None
+        rows = extract_for_jobs(tech, processed_uids(data_dir),
+                                **({"limit": limit} if limit is not None else {}), log=log)
+        if rows:
+            write_partition(rows, data_dir, "skills", dt)
+        skill_rows = len(rows)
+
     summary = {"boards": len(seed), "raw_jobs": len(jobs), "snapshot_rows": len(snap),
                "new_rows": len(new), "with_salary": sum(1 for r in snap if r["has_salary"]),
-               "by_source": dict(Counter(r["source"] for r in snap)), **stats}
+               "skill_rows": skill_rows, "by_source": dict(Counter(r["source"] for r in snap)), **stats}
+    cache = Path(data_dir) / "cache"
+    cache.mkdir(parents=True, exist_ok=True)
+    (cache / "last_run.json").write_text(json.dumps({"date": dt, **stats}))
     return summary
 
 
 def cmd_run(args):
     """Daily increment: fetch -> normalize -> fx -> parquet partitions (skills = stage 5)."""
     dt = today_str()
-    s = run(make_client(), load_seed(), args.data_dir, dt)
+    s = run(make_client(), load_seed(), args.data_dir, dt,
+            skip_llm=args.skip_llm, llm_limit=args.llm_limit)
     print(f"\n=== run {dt} ===")
     print(f"boards: {s['boards']} | raw jobs fetched: {s['raw_jobs']}")
     print(f"snapshot rows: {s['snapshot_rows']} by source {s['by_source']}")
