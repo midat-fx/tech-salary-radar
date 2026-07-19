@@ -34,4 +34,5 @@ jobs:
           git add -A
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
           git commit -m "data: backfill by publish date"
-          for i in 1 2 3; do git push && break || git pull --rebase origin main; done
+          for i in 1 2 3; do git push && exit 0; git pull --rebase origin main || true; done
+          echo "push failed after 3 attempts"; exit 1

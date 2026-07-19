@@ -11,6 +11,7 @@ SOURCES = {
 SEED_PATH = "data/seed_companies.json"     # [{ "source": ..., "slug": ..., "name": ... }]
 
 FETCH_PAUSE_SEC = 0.5          # + jitter 0.2-0.4 in code; one request per board
+FETCH_CIRCUIT_BREAK = 8        # consecutive failures before a whole ATS is skipped for the run
 HTTP_TIMEOUT = 20
 
 # Salary normalization -> annual gross USD (see §5)
