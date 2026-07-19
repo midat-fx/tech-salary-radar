@@ -40,8 +40,8 @@
     <section class="hero" id="hero">
       <div class="tile"><div class="tile-val" id="t-median">—</div><div class="tile-lbl">медианная ЗП в срезе</div><div class="tile-sub" id="t-median-mo"></div></div>
       <div class="tile"><div class="tile-val" id="t-jobs">—</div><div class="tile-lbl">вакансий на радаре</div></div>
-      <div class="tile"><div class="tile-val" id="t-skill">—</div><div class="tile-lbl">самый прибыльный навык</div></div>
-      <div class="tile"><div class="tile-val" id="t-new">—</div><div class="tile-lbl">новых за сутки</div></div>
+      <div class="tile"><div class="tile-val" id="t-skill">—</div><div class="tile-lbl">самый прибыльный навык</div><div class="tile-sub" id="t-skill-note"></div></div>
+      <div class="tile"><div class="tile-val" id="t-new">—</div><div class="tile-lbl">новых за сутки</div><div class="tile-sub" id="t-new-note"></div></div>
     </section>
 
     <section class="filters" id="filters">
@@ -57,11 +57,11 @@
 
     <main id="charts">
       <div class="card"><h2 id="c1-title">Сколько платят в tech-найме</h2><p class="meth" id="c1-meth"></p><div class="cwrap"><canvas id="c1"></canvas><div class="empty" id="e1" hidden></div></div></div>
-      <div class="card"><h2>Сколько платят по грейдам</h2><p class="meth">медиана по грейду · gross annual USD · грейд по названию (эвристика), «Без уровня» = маркера в названии нет</p><div class="cwrap"><canvas id="c2"></canvas><div class="empty" id="e2" hidden></div></div></div>
+      <div class="card"><h2>Сколько платят по грейдам</h2><p class="meth">медиана по грейду · gross annual USD · грейд по названию (эвристика), «Без уровня» = маркера в названии нет</p><p class="meth" id="c2-note"></p><div class="cwrap"><canvas id="c2"></canvas><div class="empty" id="e2" hidden></div></div></div>
       <div class="card"><h2>Какие навыки добавляют к зарплате больше всего</h2><p class="meth">стратифицировано по грейдам и регионам · по N вакансий с указанной вилкой</p><div class="cwrap"><canvas id="c3"></canvas><div class="empty" id="e3" hidden></div></div></div>
-      <div class="card"><h2>Какие навыки требуют чаще всего</h2><p class="meth">доля вакансий в срезе</p><div class="cwrap"><canvas id="c4"></canvas><div class="empty" id="e4" hidden></div></div></div>
+      <div class="card"><h2>Какие навыки требуют чаще всего</h2><p class="meth" id="c4-meth">доля вакансий в срезе</p><div class="cwrap"><canvas id="c4"></canvas><div class="empty" id="e4" hidden></div></div></div>
       <div class="card"><h2>Где платят больше</h2><p class="meth">медиана по региону и формату · gross annual USD</p><div class="cwrap"><canvas id="c5"></canvas><div class="empty" id="e5" hidden></div></div></div>
-      <div class="card"><h2>Как дышит рынок</h2><p class="meth">активные вакансии и медиана по дням</p><div class="cwrap"><canvas id="c6"></canvas><div class="empty" id="e6" hidden></div></div></div>
+      <div class="card"><h2>Как дышит рынок</h2><p class="meth">активные вакансии и медиана по дням</p><div class="cwrap"><canvas id="c6"></canvas><div class="wm" id="c6-wm" hidden></div><div class="empty" id="e6" hidden></div></div></div>
     </main>
 
     <section class="card hiring"><h2>Кто нанимает прямо сейчас</h2><div id="employers" class="chips"></div></section>
@@ -70,6 +70,7 @@
       <p id="f-attr"></p>
       <p id="f-salary"></p>
       <p id="f-fx"></p>
+      <p id="f-coverage"></p>
       <p>Работает на $0/мес: GitHub Actions + Cloudflare Pages + Gemini free tier.</p>
       <details><summary>Скачать данные (parquet)</summary>
         <p>История в репозитории: <code>data/snapshots/</code>, <code>data/jobs/</code>, <code>data/skills/</code>. Пересчитать самому:</p>
