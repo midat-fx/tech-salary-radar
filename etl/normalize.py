@@ -12,7 +12,17 @@ def region_of(location_raw, country=None):
 
 
 def seniority_of(title):
-    """Heuristic seniority from title: junior | mid | senior | lead (PLAN.md §3.6)."""
+    """Heuristic seniority from title: junior | mid | senior | staff+ | unspecified (PLAN.md §3.6)."""
+    raise NotImplementedError
+
+
+def is_management(title):
+    """True for Manager/Director/VP/Head/Chief roles (excluded from salary stats, PLAN.md §3.6)."""
+    raise NotImplementedError
+
+
+def passes_role_filter(title, department=None):
+    """Keep only tech-IC roles (allow eng/data/ML/DevOps/SRE/QA/security; deny non-tech, PM, design)."""
     raise NotImplementedError
 
 
