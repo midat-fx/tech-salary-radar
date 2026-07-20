@@ -215,13 +215,17 @@ def backfill_job_rows(jobs, rates, today):
     return by_date
 
 
-def write_partition(rows, data_dir, table, dt):
+def write_partition(rows, data_dir, table, dt, append=False):
     """Write a daily parquet partition (zstd, sorted by job_uid); overwrites the whole day.
 
     Empty rows -> no file (a columnless parquet is unreadable); a stale file for dt is removed.
+    append=True keeps the rows already stored for dt: the skills cache grows across several
+    runs of the same day, and each run only extracts what the anti-join left over.
     """
     from pathlib import Path
     out = Path(data_dir) / table / f"dt={dt}" / "part.parquet"
+    if append and out.exists():
+        rows = pq.read_table(out).to_pylist() + list(rows)
     if not rows:
         if out.exists():
             out.unlink()
