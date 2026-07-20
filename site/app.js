@@ -123,13 +123,20 @@ function chartRequired(){
     +share.toFixed(0)+"% базы) — не от всего рынка";
   empty("e4", rows.length<100, "Навыки ещё извлекаются из текстов вакансий");
   if(rows.length<100){ if(charts.c4)charts.c4.destroy(); return; }
-  const cnt={}; rows.forEach(r=>r[R.sk].forEach(i=>{cnt[i]=(cnt[i]||0)+1;}));
+  const cnt={}, pay={};
+  rows.forEach(r=>r[R.sk].forEach(i=>{
+    cnt[i]=(cnt[i]||0)+1;
+    if(r[R.mgmt]!==1 && r[R.sal]!=null){ (pay[i]=pay[i]||[]).push(r[R.sal]); }
+  }));
   const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0, window.innerWidth<480?10:15);
   newChart("c4",{type:"bar",data:{labels:top.map(([i])=>DATA.skills[i]),
       datasets:[{data:top.map(([,n])=>Math.round(1000*n/rows.length)/10),backgroundColor:C.s2+"cc"}]},
     options:{indexAxis:"y",maintainAspectRatio:false,...NOLEG,
       scales:{x:axis({beginAtZero:true,ticks:{color:C.tx2,callback:v=>v+"%"}}),y:axis()},
-      plugins:{legend:{display:false}}}});
+      plugins:{legend:{display:false},tooltip:{callbacks:{afterLabel:(c)=>{
+        const idx=top[c.dataIndex][0], a=pay[idx]||[];
+        return a.length>=10 ? "медиана с этим навыком: "+kUSD(median(a))+" · n="+a.length
+                            : "мало вакансий с вилкой ("+a.length+")";}}}}}});
 }
 
 function chartWhere(){
@@ -148,6 +155,33 @@ function chartWhere(){
     options:{maintainAspectRatio:false,...NOLEG,
       scales:{x:axis(),y:axis({beginAtZero:true,ticks:{color:C.tx2,callback:v=>kUSD(v)}})},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>kUSD(c.raw)+" · n="+all[c.dataIndex].n}}}}});
+}
+
+function chartLearnNext(){
+  const rows=filtered().filter(r=>Array.isArray(r[R.sk]));
+  const prem=(META.skill_premium||[]);
+  const cnt={};
+  rows.forEach(r=>r[R.sk].forEach(i=>{cnt[i]=(cnt[i]||0)+1;}));
+  const pts=prem.map(s=>{
+    const idx=DATA.skills.indexOf(s.skill);
+    const demand = idx>=0 && rows.length ? 100*(cnt[idx]||0)/rows.length : 0;
+    return {s, x:+demand.toFixed(1), y:s.premium_pct, r:Math.max(5, Math.min(22, Math.sqrt(s.n)*2))};
+  }).filter(p=>p.x>0);
+  empty("e7", pts.length<3, "Появится, когда навыки разметятся и премии наберут выборку");
+  if(pts.length<3){ if(charts.c7)charts.c7.destroy(); return; }
+  const solid = (s) => !(s.ci_lo != null && s.ci_lo <= 0);
+  newChart("c7",{type:"bubble",data:{datasets:[{
+      data:pts, backgroundColor:pts.map(p=>solid(p.s)?C.acc+"cc":C.acc+"44"),
+      borderColor:pts.map(p=>solid(p.s)?C.acc:C.acc+"66")}]},
+    options:{maintainAspectRatio:false,...NOLEG,
+      scales:{x:axis({title:{display:true,text:"спрос: доля вакансий, %",color:C.tx2},
+                      beginAtZero:true,ticks:{color:C.tx2,callback:v=>v+"%"}}),
+              y:axis({title:{display:true,text:"премия к зарплате",color:C.tx2},
+                      ticks:{color:C.tx2,callback:v=>"+"+v+"%"}})},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{
+        const p=pts[c.dataIndex];
+        return p.s.skill+": спрос "+p.x+"% · премия +"+p.s.premium_pct+"% · "+p.s.n+" вак."
+               +(solid(p.s)?"":" (незначимо)");}}}}}});
 }
 
 function chartPulse(){
@@ -173,6 +207,28 @@ function employers(){
   });
 }
 
+function employersAndPayers(){
+  // median pay per company, computed client-side from the current slice
+  const el=$("payers"); if(!el) return;
+  const byCo={};
+  filtered().forEach(r=>{ if(r[R.mgmt]!==1 && r[R.sal]!=null){ (byCo[r[R.co]]=byCo[r[R.co]]||[]).push(r[R.sal]); } });
+  const urls={}; (META.top_companies||[]).forEach(c=>{urls[c.company]=c.url;});
+  const top=Object.entries(byCo).filter(([,a])=>a.length>=10)
+    .map(([i,a])=>({name:DATA.companies[i], med:median(a), n:a.length}))
+    .sort((a,b)=>b.med-a.med).slice(0,10);
+  el.innerHTML="";
+  const meth=$("pay-meth");
+  if(!top.length){ if(meth) meth.textContent="в этом срезе нет компаний с ≥10 вакансиями с открытой вилкой"; return; }
+  if(meth) meth.textContent="по вакансиям с открытой вилкой · только компании с ≥10 такими вакансиями";
+  top.forEach(c=>{
+    const node=urls[c.name]?document.createElement("a"):document.createElement("span");
+    node.className="chip";
+    if(urls[c.name]){ node.href=urls[c.name]; node.target="_blank"; node.rel="noopener"; }
+    node.innerHTML=c.name+"<b>"+kUSD(c.med)+" · n="+c.n+"</b>";
+    el.appendChild(node);
+  });
+}
+
 function footer(){
   $("f-attr").textContent=META.attribution||"";
   $("f-salary").textContent=META.salary_note||"";
@@ -186,7 +242,7 @@ function footer(){
   document.title="Радар навыков и зарплат: медиана "+kUSD(median(salaryRows(DATA.rows).map(r=>r[R.sal])))+" в tech-найме";
 }
 
-function renderAll(){ hero(); chartSalaryDist(); chartBySeniority(); chartPremium(); chartRequired(); chartWhere(); chartPulse(); }
+function renderAll(){ hero(); chartSalaryDist(); chartBySeniority(); chartPremium(); chartRequired(); chartWhere(); chartLearnNext(); chartPulse(); employersAndPayers(); }
 
 function wire(){
   $("seg-region").addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b)return;
