@@ -1,6 +1,7 @@
 """Turn normalized jobs into snapshot / new-job rows and write daily parquet partitions (stage 2)."""
 
 import re
+from datetime import datetime
 
 import pandas as pd
 import pyarrow as pa
@@ -154,6 +155,27 @@ def normalize_all(jobs, rates, snapshot_date, existing_uids):
 def build_snapshot_rows(jobs, rates, snapshot_date):
     recs, stats = _records(jobs, rates, snapshot_date)
     return [{k: r[k] for k in _SNAP_COLS} for r in recs], stats
+
+
+def _pub_date(published_at):
+    if not published_at:
+        return None
+    try:
+        return datetime.fromisoformat(str(published_at).replace("Z", "+00:00")).date().isoformat()
+    except ValueError:
+        return None
+
+
+def backfill_job_rows(jobs, rates, today):
+    """Group tech-IC deduped jobs into full rows keyed by first_seen = date(published_at) (§7 stage 4)."""
+    recs, _ = _records(jobs, rates, today)
+    by_date = {}
+    for r in recs:
+        fs = _pub_date(r.get("published_at")) or today
+        row = {k: r.get(k) for k in _JOB_COLS}
+        row["first_seen"] = fs
+        by_date.setdefault(fs, []).append(row)
+    return by_date
 
 
 def write_partition(rows, data_dir, table, dt):
