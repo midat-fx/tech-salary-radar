@@ -52,6 +52,9 @@ def test_rerun_same_day_idempotent(tmp_path):
     client = httpx.Client(transport=httpx.MockTransport(_handler))
     seed = [{"source": "lever", "slug": "matchgroup", "name": "matchgroup"}]
     run(client, seed, str(tmp_path), "2026-08-20", pause=0)
-    n1 = _count(tmp_path, "snapshots")
+    snap1, jobs1 = _count(tmp_path, "snapshots"), _count(tmp_path, "jobs")
     run(client, seed, str(tmp_path), "2026-08-20", pause=0)
-    assert _count(tmp_path, "snapshots") == n1   # partition overwritten, not appended
+    # partitions overwritten, not appended; the jobs partition must NOT be wiped on re-run
+    # (anti-join excludes the day's own partition; see the empty-partition bug)
+    assert _count(tmp_path, "snapshots") == snap1
+    assert _count(tmp_path, "jobs") == jobs1 > 0
