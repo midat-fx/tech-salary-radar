@@ -17,7 +17,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       TZ: Asia/Almaty
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: actions/setup-python@v5
