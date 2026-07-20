@@ -58,6 +58,38 @@ def test_unprocessed_jobs_do_not_dilute_premium(tmp_path):
     assert py["n"] == 16
 
 
+def test_newest_prompt_version_wins(tmp_path):
+    """A job labelled by two prompt generations must count only under the newest one, so a prompt
+    upgrade rolls out per job instead of mixing v1 and v2 labels in one metric."""
+    snaps = [_snap("ashby:c:1", 200_000)]
+    write_partition(snaps, tmp_path, "snapshots", DT)
+    write_partition([{"job_uid": "ashby:c:1", "first_seen": DT}], tmp_path, "jobs", DT)
+    write_partition([
+        {"job_uid": "ashby:c:1", "skill": "Python", "source": "llm",
+         "prompt_version": "v1", "extracted_at": "2026-08-19T00:00:00+00:00"},
+        {"job_uid": "ashby:c:1", "skill": "Go", "source": "llm",
+         "prompt_version": "v2", "extracted_at": "2026-08-20T00:00:00+00:00"},
+    ], tmp_path, "skills", DT)
+    con = _con(str(tmp_path))
+    from etl.aggregate import _skills_by_uid
+    by, processed = _skills_by_uid(con, ["ashby:c:1"])
+    con.close()
+    assert by["ashby:c:1"] == {"Go"}          # v1's Python is superseded, not merged
+    assert processed == {"ashby:c:1"}
+
+
+def test_cache_state_splits_current_and_stale(tmp_path):
+    from etl.skills import cache_state
+    write_partition([
+        {"job_uid": "a", "skill": "Python", "source": "llm",
+         "prompt_version": "v1", "extracted_at": "x"},
+        {"job_uid": "b", "skill": "Go", "source": "llm",
+         "prompt_version": "v2", "extracted_at": "x"},
+    ], tmp_path, "skills", DT)
+    current, stale = cache_state(str(tmp_path), prompt_version="v2")
+    assert current == {"b"} and stale == {"a"}   # 'a' is re-extractable, 'b' is done
+
+
 def test_premium_carries_bootstrap_ci(tmp_path):
     con = _build(tmp_path, n_unprocessed=0)
     py = next(r for r in skill_premium(con, DT) if r["skill"] == "Python")

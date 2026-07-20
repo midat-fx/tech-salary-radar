@@ -47,8 +47,10 @@ _MGMT = re.compile(r"\b(manager|director|vp|vice president|head of|chief|cto|ceo
 _HARD_DENY = re.compile(r"\b(product manager|program manager|product owner|technical program|"
                         r"designer|ux designer|ui designer|product designer|graphic designer|"
                         r"design lead|sales engineer|solutions engineer|solutions consultant|"
-                        r"sales development|account executive|account manager|partnerships|"
-                        r"go[- ]to[- ]market|\bgtm\b)\b", re.I)
+                        r"solutions architect|sales development|account executive|account manager|"
+                        r"partnerships|go[- ]to[- ]market|\bgtm\b|"
+                        # data-annotation gig work: median ~$29k against a ~$221k IC median
+                        r"labeler|labelling|annotator|data annotation)\b", re.I)
 # soft deny only applies when the title carries NO allow (tech) signal
 _SOFT_DENY = re.compile(r"\b(sales|recruit|talent|\bhr\b|people ops|human resources|legal|counsel|"
                         r"finance|accounting|marketing|content|community|customer success|"

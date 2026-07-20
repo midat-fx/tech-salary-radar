@@ -42,6 +42,7 @@ Rules:
 - Return every input id exactly once."""
 
 
+
 class _Transient(Exception):
     pass
 
@@ -93,13 +94,13 @@ def reset_stats():
 _QUOTA = re.compile(r"resource_exhausted|quota|429", re.I)
 
 
-def _prioritise(pending, priority):
-    """Salary-bearing jobs first (they are the only ones the flagship metric can use), newest first,
-    then round-robin across sources so one alphabetically-early ATS cannot monopolise the budget."""
+def _prioritise(pending, priority, stale=frozenset()):
+    """Never-labelled jobs before re-extractions; salary-bearing first (only those feed the flagship
+    metric), newest first; then round-robin across sources so one ATS cannot monopolise the budget."""
     def key(item):
         uid, _ = item
         has_salary, published = priority.get(uid, (False, ""))
-        return (0 if has_salary else 1, _neg_date(published))
+        return (1 if uid in stale else 0, 0 if has_salary else 1, _neg_date(published))
     ordered = sorted(pending, key=key)
     buckets = {}
     for uid, job in ordered:
@@ -118,7 +119,7 @@ def _neg_date(published):
 
 
 def extract_for_jobs(jobs, processed_uids, limit=LLM_DAILY_JOB_LIMIT, call=_gemini_call,
-                     pause=LLM_PAUSE_SEC, log=print, priority=None):
+                     pause=LLM_PAUSE_SEC, log=print, priority=None, stale_uids=frozenset()):
     """Extract skills for fetched jobs whose uid is not yet cached.
 
     Order: salary-bearing first, then newest, round-robin across sources (`priority` maps
@@ -139,7 +140,7 @@ def extract_for_jobs(jobs, processed_uids, limit=LLM_DAILY_JOB_LIMIT, call=_gemi
         seen.add(uid)
         pending.append((uid, j))
     STATS["queue_depth"] = len(pending)
-    pending = _prioritise(pending, priority or {})[:limit]
+    pending = _prioritise(pending, priority or {}, stale_uids)[:limit]
     now = datetime.now(timezone.utc).isoformat()
     rows, consecutive_failures = [], 0
     for i in range(0, len(pending), LLM_BATCH_SIZE):
@@ -180,6 +181,25 @@ def extract_for_jobs(jobs, processed_uids, limit=LLM_DAILY_JOB_LIMIT, call=_gemi
 def _row(uid, skill, now):
     return {"job_uid": uid, "skill": skill, "source": "llm",
             "prompt_version": PROMPT_VERSION, "extracted_at": now}
+
+
+def cache_state(data_dir, prompt_version=PROMPT_VERSION):
+    """(current, stale) job_uid sets: labelled with this prompt version vs an older one.
+
+    Stale jobs are re-extractable — they queue behind never-labelled jobs so a prompt upgrade
+    spends only leftover budget instead of stalling coverage of fresh postings.
+    """
+    from pathlib import Path
+    glob = Path(data_dir) / "skills"
+    if not any(glob.rglob("*.parquet")):
+        return set(), set()
+    import duckdb
+    rows = duckdb.sql(
+        f"SELECT job_uid, max(prompt_version) FROM read_parquet('{glob}/*/part.parquet') "
+        "GROUP BY 1").fetchall()
+    current = {uid for uid, ver in rows if ver == prompt_version}
+    stale = {uid for uid, ver in rows if ver != prompt_version}
+    return current, stale
 
 
 def processed_uids(data_dir):
