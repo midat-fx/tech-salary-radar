@@ -32,6 +32,8 @@ def test_role_filter():
     assert passes_role_filter("Software Engineer, Accounting") is True   # eng wins over soft-deny
     assert passes_role_filter("Account Executive") is False
     assert passes_role_filter("Sales Engineer") is False         # eng-adjacent hard-deny
+    assert passes_role_filter("AI Partnerships Manager") is False  # GTM, despite "AI"
+    assert passes_role_filter("Head of GTM, AI Inference") is False
     assert passes_role_filter("Product Manager") is False        # PM excluded
     assert passes_role_filter("Product Designer") is False       # design excluded
     assert passes_role_filter("Office Coordinator", department="Engineering") is False
