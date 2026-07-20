@@ -8,7 +8,7 @@
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-**→ Live dashboard (RU):** _link added after first Cloudflare Pages deploy._
+**→ Live dashboard (RU): https://tech-salary-radar.pages.dev**
 
 ![hero](docs/screenshot-hero.png)
 ![skill premium](docs/screenshot-skills.png)
