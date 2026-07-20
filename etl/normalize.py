@@ -179,12 +179,17 @@ def backfill_job_rows(jobs, rates, today):
 
 
 def write_partition(rows, data_dir, table, dt):
-    """Write a daily parquet partition (zstd, sorted by job_uid); overwrites the whole day."""
+    """Write a daily parquet partition (zstd, sorted by job_uid); overwrites the whole day.
+
+    Empty rows -> no file (a columnless parquet is unreadable); a stale file for dt is removed.
+    """
     from pathlib import Path
     out = Path(data_dir) / table / f"dt={dt}" / "part.parquet"
+    if not rows:
+        if out.exists():
+            out.unlink()
+        return None
     out.parent.mkdir(parents=True, exist_ok=True)
-    df = pd.DataFrame(rows)
-    if not df.empty and "job_uid" in df:
-        df = df.sort_values("job_uid").reset_index(drop=True)
+    df = pd.DataFrame(rows).sort_values("job_uid").reset_index(drop=True)
     pq.write_table(pa.Table.from_pandas(df, preserve_index=False), out, compression="zstd")
     return out
