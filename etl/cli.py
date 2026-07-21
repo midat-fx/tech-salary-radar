@@ -43,26 +43,33 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
     write_partition(new, data_dir, "jobs", dt)
 
     skill_rows = 0
+    llm_stats = {}
     if not skip_llm:
         from etl.normalize import passes_role_filter
+        from etl.skills import STATS as LLM_STATS
         from etl.skills import extract_for_jobs, processed_uids
+        from etl.skills import reset_stats as reset_llm_stats
+        reset_llm_stats()
+        # the flagship metric can only use salary-bearing jobs -> label those first
+        priority = {r["job_uid"]: (bool(r["has_salary"]), str(r["published_at"] or "")) for r in snap}
         tech = [j for j in jobs if passes_role_filter(j.get("title"), j.get("department"))]
         limit = llm_limit if llm_limit is not None else None
-        rows = extract_for_jobs(tech, processed_uids(data_dir),
+        rows = extract_for_jobs(tech, processed_uids(data_dir), priority=priority,
                                 **({"limit": limit} if limit is not None else {}), log=log)
         if rows:
             write_partition(rows, data_dir, "skills", dt)
         skill_rows = len(rows)
+        llm_stats = {f"llm_{k}": v for k, v in LLM_STATS.items()}
 
     by_source = dict(Counter(r["source"] for r in snap))
     summary = {"boards": len(seed), "raw_jobs": len(jobs), "snapshot_rows": len(snap),
                "new_rows": len(new), "with_salary": sum(1 for r in snap if r["has_salary"]),
                "skill_rows": skill_rows, "by_source": by_source,
-               **stats, **dict(salary_mod.STATS)}
+               **stats, **dict(salary_mod.STATS), **llm_stats}
     cache = Path(data_dir) / "cache"
     cache.mkdir(parents=True, exist_ok=True)
     (cache / "last_run.json").write_text(json.dumps(
-        {"date": dt, "by_source": by_source, **stats, **dict(salary_mod.STATS)}))
+        {"date": dt, "by_source": by_source, **stats, **dict(salary_mod.STATS), **llm_stats}))
     return summary
 
 
