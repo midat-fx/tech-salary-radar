@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from etl import aggregate as agg
 from etl.config import TZ
 from etl.fetch import iter_jobs, load_seed, make_client
+from etl import salary as salary_mod
 from etl.fx import fetch_rates
 from etl.normalize import normalize_all, write_partition
 
@@ -32,6 +33,7 @@ def existing_job_uids(data_dir, exclude_dt=None):
 
 def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_limit=None):
     """Testable core: fetch -> fx -> normalize -> write partitions (+ optional skills). Returns summary."""
+    salary_mod.reset_stats()
     kwargs = {"log": log} if pause is None else {"log": log, "pause": pause}
     jobs = list(iter_jobs(client, seed, **kwargs))
     rates = fetch_rates(client, data_dir)
@@ -52,12 +54,15 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
             write_partition(rows, data_dir, "skills", dt)
         skill_rows = len(rows)
 
+    by_source = dict(Counter(r["source"] for r in snap))
     summary = {"boards": len(seed), "raw_jobs": len(jobs), "snapshot_rows": len(snap),
                "new_rows": len(new), "with_salary": sum(1 for r in snap if r["has_salary"]),
-               "skill_rows": skill_rows, "by_source": dict(Counter(r["source"] for r in snap)), **stats}
+               "skill_rows": skill_rows, "by_source": by_source,
+               **stats, **dict(salary_mod.STATS)}
     cache = Path(data_dir) / "cache"
     cache.mkdir(parents=True, exist_ok=True)
-    (cache / "last_run.json").write_text(json.dumps({"date": dt, **stats}))
+    (cache / "last_run.json").write_text(json.dumps(
+        {"date": dt, "by_source": by_source, **stats, **dict(salary_mod.STATS)}))
     return summary
 
 
