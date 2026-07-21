@@ -15,17 +15,31 @@ _EU = re.compile(r"\b(united kingdom|england|scotland|wales|ireland|london|germa
                  r"vienna|denmark|copenhagen|finland|helsinki|norway|oslo|czech|prague|romania|"
                  r"bucharest|estonia|tallinn|lithuania|latvia|greece|athens|hungary|budapest|"
                  r"switzerland|zurich|zürich|luxembourg|bulgaria|croatia|slovakia|slovenia|"
+                 r"dublin|cork|belgrade|serbia|ukraine|kyiv|kiev|riga|vilnius|sofia|zagreb|"
+                 r"ljubljana|bratislava|malta|cyprus|iceland|"
                  r"emea|europe|\beu\b|\buk\b)\b", re.I)
-_US = re.compile(r"\b(united states|u\.s\.a?|\busa?\b|california|new york|texas|washington|"
-                 r"massachusetts|illinois|georgia|colorado|florida|san francisco|seattle|austin|"
+# "U.S." never matched inside \b(...)\b — the trailing dot is not a word char. Handled separately.
+_US_DOTTED = re.compile(r"u\.s\.a?\.?(?!\w)", re.I)
+_US = re.compile(r"\b(united states|\busa?\b|california|new york|nyc|new york city|texas|washington|"
+                 r"massachusetts|illinois|colorado|florida|san francisco|\bsf\b|sf bay|seattle|austin|"
                  r"boston|chicago|los angeles|denver|atlanta|new jersey|virginia|oregon|arizona|"
                  r"ca|ny|tx|wa|ma|il|ga|co|fl)\b", re.I)
+# Non-US places whose names collide with US tokens (Georgia the country, London/Ontario, CA=Canada).
+_US_COLLISION = re.compile(r"\b(ontario|british columbia|toronto|vancouver|montreal|canada|"
+                           r"tbilisi|yerevan|armenia|baku|azerbaijan)\b", re.I)
+_US_EXPLICIT = re.compile(r"\b(united states|\busa\b)\b|u\.s\.a?\.?(?!\w)", re.I)
 
 _STAFF = re.compile(r"\b(staff|principal|lead|distinguished|fellow)\b", re.I)
 _SENIOR = re.compile(r"\b(senior|sr\.?|snr)\b", re.I)
 _JUNIOR = re.compile(r"\b(junior|jr\.?|intern|internship|new grad|graduate|entry[- ]level|apprentice|"
                      r"associate)\b", re.I)
 _MID = re.compile(r"\b(mid|middle|mid[- ]level|intermediate)\b", re.I)
+# "Software Engineer II" / "Data Analyst 2" — level numeral right after the role noun (PLAN §3.6).
+_MID_NUMERAL = re.compile(r"\b(engineer|developer|analyst|scientist|programmer)\b[\s,|-]*\b(?:ii|2)\b",
+                          re.I)
+# a second numeral ("Engineer 1 - 2") or a level code (L5, IC3, E4) is ambiguous -> unspecified
+_NUMERAL_AMBIGUOUS = re.compile(r"\b(?:i{1,3}v?|iv|\d)\b[\s,|-]*\b(?:i{1,3}v?|iv|\d)\b|"
+                                r"\b(?:l\d|ic\d|e\d)\b", re.I)
 
 _MGMT = re.compile(r"\b(manager|director|vp|vice president|head of|chief|cto|ceo|cio|cfo|coo)\b", re.I)
 
@@ -44,7 +58,8 @@ _ALLOW_ROLE = re.compile(r"\b(engineer|engineering|developer|programmer|software
                          r"front[- ]?end|full[- ]?stack|sde|mobile|android|ios|data|machine learning|"
                          r"\bml\b|\bai\b|mlops|devops|sre|site reliability|platform|infrastructure|"
                          r"cloud|\bqa\b|quality assurance|sdet|test engineer|security|infosec|"
-                         r"applied scientist|research engineer|research scientist|analytics)\b", re.I)
+                         r"applied scientist|research engineer|research scientist|analytics|"
+                         r"member of technical staff|\bmts\b)\b", re.I)
 _TECH_DEPT = re.compile(r"engineering|data|infrastructure|platform|security|technolog|research|r&d",
                         re.I)
 
@@ -55,18 +70,35 @@ def job_uid(source, company, job_id):
 
 
 def region_of(location_raw, country=None):
-    """Map a location to region bucket: us | eu | other (PLAN.md §3.6). EU wins ties."""
+    """Map a location to region bucket: us | eu | other (PLAN.md §3.6). EU wins ties.
+
+    Collision guard: 'Tbilisi, Georgia' and 'London, Ontario' must not be read as US just because
+    they share a token with a US state/city — only an explicit US marker overrides.
+    """
     text = f"{location_raw or ''} {country or ''}"
+    # guard first: 'London, Ontario' would otherwise match EU on "london"
+    if _US_COLLISION.search(text) and not _US_EXPLICIT.search(text):
+        return "other"
     if _EU.search(text):
         return "eu"
+    if _US_DOTTED.search(text):
+        return "us"
     if _US.search(text):
         return "us"
     return "other"
 
 
 def seniority_of(title):
-    """Heuristic seniority from title: staff+ | senior | junior | mid | unspecified (PLAN.md §3.6)."""
+    """Heuristic seniority from title: staff+ | senior | junior | mid | unspecified (PLAN.md §3.6).
+
+    Word markers win over numerals ('Senior Engineer II' is senior). A bare 'Engineer II/2' is mid —
+    §3.6 already fixes `II|2` as a mid marker. Other numerals (I, III, IV, L5, IC3) stay unspecified:
+    mapping them would be a methodology change, not a code fix.
+    """
     t = title or ""
+    if "member of technical staff" in t.lower():
+        # AI-lab MTS is an IC title, not a staff-level marker; "Senior MTS" is caught above by _SENIOR
+        return "senior" if _SENIOR.search(t) else "unspecified"
     if _STAFF.search(t):
         return "staff+"
     if _SENIOR.search(t):
@@ -74,6 +106,8 @@ def seniority_of(title):
     if _JUNIOR.search(t):
         return "junior"
     if _MID.search(t):
+        return "mid"
+    if _MID_NUMERAL.search(t) and not _NUMERAL_AMBIGUOUS.search(t):
         return "mid"
     return "unspecified"
 

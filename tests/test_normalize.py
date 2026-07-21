@@ -1,5 +1,7 @@
 """Region / seniority / management / role-filter / dedup (PLAN.md §3.6, §3.7)."""
 
+import pytest
+
 from etl.normalize import (
     build_snapshot_rows,
     is_management,
@@ -44,6 +46,47 @@ def test_region_of():
     assert region_of("London, United Kingdom") == "eu"
     assert region_of("Seoul, South Korea") == "other"
     assert region_of("Remote, US") == "us"
+
+
+@pytest.mark.parametrize("loc,expected", [
+    # "U.S." never matched before: the trailing dot breaks \b (30 rows sat in `other`)
+    ("Remote U.S.", "us"), ("U.S. Remote", "us"), ("Remote - U.S.A.", "us"),
+    # collisions: country Georgia / Canadian London / CA=Canada must not read as US
+    ("Tbilisi, Georgia", "other"), ("Yerevan, Armenia", "other"),
+    ("London, Ontario", "other"), ("Toronto, Canada", "other"), ("Vancouver, BC", "other"),
+    # ...but the US state still wins when the city is American
+    ("Atlanta, Georgia", "us"), ("Atlanta, GA", "us"),
+    # city-only locations that used to fall into `other`
+    ("Dublin", "eu"), ("Belgrade", "eu"), ("Kyiv", "eu"), ("Riga", "eu"),
+    ("NYC", "us"), ("New York City", "us"), ("SF Bay Area", "us"),
+    # genuinely unknown stays honest
+    ("Remote", "other"), ("Hybrid", "other"), ("In-Office", "other"),
+    ("Singapore", "other"), ("Tokyo, Japan", "other"),
+])
+def test_region_audit_rows(loc, expected):
+    assert region_of(loc) == expected
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("Software Engineer II, Backend", "mid"),
+    ("Machine Learning Engineer II", "mid"),
+    ("Data Analyst II", "mid"),
+    ("Software Engineer 2", "mid"),
+    ("Senior Engineer II", "senior"),          # word marker wins over the numeral
+    ("Staff Engineer II", "staff+"),
+    ("Software Engineer 3", "unspecified"),    # III/IV left alone: methodology decision
+    ("Software Engineer I", "unspecified"),
+    ("Engineer 1 - 2", "unspecified"),         # ambiguous range
+    ("Software Engineer, L5", "unspecified"),  # level codes not mapped
+    ("Member of Technical Staff", "unspecified"),   # MTS is an IC title, not staff+
+    ("Senior Member of Technical Staff", "senior"),
+])
+def test_seniority_numerals_and_mts(title, expected):
+    assert seniority_of(title) == expected
+
+
+def test_mts_passes_role_filter():
+    assert passes_role_filter("Member of Technical Staff") is True
 
 
 def test_job_uid():
