@@ -89,11 +89,16 @@ function chartPremium(){
   const sp=(META.skill_premium||[]).slice(0,10);
   empty("e3", sp.length<1, "Премия навыка появится, когда LLM разметит вакансии (этап извлечения навыков идёт)");
   if(sp.length<1){ if(charts.c3)charts.c3.destroy(); return; }
-  newChart("c3",{type:"bar",data:{labels:sp.map(s=>s.skill),datasets:[{data:sp.map(s=>s.premium_pct),backgroundColor:C.acc+"cc"}]},
+  // CI crossing zero = not statistically distinguishable from "no premium" -> dimmed bar
+  const solid = (s) => !(s.ci_lo != null && s.ci_lo <= 0);
+  newChart("c3",{type:"bar",data:{labels:sp.map(s=>s.skill),datasets:[{data:sp.map(s=>s.premium_pct),
+      backgroundColor:sp.map(s=>solid(s)?C.acc+"cc":C.acc+"44")}]},
     options:{indexAxis:"y",maintainAspectRatio:false,...NOLEG,
       scales:{x:axis({beginAtZero:true,ticks:{color:C.tx2,callback:v=>"+"+v+"%"}}),y:axis()},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const s=sp[c.dataIndex];
-        return "С "+s.skill+": "+kUSD(s.median_with_usd)+" ("+s.n+" вак.) · без: "+kUSD(s.median_without_usd)+" · +"+s.premium_pct+"%";}}}}}});
+        const ci = (s.ci_lo!=null&&s.ci_hi!=null) ? " · 95% CI ["+s.ci_lo+"%, "+s.ci_hi+"%]" : "";
+        const warn = solid(s) ? "" : " · статистически незначимо";
+        return "С "+s.skill+": "+kUSD(s.median_with_usd)+" ("+s.n+" вак.) · премия внутри страт +"+s.premium_pct+"%"+ci+warn;}}}}}});
 }
 
 function chartRequired(){
