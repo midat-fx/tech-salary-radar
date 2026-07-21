@@ -37,12 +37,21 @@ function fresh(){
 function hero(){
   const rows=filtered(), sal=salaryRows(rows).map(r=>r[R.sal]);
   const med=median(sal);
-  $("t-median").textContent=kUSD(med);
-  $("t-median-mo").textContent = med? "(~"+kUSD(med/12)+"/мес)" : "";
+  // a median over a handful of bands is noise — say so instead of printing a confident number
+  const thin = sal.length < 10;
+  $("t-median").textContent = thin ? "—" : kUSD(med);
+  $("t-median-mo").textContent = thin ? "мало данных ("+sal.length+" вак. с вилкой)"
+                                      : "(~"+kUSD(med/12)+"/мес · по "+sal.length+" вак.)";
   $("t-jobs").textContent=nfmt(rows.length);
-  $("t-new").textContent=nfmt(rows.filter(r=>r[R.new]===1).length);
-  const sp=(META.skill_premium||[])[0];
+  // on day 1 every row is "new" (100%) — that is an artefact of history length, not a daily inflow
+  const firstDay = (META.days_collected||0) <= 1;
+  $("t-new").textContent = firstDay ? "—" : nfmt(rows.filter(r=>r[R.new]===1).length);
+  const nd=$("t-new-note"); if(nd) nd.textContent = firstDay ? "нужен второй день истории" : "";
+  // headline the first premium that is not a small-sample artefact (winner's curse)
+  const sp=(META.skill_premium||[]).find(s=>s.n>=15 && !(s.ci_lo!=null && s.ci_lo<=0))
+        || (META.skill_premium||[]).find(s=>s.n>=15);
   $("t-skill").textContent = sp ? sp.skill+" +"+sp.premium_pct+"%" : "—";
+  const sn=$("t-skill-note"); if(sn) sn.textContent = sp ? "по "+sp.n+" вак. с вилкой" : "набирается";
 }
 
 function newChart(id, cfg){ if(charts[id])charts[id].destroy(); charts[id]=new Chart($(id), cfg); }
@@ -74,8 +83,13 @@ function chartBySeniority(){
   const order=["junior","mid","senior","staff+","unspecified"];
   // region filter applies; grade select does not cut this chart (all grades shown, active highlighted)
   const base=DATA.rows.filter(r=> state.region==="remote"?r[R.rem]===1 : (state.region==="all"||r[R.reg]===state.region));
-  const meds=order.map(g=>{ const a=base.filter(r=>r[R.sen]===g && r[R.mgmt]!==1 && r[R.sal]!=null).map(r=>r[R.sal]);
-      return {g,med:median(a),n:a.length}; }).filter(m=>m.n>=10 && m.med!=null);   // hide thin buckets
+  let meds=order.map(g=>{ const a=base.filter(r=>r[R.sen]===g && r[R.mgmt]!==1 && r[R.sal]!=null).map(r=>r[R.sal]);
+      return {g,med:median(a),n:a.length}; });
+  const hidden=meds.filter(m=>m.n>0 && (m.n<10 || m.med==null));
+  const note=document.querySelector("#c2-note");
+  if(note) note.textContent = hidden.length
+    ? "скрыто как малая выборка: "+hidden.map(m=>RU_SEN[m.g]+" (n="+m.n+")").join(", ") : "";
+  meds=meds.filter(m=>m.n>=10 && m.med!=null);   // hide thin buckets
   empty("e2", meds.length<1, "Мало данных о зарплатах по грейдам");
   if(meds.length<1){ if(charts.c2)charts.c2.destroy(); return; }
   newChart("c2",{type:"bar",data:{labels:meds.map(m=>[RU_SEN[m.g],"n="+m.n]),datasets:[{
@@ -87,8 +101,8 @@ function chartBySeniority(){
 
 function chartPremium(){
   const sp=(META.skill_premium||[]).slice(0,10);
-  empty("e3", sp.length<1, "Премия навыка появится, когда LLM разметит вакансии (этап извлечения навыков идёт)");
-  if(sp.length<1){ if(charts.c3)charts.c3.destroy(); return; }
+  empty("e3", sp.length<5, "Премия навыка появится, когда LLM разметит больше вакансий (нужно ≥5 навыков, прошедших пороги)");
+  if(sp.length<5){ if(charts.c3)charts.c3.destroy(); return; }
   // CI crossing zero = not statistically distinguishable from "no premium" -> dimmed bar
   const solid = (s) => !(s.ci_lo != null && s.ci_lo <= 0);
   newChart("c3",{type:"bar",data:{labels:sp.map(s=>s.skill),datasets:[{data:sp.map(s=>s.premium_pct),
@@ -103,6 +117,10 @@ function chartPremium(){
 
 function chartRequired(){
   const rows=filtered().filter(r=>Array.isArray(r[R.sk]));
+  const share=((META.coverage||{}).skills_extracted_share||0)*100;
+  const meth=document.querySelector("#c4-meth");
+  if(meth) meth.textContent="доля от "+nfmt(rows.length)+" вакансий, размеченных LLM ("
+    +share.toFixed(0)+"% базы) — не от всего рынка";
   empty("e4", rows.length<100, "Навыки ещё извлекаются из текстов вакансий");
   if(rows.length<100){ if(charts.c4)charts.c4.destroy(); return; }
   const cnt={}; rows.forEach(r=>r[R.sk].forEach(i=>{cnt[i]=(cnt[i]||0)+1;}));
@@ -135,6 +153,8 @@ function chartWhere(){
 function chartPulse(){
   empty("e6", TS.length<1, "Радар только начал собирать историю");
   if(TS.length<1){ if(charts.c6)charts.c6.destroy(); return; }
+  const wm=document.querySelector("#c6-wm");
+  if(wm){ wm.hidden = TS.length>=7; wm.textContent="Радар набирает историю: день "+TS.length+" из 7"; }
   const enoughMed = TS.filter(d=>d.median_usd!=null).length>=7;
   const ds=[{type:"line",label:"активные",data:TS.map(d=>d.active),borderColor:C.acc,backgroundColor:C.acc+"22",fill:true,yAxisID:"y",tension:.3}];
   if(enoughMed)ds.push({type:"line",label:"медиана",data:TS.map(d=>d.median_usd),borderColor:C.s3,yAxisID:"y1",tension:.3});
@@ -157,6 +177,11 @@ function footer(){
   $("f-attr").textContent=META.attribution||"";
   $("f-salary").textContent=META.salary_note||"";
   if(META.fx&&META.fx.date)$("f-fx").textContent="Курсы на "+META.fx.date+" (base USD)"+(META.fx.stale?" · устарели":"");
+  const cov=META.coverage||{};
+  const fc=$("f-coverage");
+  if(fc) fc.textContent="Навыки размечены у "+((cov.skills_extracted_share||0)*100).toFixed(0)
+    +"% вакансий (очередь дорабатывается ежедневно) · вилка зарплаты указана у "
+    +((cov.salary_share||0)*100).toFixed(0)+"%.";
   $("f-run").textContent="радар работает "+(META.days_collected||0)+" дн. · "+(META.companies_tracked||0)+" компаний";
   document.title="Радар навыков и зарплат: медиана "+kUSD(median(salaryRows(DATA.rows).map(r=>r[R.sal])))+" в tech-найме";
 }
