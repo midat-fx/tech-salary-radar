@@ -1,11 +1,15 @@
 """DuckDB SQL over parquet -> site/data/*.json + badge.json (PLAN.md §3.5, §3.6, stage 6)."""
 
 import json
+import random
 from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
 
 import duckdb
+
+BOOTSTRAP_REPLICATES = 1000
+BOOTSTRAP_SEED = 20260719          # fixed: daily aggregate must be reproducible
 
 BOARD_URL = {
     "greenhouse": "https://boards.greenhouse.io/{slug}",
@@ -107,8 +111,41 @@ def _timeseries(con, site_data_dir):
              "median_usd": round(m) if m is not None else None} for d, a, n, m in rows])
 
 
+def _weighted_premium(pools):
+    """Weighted mean of per-stratum median ratios -> premium %. pools: [(with[], without[])]."""
+    num = den = 0.0
+    for w, wo in pools:
+        if not w or not wo:
+            continue
+        num += (median(w) / median(wo)) * len(w)
+        den += len(w)
+    return (num / den - 1) * 100 if den else None
+
+
+def _bootstrap_ci(pools, rng, replicates=BOOTSTRAP_REPLICATES):
+    """Stratified bootstrap CI (2.5/97.5 pct) of the weighted premium. Resamples within strata."""
+    est = []
+    choice = rng.choices
+    for _ in range(replicates):
+        boot = [(choice(w, k=len(w)), choice(wo, k=len(wo))) for w, wo in pools]
+        val = _weighted_premium(boot)
+        if val is not None:
+            est.append(val)
+    if len(est) < replicates // 2:
+        return None, None
+    est.sort()
+    lo = est[int(0.025 * (len(est) - 1))]
+    hi = est[int(0.975 * (len(est) - 1))]
+    return round(lo, 1), round(hi, 1)
+
+
 def skill_premium(con, latest_date):
-    """Skill premium stratified by seniority x region on salary-bearing non-mgmt rows (PLAN.md §3.6)."""
+    """Skill premium stratified by seniority x region on salary-bearing non-mgmt rows (PLAN.md §3.6).
+
+    Only LLM-processed jobs take part: a job whose skills were never extracted is NOT evidence of
+    "skill absent" and must not land in the without-pool (that contamination deflated every premium).
+    Each premium carries a stratified-bootstrap 95% CI so winner's-curse spikes are visible.
+    """
     rows = con.execute("""
         SELECT s.job_uid, s.seniority, s.region, s.salary_mid_usd
         FROM snap s
@@ -118,34 +155,37 @@ def skill_premium(con, latest_date):
     if not rows:
         return []
     uids = [r[0] for r in rows]
-    skills_by, _ = _skills_by_uid(con, uids)
+    skills_by, processed = _skills_by_uid(con, uids)
     strata = {}   # (seniority, region) -> list[(mid, skillset)]
     all_skills = set()
     for uid, sen, reg, mid in rows:
+        if uid not in processed:        # not labelled yet -> no evidence either way
+            continue
         sk = skills_by.get(uid, set())
         all_skills |= sk
         strata.setdefault((sen, reg), []).append((mid, sk))
 
+    rng = random.Random(BOOTSTRAP_SEED)
     results = []
     for skill in all_skills:
-        num = den = total_with = 0.0
-        with_pool, without_pool = [], []
+        total_with = 0
+        pools, with_pool = [], []
         for members in strata.values():
             w = [m for m, s in members if skill in s]
             wo = [m for m, s in members if skill not in s]
             total_with += len(w)
             if len(w) >= 8 and len(wo) >= 8:
-                ratio = median(w) / median(wo)
-                num += ratio * len(w)
-                den += len(w)
+                pools.append((w, wo))
                 with_pool += w
-                without_pool += wo
-        if total_with >= 15 and den > 0:
-            pct = (num / den - 1) * 100
-            if pct > 0:
-                results.append({"skill": skill, "n": int(den), "premium_pct": round(pct, 1),
-                                "median_with_usd": round(median(with_pool)),
-                                "median_without_usd": round(median(without_pool))})
+        if total_with < 15 or not pools:
+            continue
+        pct = _weighted_premium(pools)
+        if pct is None or pct <= 0:
+            continue
+        ci_lo, ci_hi = _bootstrap_ci(pools, rng)
+        results.append({"skill": skill, "n": len(with_pool), "premium_pct": round(pct, 1),
+                        "median_with_usd": round(median(with_pool)),
+                        "ci_lo": ci_lo, "ci_hi": ci_hi})
     results.sort(key=lambda r: r["premium_pct"], reverse=True)
     return results[:10]
 
