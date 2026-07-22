@@ -5,6 +5,7 @@ import json
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+from statistics import median
 from zoneinfo import ZoneInfo
 
 from etl import aggregate as agg
@@ -31,6 +32,45 @@ def existing_job_uids(data_dir, exclude_dt=None):
     return {r[0] for r in duckdb.sql(f"SELECT DISTINCT job_uid FROM read_parquet([{files}])").fetchall()}
 
 
+class VolumeGuardError(RuntimeError):
+    """A source collapsed vs its recent history — refuse to write a poisoned day."""
+
+
+MIN_HISTORY_DAYS = 3
+SOURCE_FLOOR = 0.5      # a source must keep >=50% of its 7-day median
+TOTAL_FLOOR = 0.6       # ...and the day must keep >=60% of the expected total
+
+
+def volume_guard(data_dir, dt, by_source):
+    """Compare today's per-source row counts with the 7-day medians; return a list of problems.
+
+    A full Greenhouse outage (66% of the dataset) would otherwise be committed as a real market
+    crash into the append-only history, and timeseries would never recover from it.
+    """
+    root = Path(data_dir) / "snapshots"
+    parts = [p for p in root.glob("dt=*/part.parquet") if p.parent.name != f"dt={dt}"]
+    if len(parts) < MIN_HISTORY_DAYS:
+        return []                     # not enough history to judge; don't block the launch week
+    import duckdb
+    files = ",".join(f"'{p}'" for p in parts)
+    rows = duckdb.sql(f"SELECT source, snapshot_date, count(*) FROM read_parquet([{files}]) "
+                      "GROUP BY 1,2 ORDER BY 2 DESC").fetchall()
+    hist = {}
+    for src, _d, n in rows:
+        hist.setdefault(src, []).append(n)
+    problems, expected_total = [], 0
+    for src, counts in hist.items():
+        med = median(counts[:7])
+        expected_total += med
+        got = by_source.get(src, 0)
+        if got < SOURCE_FLOOR * med:
+            problems.append(f"{src}: {got} rows vs 7-day median {med:.0f}")
+    got_total = sum(by_source.values())
+    if expected_total and got_total < TOTAL_FLOOR * expected_total:
+        problems.append(f"total: {got_total} rows vs expected ~{expected_total:.0f}")
+    return problems
+
+
 def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_limit=None):
     """Testable core: fetch -> fx -> normalize -> write partitions (+ optional skills). Returns summary."""
     salary_mod.reset_stats()
@@ -39,6 +79,10 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
     rates = fetch_rates(client, data_dir)
     result = normalize_all(jobs, rates, dt, existing_job_uids(data_dir, exclude_dt=dt))
     snap, new, stats = result["snapshot_rows"], result["new_rows"], result["stats"]
+    by_source = dict(Counter(r["source"] for r in snap))
+    problems = volume_guard(data_dir, dt, by_source)
+    if problems:
+        raise VolumeGuardError("; ".join(problems))
     write_partition(snap, data_dir, "snapshots", dt)
     write_partition(new, data_dir, "jobs", dt)
 
@@ -61,7 +105,6 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
         skill_rows = len(rows)
         llm_stats = {f"llm_{k}": v for k, v in LLM_STATS.items()}
 
-    by_source = dict(Counter(r["source"] for r in snap))
     summary = {"boards": len(seed), "raw_jobs": len(jobs), "snapshot_rows": len(snap),
                "new_rows": len(new), "with_salary": sum(1 for r in snap if r["has_salary"]),
                "skill_rows": skill_rows, "by_source": by_source,
@@ -75,9 +118,14 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
 
 def cmd_run(args):
     """Daily increment: fetch -> normalize -> fx -> parquet partitions (skills = stage 5)."""
+    import sys
     dt = today_str()
-    s = run(make_client(), load_seed(), args.data_dir, dt,
-            skip_llm=args.skip_llm, llm_limit=args.llm_limit)
+    try:
+        s = run(make_client(), load_seed(), args.data_dir, dt,
+                skip_llm=args.skip_llm, llm_limit=args.llm_limit)
+    except VolumeGuardError as e:
+        print(f"VOLUME GUARD: refusing to write {dt} — {e}", file=sys.stderr)
+        sys.exit(2)
     print(f"\n=== run {dt} ===")
     print(f"boards: {s['boards']} | raw jobs fetched: {s['raw_jobs']}")
     print(f"snapshot rows: {s['snapshot_rows']} by source {s['by_source']}")

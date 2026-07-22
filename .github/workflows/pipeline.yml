@@ -24,6 +24,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     env:
       GH_TOKEN: ${{ github.token }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -83,8 +84,10 @@ jobs:
           fi
           git commit -m "data: $(date +%F)"
           for i in 1 2 3; do
-            git push && break || git pull --rebase origin main
+            git push && exit 0
+            git pull --rebase origin main || true
           done
+          echo "push failed after 3 attempts"; exit 1
 
       - name: Deploy to Cloudflare Pages
         if: steps.guard.outputs.skip != '1'
