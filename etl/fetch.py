@@ -7,7 +7,13 @@ from pathlib import Path
 
 import httpx
 
-from etl.config import FETCH_PAUSE_SEC, HTTP_TIMEOUT, SEED_PATH, USER_AGENT
+from etl.config import (
+    FETCH_CIRCUIT_BREAK,
+    FETCH_PAUSE_SEC,
+    HTTP_TIMEOUT,
+    SEED_PATH,
+    USER_AGENT,
+)
 from etl.sources import FETCHERS
 
 
@@ -36,15 +42,24 @@ def iter_jobs(client, seed, pause=FETCH_PAUSE_SEC, log=None):
 
     A dead/empty board contributes nothing; failures are logged and skipped, never fatal.
     """
+    consecutive_failures, down = {}, set()
     for i, entry in enumerate(seed):
-        fetcher = FETCHERS.get(entry["source"])
-        if fetcher is None:
+        source = entry["source"]
+        fetcher = FETCHERS.get(source)
+        if fetcher is None or source in down:
             continue
         try:
             jobs = fetcher(client, entry["slug"])
+            consecutive_failures[source] = 0
         except Exception as exc:  # one bad board must not kill the crawl
+            consecutive_failures[source] = consecutive_failures.get(source, 0) + 1
             if log:
-                log(f"fetch failed {entry['source']}:{entry['slug']}: {exc}")
+                log(f"fetch failed {source}:{entry['slug']}: {exc}")
+            # a whole ATS being down (429 storm) should not cost hours of retries per board
+            if consecutive_failures[source] >= FETCH_CIRCUIT_BREAK:
+                down.add(source)
+                if log:
+                    log(f"{source}: {FETCH_CIRCUIT_BREAK} consecutive failures — skipping its boards")
             jobs = []
         yield from jobs
         if pause and i + 1 < len(seed):
