@@ -48,6 +48,37 @@ def test_run_writes_partitions(tmp_path):
     assert summary["snapshot_rows"] == _count(tmp_path, "snapshots")
 
 
+def test_volume_guard_blocks_collapsed_source(tmp_path):
+    """A source collapsing to 30% of its median must abort BEFORE any partition is written —
+    otherwise the append-only history records a fake market crash forever."""
+    import pytest
+
+    from etl.cli import VolumeGuardError, volume_guard
+    from etl.normalize import write_partition
+    for day in ("2026-08-17", "2026-08-18", "2026-08-19"):
+        rows = [{"job_uid": f"greenhouse:c:{day}-{i}", "snapshot_date": day, "source": "greenhouse",
+                 "company": "c", "region": "us", "is_remote": False, "seniority": "senior",
+                 "is_management": False, "salary_min_usd": None, "salary_max_usd": None,
+                 "salary_mid_usd": None, "has_salary": False, "employment_type": None,
+                 "published_at": None} for i in range(100)]
+        write_partition(rows, tmp_path, "snapshots", day)
+
+    assert volume_guard(str(tmp_path), "2026-08-20", {"greenhouse": 95}) == []      # healthy day
+    problems = volume_guard(str(tmp_path), "2026-08-20", {"greenhouse": 30})        # collapsed
+    assert problems and "greenhouse" in problems[0]
+
+    client = httpx.Client(transport=httpx.MockTransport(_handler))
+    seed = [{"source": "lever", "slug": "matchgroup", "name": "matchgroup"}]
+    with pytest.raises(VolumeGuardError):
+        run(client, seed, str(tmp_path), "2026-08-20", pause=0)
+    assert not (tmp_path / "snapshots" / "dt=2026-08-20").exists()   # nothing written
+
+
+def test_volume_guard_silent_until_enough_history(tmp_path):
+    from etl.cli import volume_guard
+    assert volume_guard(str(tmp_path), "2026-08-20", {"greenhouse": 1}) == []
+
+
 def test_rerun_same_day_idempotent(tmp_path):
     client = httpx.Client(transport=httpx.MockTransport(_handler))
     seed = [{"source": "lever", "slug": "matchgroup", "name": "matchgroup"}]
