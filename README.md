@@ -5,6 +5,7 @@
 [![pipeline](https://github.com/midat-fx/tech-salary-radar/actions/workflows/pipeline.yml/badge.svg)](https://github.com/midat-fx/tech-salary-radar/actions/workflows/pipeline.yml)
 [![ci](https://github.com/midat-fx/tech-salary-radar/actions/workflows/ci.yml/badge.svg)](https://github.com/midat-fx/tech-salary-radar/actions/workflows/ci.yml)
 ![jobs tracked](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/midat-fx/tech-salary-radar/main/site/data/badge.json)
+[![skills eval F1](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/midat-fx/tech-salary-radar/main/site/data/eval_badge.json)](.github/workflows/llm-eval.yml)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
