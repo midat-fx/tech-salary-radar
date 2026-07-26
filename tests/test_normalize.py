@@ -89,6 +89,23 @@ def test_mts_passes_role_filter():
     assert passes_role_filter("Member of Technical Staff") is True
 
 
+@pytest.mark.parametrize("title,keep", [
+    # pre-sales with OTE: 151 rows at a $260k median against a $221k IC median -> out
+    ("Senior Solutions Architect (DS/ML/GenAI/LLM)", False),
+    ("Partner Solutions Architect - Service Providers", False),
+    # annotation gig work: $29k median -> out
+    ("Data Annotation Specialist", False),
+    ("Image Labeler", False),
+    # forward-deployed engineers write code; median matches the IC median -> stay
+    ("Forward Deployed Software Engineer", True),
+    ("Forward Deployed Infrastructure Engineer - UK", True),
+    # hardware is genuine engineering and does not skew salary -> stay
+    ("Hardware Engineer, Compute", True),
+])
+def test_tech_ic_boundaries(title, keep):
+    assert passes_role_filter(title) is keep
+
+
 def test_job_uid():
     assert job_uid("ashby", "ramp", "abc") == "ashby:ramp:abc"
 
