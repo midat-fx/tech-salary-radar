@@ -27,7 +27,7 @@ LLM_BATCH_SIZE = 10            # small batch: long English JDs (requirements liv
 LLM_PAUSE_SEC = 8.0
 LLM_DAILY_JOB_LIMIT = 5000     # = 500 calls at batch 10; ceiling is 900 calls/day (free tier)
 LLM_TEXT_TRIM = 4000           # description chars per job (JDs are long; 1500 cut the requirements)
-PROMPT_VERSION = "v1"
+PROMPT_VERSION = "v1"   # v2 attempt reverted: eval rejected it (see journal)
 
 FX_MAX_AGE_DAYS = 3
 TZ = "Asia/Almaty"

@@ -41,10 +41,18 @@ def _write(site_data_dir, name, obj):
 
 
 def _skills_by_uid(con, uids):
-    """{job_uid: set(skills)} for processed jobs; also the set of processed uids."""
-    rows = con.execute(
-        "SELECT job_uid, skill FROM sk WHERE job_uid IN (SELECT unnest(?))", [list(uids)]
-    ).fetchall() if uids else []
+    """{job_uid: set(skills)} for processed jobs; also the set of processed uids.
+
+    Version-aware: when a job carries labels from several prompt versions, only the newest wins,
+    so a prompt upgrade rolls out per job as re-extraction happens instead of mixing generations.
+    """
+    rows = con.execute("""
+        SELECT job_uid, skill FROM (
+            SELECT job_uid, skill, prompt_version,
+                   max(prompt_version) OVER (PARTITION BY job_uid) AS latest
+            FROM sk WHERE job_uid IN (SELECT unnest(?))
+        ) WHERE prompt_version = latest
+    """, [list(uids)]).fetchall() if uids else []
     by, processed = {}, set()
     for uid, skill in rows:
         processed.add(uid)
