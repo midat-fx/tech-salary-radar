@@ -46,6 +46,7 @@ canvas{max-width:100%}
 .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   pointer-events:none;color:var(--tx2);opacity:.55;font-size:14px;letter-spacing:.02em}
 
+.sub-h2{font-size:15px;margin:18px 0 2px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:6px 12px;font-size:13px}
 .chip b{color:var(--tx2);font-weight:400;margin-left:6px}
