@@ -9,6 +9,7 @@ from etl.normalize import (
     passes_role_filter,
     region_of,
     seniority_of,
+    write_partition,
 )
 
 RATES = {"USD": 1.0}
@@ -123,3 +124,16 @@ def test_snapshot_dedup_and_filter():
     assert len(rows) == 1                       # dup collapsed, non-tech filtered
     assert stats["filtered_non_tech"] == 1
     assert rows[0]["seniority"] == "unspecified" and rows[0]["region"] == "us"
+
+
+def test_skills_partition_append_keeps_earlier_run(tmp_path):
+    """A second LLM run of the same day must not drop what the first one labelled."""
+    import duckdb
+    row = lambda uid: {"job_uid": uid, "skill": "Python", "source": "llm",  # noqa: E731
+                       "prompt_version": "v1", "extracted_at": "2026-08-20T00:00:00Z"}
+    write_partition([row("a:c:1")], tmp_path, "skills", "2026-08-20", append=True)
+    write_partition([row("a:c:2")], tmp_path, "skills", "2026-08-20", append=True)
+    uids = duckdb.connect().execute(
+        f"SELECT job_uid FROM read_parquet('{tmp_path}/skills/dt=*/part.parquet') ORDER BY 1"
+    ).fetchall()
+    assert [u[0] for u in uids] == ["a:c:1", "a:c:2"]

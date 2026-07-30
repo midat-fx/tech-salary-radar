@@ -102,7 +102,7 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
         rows = extract_for_jobs(tech, current_uids, priority=priority, stale_uids=stale_uids,
                                 **({"limit": limit} if limit is not None else {}), log=log)
         if rows:
-            write_partition(rows, data_dir, "skills", dt)
+            write_partition(rows, data_dir, "skills", dt, append=True)
         skill_rows = len(rows)
         llm_stats = {f"llm_{k}": v for k, v in LLM_STATS.items()}
 
