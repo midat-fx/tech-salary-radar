@@ -7,7 +7,6 @@ Descriptions are only available during a fetch run, so extraction runs there (no
 import json
 import os
 import re
-from datetime import datetime, timezone
 
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
@@ -19,6 +18,7 @@ from etl.config import (
     LLM_TEXT_TRIM,
     PROMPT_VERSION,
 )
+from etl.clock import SystemClock, SystemSleeper, iso_second
 from etl.skills_catalog import CANONICAL, canonicalize
 
 RESPONSE_SCHEMA = {
@@ -119,7 +119,8 @@ def _neg_date(published):
 
 
 def extract_for_jobs(jobs, processed_uids, limit=LLM_DAILY_JOB_LIMIT, call=_gemini_call,
-                     pause=LLM_PAUSE_SEC, log=print, priority=None, stale_uids=frozenset()):
+                     pause=LLM_PAUSE_SEC, log=print, priority=None, stale_uids=frozenset(),
+                     clock=None, sleeper=None):
     """Extract skills for fetched jobs whose uid is not yet cached.
 
     Order: salary-bearing first, then newest, round-robin across sources (`priority` maps
@@ -127,7 +128,8 @@ def extract_for_jobs(jobs, processed_uids, limit=LLM_DAILY_JOB_LIMIT, call=_gemi
     model processed with no skills -> one NULL row. Jobs the model silently dropped are NOT
     written (a NULL row would poison the append-only cache forever) and stay queued.
     """
-    import time
+    clock = clock or SystemClock()
+    sleeper = sleeper or SystemSleeper()
 
     from etl.normalize import job_uid
     pending, seen = [], set()
@@ -141,7 +143,7 @@ def extract_for_jobs(jobs, processed_uids, limit=LLM_DAILY_JOB_LIMIT, call=_gemi
         pending.append((uid, j))
     STATS["queue_depth"] = len(pending)
     pending = _prioritise(pending, priority or {}, stale_uids)[:limit]
-    now = datetime.now(timezone.utc).isoformat()
+    now = iso_second(clock.now())
     rows, consecutive_failures = [], 0
     for i in range(0, len(pending), LLM_BATCH_SIZE):
         chunk = pending[i:i + LLM_BATCH_SIZE]
@@ -173,7 +175,7 @@ def extract_for_jobs(jobs, processed_uids, limit=LLM_DAILY_JOB_LIMIT, call=_gemi
                 rows.append(_row(uid, None, now))
             STATS["extracted"] += 1
         if pause and i + LLM_BATCH_SIZE < len(pending):
-            time.sleep(pause)
+            sleeper.sleep(pause)
     STATS["companies"] = len({uid.split(":")[1] for uid, _ in pending})
     return rows
 
