@@ -3,12 +3,11 @@
 import argparse
 import json
 from collections import Counter
-from datetime import datetime
 from pathlib import Path
 from statistics import median
-from zoneinfo import ZoneInfo
 
 from etl import aggregate as agg
+from etl.clock import SystemClock
 from etl.config import TZ
 from etl.fetch import iter_jobs, load_seed, make_client
 from etl import salary as salary_mod
@@ -16,8 +15,9 @@ from etl.fx import fetch_rates
 from etl.normalize import normalize_all, write_partition
 
 
-def today_str():
-    return datetime.now(ZoneInfo(TZ)).date().isoformat()
+def today_str(clock=None):
+    """The snapshot partition this run belongs to, in the project's reporting timezone."""
+    return (clock or SystemClock()).today(TZ).isoformat()
 
 
 def existing_job_uids(data_dir, exclude_dt=None):
