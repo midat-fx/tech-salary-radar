@@ -1,15 +1,16 @@
 """DuckDB SQL over parquet -> site/data/*.json + badge.json (PLAN.md §3.5, §3.6, stage 6)."""
 
 import json
-import random
-from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
 
 import duckdb
 
+from etl.clock import SystemClock, age_in_days, iso_second
+from etl.config import FX_MAX_AGE_DAYS
+from etl.rng import bootstrap_rng
+
 BOOTSTRAP_REPLICATES = 1000
-BOOTSTRAP_SEED = 20260719          # fixed: daily aggregate must be reproducible
 
 BOARD_URL = {
     "greenhouse": "https://boards.greenhouse.io/{slug}",
@@ -147,7 +148,7 @@ def _bootstrap_ci(pools, rng, replicates=BOOTSTRAP_REPLICATES):
     return round(lo, 1), round(hi, 1)
 
 
-def skill_premium(con, latest_date):
+def skill_premium(con, latest_date, rng=None):
     """Skill premium stratified by seniority x region on salary-bearing non-mgmt rows (PLAN.md §3.6).
 
     Only LLM-processed jobs take part: a job whose skills were never extracted is NOT evidence of
@@ -173,7 +174,7 @@ def skill_premium(con, latest_date):
         all_skills |= sk
         strata.setdefault((sen, reg), []).append((mid, sk))
 
-    rng = random.Random(BOOTSTRAP_SEED)
+    rng = rng or bootstrap_rng()
     results = []
     for skill in all_skills:
         total_with = 0
@@ -198,7 +199,7 @@ def skill_premium(con, latest_date):
     return results[:10]
 
 
-def _meta(con, data_dir, site_data_dir, latest_date, n_active):
+def _meta(con, data_dir, site_data_dir, latest_date, n_active, now):
     d = Path(data_dir)
     fx = {"date": None, "base": "USD", "source": "er-api", "stale": True,
           "gbp_usd": None, "eur_usd": None}
@@ -206,8 +207,8 @@ def _meta(con, data_dir, site_data_dir, latest_date, n_active):
     if fxp.exists():
         raw = json.loads(fxp.read_text())
         rates = raw.get("rates", {})
-        age = (datetime.now(timezone.utc).date() - datetime.fromisoformat(raw["date"]).date()).days
-        fx.update({"date": raw["date"], "stale": age > 3,
+        age = age_in_days(raw["date"], now)
+        fx.update({"date": raw["date"], "stale": age is None or age > FX_MAX_AGE_DAYS,
                    "gbp_usd": round(1 / rates["GBP"], 4) if rates.get("GBP") else None,
                    "eur_usd": round(1 / rates["EUR"], 4) if rates.get("EUR") else None})
 
@@ -234,7 +235,7 @@ def _meta(con, data_dir, site_data_dir, latest_date, n_active):
         last_run = json.loads(lrp.read_text())
 
     meta = {
-        "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+        "updated_at": iso_second(now),
         "days_collected": int(days), "companies_tracked": int(comp), "sources": src, "fx": fx,
         "salary_note": SALARY_NOTE, "attribution": ATTRIBUTION,
         "skill_premium": skill_premium(con, latest_date),
@@ -253,11 +254,12 @@ def _meta(con, data_dir, site_data_dir, latest_date, n_active):
             "message": f"{n_active:,}".replace(",", " "), "color": "brightgreen"})
 
 
-def aggregate(data_dir, site_data_dir):
+def aggregate(data_dir, site_data_dir, clock=None):
     """Build latest.json, timeseries.json, meta.json, badge.json from the parquet history."""
+    now = (clock or SystemClock()).now()
     con = _con(data_dir)
     latest_date, n_active = _latest(con, site_data_dir)
     _timeseries(con, site_data_dir)
-    _meta(con, data_dir, site_data_dir, latest_date, n_active)
+    _meta(con, data_dir, site_data_dir, latest_date, n_active, now)
     con.close()
     print(f"aggregated: {n_active} active rows @ {latest_date} -> {site_data_dir}/")

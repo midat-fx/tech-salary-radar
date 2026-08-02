@@ -1,8 +1,6 @@
 """Seed-list crawl: iterate companies -> per-ATS clients -> normalized jobs (PLAN.md §3.1, stage 1)."""
 
 import json
-import random
-import time
 from pathlib import Path
 
 import httpx
@@ -14,6 +12,8 @@ from etl.config import (
     SEED_PATH,
     USER_AGENT,
 )
+from etl.clock import SystemSleeper
+from etl.rng import Jitter
 from etl.sources import FETCHERS
 
 
@@ -37,11 +37,15 @@ def load_seed(path=None):
     return seed
 
 
-def iter_jobs(client, seed, pause=FETCH_PAUSE_SEC, log=None):
+def iter_jobs(client, seed, pause=FETCH_PAUSE_SEC, log=None, sleeper=None, rng=None):
     """Walk the seed (one request per board, pause + jitter), yield normalized job dicts.
 
     A dead/empty board contributes nothing; failures are logged and skipped, never fatal.
+    The pause between boards goes through an injected sleeper and a seeded jitter, so a test
+    walks 320 boards without waiting and without a random schedule (ADR 0007).
     """
+    sleeper = sleeper or SystemSleeper()
+    jitter = Jitter(base_seconds=pause, rng=rng)
     consecutive_failures, down = {}, set()
     for i, entry in enumerate(seed):
         source = entry["source"]
@@ -63,4 +67,4 @@ def iter_jobs(client, seed, pause=FETCH_PAUSE_SEC, log=None):
             jobs = []
         yield from jobs
         if pause and i + 1 < len(seed):
-            time.sleep(pause + random.uniform(0.2, 0.4))
+            sleeper.sleep(jitter.next_pause())
