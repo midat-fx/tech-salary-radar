@@ -8,6 +8,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from etl.salary import normalize_salary
+from etl.schema import job_uid, table_for, validate_partition
 
 _EU = re.compile(r"\b(united kingdom|england|scotland|wales|ireland|london|germany|berlin|munich|"
                  r"france|paris|spain|madrid|barcelona|netherlands|amsterdam|poland|warsaw|krakow|"
@@ -64,11 +65,6 @@ _ALLOW_ROLE = re.compile(r"\b(engineer|engineering|developer|programmer|software
                          r"member of technical staff|\bmts\b)\b", re.I)
 _TECH_DEPT = re.compile(r"engineering|data|infrastructure|platform|security|technolog|research|r&d",
                         re.I)
-
-
-def job_uid(source, company, job_id):
-    """Stable dedup key: f'{source}:{company}:{job_id}'."""
-    return f"{source}:{company}:{job_id}"
 
 
 def region_of(location_raw, country=None):
@@ -215,22 +211,32 @@ def backfill_job_rows(jobs, rates, today):
     return by_date
 
 
-def write_partition(rows, data_dir, table, dt, append=False):
-    """Write a daily parquet partition (zstd, sorted by job_uid); overwrites the whole day.
+def write_partition(rows, data_dir, table, dt, append=False, log=None):
+    """Write a daily parquet partition (zstd, sorted by the table's key); overwrites the whole day.
+
+    Every row is checked against the table specification first. A row that
+    cannot be stored is dropped and counted rather than failing the day — one
+    malformed posting out of six thousand must not cost the crawl — while a
+    duplicate key still raises, because that means the pipeline built the day
+    wrong rather than a board sending something odd.
 
     Empty rows -> no file (a columnless parquet is unreadable); a stale file for dt is removed.
     append=True keeps the rows already stored for dt: the skills cache grows across several
     runs of the same day, and each run only extracts what the anti-join left over.
     """
     from pathlib import Path
+    spec = table_for(table)
     out = Path(data_dir) / table / f"dt={dt}" / "part.parquet"
     if append and out.exists():
         rows = pq.read_table(out).to_pylist() + list(rows)
+    rows, rejected = validate_partition(spec, rows)
+    if rejected and log:
+        log(f"{table} {dt}: dropped {len(rejected)} unstorable rows, first: {rejected[0].reason}")
     if not rows:
         if out.exists():
             out.unlink()
         return None
     out.parent.mkdir(parents=True, exist_ok=True)
-    df = pd.DataFrame(rows).sort_values("job_uid").reset_index(drop=True)
+    df = pd.DataFrame(rows).sort_values(list(spec.key)).reset_index(drop=True)
     pq.write_table(pa.Table.from_pandas(df, preserve_index=False), out, compression="zstd")
     return out
