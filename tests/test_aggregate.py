@@ -14,6 +14,19 @@ def _snap(uid, mid, seniority="senior", region="us"):
             "published_at": "2026-08-01T00:00:00+00:00"}
 
 
+def _job(uid):
+    """A full jobs row. The writer now checks every declared column, which is how
+    this fixture was found to be carrying two of twenty-one."""
+    return {"job_uid": uid, "first_seen": DT, "source": "ashby", "company": "c",
+            "title": "Backend Engineer", "location_raw": "Remote", "region": "us",
+            "is_remote": True, "seniority": "senior", "is_management": False,
+            "employment_type": "FullTime", "published_at": "2026-08-01T00:00:00+00:00",
+            "apply_url": None, "currency_original": None, "salary_min_orig": None,
+            "salary_max_orig": None, "salary_interval_orig": "year",
+            "salary_min_usd": None, "salary_max_usd": None, "salary_mid_usd": None,
+            "has_salary": False}
+
+
 def _skill_row(uid, skill):
     return {"job_uid": uid, "skill": skill, "source": "llm",
             "prompt_version": "v1", "extracted_at": "2026-08-20T00:00:00+00:00"}
@@ -36,7 +49,7 @@ def _build(tmp_path, n_unprocessed, unprocessed_mid=500_000):
     for i in range(n_unprocessed):
         uid = f"ashby:c:pending{i}"
         snaps.append(_snap(uid, unprocessed_mid))  # never sent to the LLM
-    jobs = [{"job_uid": s["job_uid"], "first_seen": DT} for s in snaps]
+    jobs = [_job(s["job_uid"]) for s in snaps]
     write_partition(snaps, tmp_path, "snapshots", DT)
     write_partition(jobs, tmp_path, "jobs", DT)
     write_partition(skills, tmp_path, "skills", DT)
@@ -63,7 +76,7 @@ def test_newest_prompt_version_wins(tmp_path):
     upgrade rolls out per job instead of mixing v1 and v2 labels in one metric."""
     snaps = [_snap("ashby:c:1", 200_000)]
     write_partition(snaps, tmp_path, "snapshots", DT)
-    write_partition([{"job_uid": "ashby:c:1", "first_seen": DT}], tmp_path, "jobs", DT)
+    write_partition([_job("ashby:c:1")], tmp_path, "jobs", DT)
     write_partition([
         {"job_uid": "ashby:c:1", "skill": "Python", "source": "llm",
          "prompt_version": "v1", "extracted_at": "2026-08-19T00:00:00+00:00"},
@@ -81,13 +94,13 @@ def test_newest_prompt_version_wins(tmp_path):
 def test_cache_state_splits_current_and_stale(tmp_path):
     from etl.skills import cache_state
     write_partition([
-        {"job_uid": "a", "skill": "Python", "source": "llm",
+        {"job_uid": "ashby:c:a", "skill": "Python", "source": "llm",
          "prompt_version": "v1", "extracted_at": "x"},
-        {"job_uid": "b", "skill": "Go", "source": "llm",
+        {"job_uid": "ashby:c:b", "skill": "Go", "source": "llm",
          "prompt_version": "v2", "extracted_at": "x"},
     ], tmp_path, "skills", DT)
     current, stale = cache_state(str(tmp_path), prompt_version="v2")
-    assert current == {"b"} and stale == {"a"}   # 'a' is re-extractable, 'b' is done
+    assert current == {"ashby:c:b"} and stale == {"ashby:c:a"}   # 'a' is re-extractable
 
 
 def test_premium_carries_bootstrap_ci(tmp_path):
