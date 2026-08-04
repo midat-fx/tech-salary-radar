@@ -1,210 +1,190 @@
-"""Parse and normalize salary to annual gross USD (PLAN.md §5, stage 2).
+"""Per-source pay extraction, on top of :mod:`etl.money`.
 
-Ashby: structured `compensation` components (Salary) or scrapeable summary string.
-Lever: `salaryRange` field. Greenhouse: regex over description text (US pay-transparency, sparse).
+Each board says what it pays in a different place, and only that difference
+lives here — the rules about currencies, periods, plausibility and conversion
+are the same for all three and belong to :mod:`etl.money`.
+
+* **Ashby** sends structured compensation components, sometimes several tiers,
+  occasionally in different currencies; failing that, a scrapeable summary
+  string.
+* **Lever** sends a ``salaryRange`` object straight from a form.
+* **Greenhouse** sends nothing. US pay-transparency law put the range into the
+  description text, so it has to be read out of the ad.
 """
 
-import re
+from __future__ import annotations
 
-from etl.config import (
-    HOURS_PER_YEAR,
-    MONTHS_PER_YEAR,
-    SALARY_MAX_USD,
-    SALARY_MIN_USD,
-    WEEKS_PER_YEAR,
+from etl.money import (
+    Confidence,
+    CurrencyGuess,
+    Interval,
+    PayRange,
+    Verdict,
+    convert_range,
+    find_anchored_range,
+    find_range,
+    from_code,
+    judge_parsed,
+    to_annual,
 )
-from etl.fx import to_usd
+from etl.money.interval import _as_interval
 
-# Run-scoped parser diagnostics, merged into data/cache/last_run.json by cli.run().
-STATS = {"gh_pairs_rejected": 0, "ashby_currency_conflicts": 0, "ratio_guard_dropped": 0}
+__all__ = [
+    "STATS",
+    "normalize_salary",
+    "parse_salary",
+    "reset_stats",
+    "to_annual",
+]
 
-
-def reset_stats():
-    for k in STATS:
-        STATS[k] = 0
-
-
-SYMBOL_CUR = {"$": "USD", "£": "GBP", "€": "EUR"}
-_NUM = r"(\d{1,3}(?:,\d{3})+|\d+(?:[.,]\d+)?)"
-_SEP = r"\s*(?:-|–|—|to|до)\s*"
-# "$150,000 - $180,000", "£85,000 – £100,000", "$150-200K", "€70.000 - €90.000"
-_PAIR = re.compile(rf"([$£€])?\s?{_NUM}\s*([KkMm])?{_SEP}(?:[$£€])?\s?{_NUM}\s*([KkMm])?")
-# "GBP 90,000 - 110,000"
-_PAIR_CODE = re.compile(rf"\b(USD|GBP|EUR)\b\s*{_NUM}\s*([KkMm])?{_SEP}{_NUM}\s*([KkMm])?", re.I)
-_ANCHOR = re.compile(r"(salary|base pay|pay range|compensation|annual|remuneration)", re.I)
-_PER_MONTH = re.compile(r"(per month|/month|pro monat|monthly|в месяц)", re.I)
-ANCHOR_WINDOW = 150
+#: Run-scoped parser diagnostics, merged into ``data/cache/last_run.json``.
+#: One counter per verdict plus the two source-specific oddities worth watching:
+#: a run whose rejects move is a board changing its format.
+STATS: dict[str, int] = {
+    "gh_pairs_rejected": 0,
+    "ashby_currency_conflicts": 0,
+    "ratio_guard_dropped": 0,
+    **{f"pay_{verdict.value.replace('-', '_')}": 0 for verdict in Verdict},
+}
 
 
-def _money_to_num(raw, suffix=None):
-    """'150,000' / '70.000' / '211.4'+'K' -> float."""
-    raw = raw.strip()
-    s = (suffix or "").lower()
-    # European thousands dot: 70.000 (three trailing digits, no suffix) -> 70000
-    if re.fullmatch(r"\d{1,3}\.\d{3}", raw) and not s:
-        val = float(raw.replace(".", ""))
-    else:
-        val = float(raw.replace(",", ""))
-    if s == "k":
-        val *= 1000
-    elif s == "m":
-        val *= 1_000_000
-    return val
+def reset_stats() -> None:
+    for key in STATS:
+        STATS[key] = 0
 
 
-def _pair_from_match(m, code_form=False):
-    """-> (lo, hi, currency). Propagates a K/M suffix from hi onto a bare lo ('$150-200K')."""
-    if code_form:
-        cur, lo_raw, lo_suf, hi_raw, hi_suf = m.group(1).upper(), *m.groups()[1:]
-    else:
-        sym, lo_raw, lo_suf, hi_raw, hi_suf = m.groups()
-        cur = SYMBOL_CUR.get(sym or "$", "USD")
-    if hi_suf and not lo_suf:
-        lo_suf = hi_suf                      # "$150-200K" -> both in thousands
-    return _money_to_num(lo_raw, lo_suf), _money_to_num(hi_raw, hi_suf), cur
+def _bump(name: str) -> None:
+    STATS[name] = STATS.get(name, 0) + 1
 
 
-def _find_pair(text):
-    """First (lo, hi, currency) in text. Code form first — 'GBP 90,000-110,000' has no symbol
-    and would otherwise be swallowed by the generic pattern and mislabelled USD."""
-    m = _PAIR_CODE.search(text or "")
-    if m:
-        return _pair_from_match(m, code_form=True)
-    m = _PAIR.search(text or "")
-    if m:
-        return _pair_from_match(m)
-    return None
+def _parse_summary(text: str | None) -> PayRange | None:
+    """Ashby's human-readable fallback: ``$211.4K - $290.6K``."""
+    return find_range(text, origin="ashby-summary")
 
 
-def _plausible(lo, hi):
-    """Reject bonus/401k/funding noise: both bounds sane and the range not absurdly wide."""
-    if lo is None or hi is None or lo <= 0:
-        return False
-    if not (20_000 <= lo <= SALARY_MAX_USD and 20_000 <= hi <= SALARY_MAX_USD):
-        return False
-    return hi / lo <= 3
-
-
-def _parse_summary(text):
-    """Parse a scrapeable range like '$211.4K - $290.6K' -> {min,max,currency,interval}."""
-    found = _find_pair(text or "")
-    if not found:
-        return None
-    lo, hi, cur = found
-    interval = "month" if _PER_MONTH.search(text or "") else "year"
-    return {"min": lo, "max": hi, "currency": cur, "interval": interval}
-
-
-def _parse_ashby(comp):
-    """Per-tier parse: never mix currencies across tiers (a USD min + a JPY max is not a range)."""
+def _parse_ashby(comp: dict | None) -> PayRange | None:
+    """Per-tier parse. Never mixes currencies: a USD floor with a JPY ceiling is
+    not a range, and averaging the two produces a number with no meaning."""
     if not comp:
         return None
     tiers = []
     for tier in comp.get("compensationTiers") or []:
-        for c in tier.get("components") or []:
-            if c.get("compensationType") != "Salary":
+        for component in tier.get("components") or []:
+            if component.get("compensationType") != "Salary":
                 continue
-            if c.get("minValue") is None and c.get("maxValue") is None:
+            if component.get("minValue") is None and component.get("maxValue") is None:
                 continue
-            tiers.append({"min": c.get("minValue"), "max": c.get("maxValue"),
-                          "currency": (c.get("currencyCode") or "USD").upper(),
-                          "interval": c.get("interval") or "year"})
+            tiers.append(
+                {
+                    "min": component.get("minValue"),
+                    "max": component.get("maxValue"),
+                    "currency": (component.get("currencyCode") or "USD").upper(),
+                    "interval": component.get("interval") or "year",
+                }
+            )
     if not tiers:
         return _parse_summary(comp.get("scrapeableCompensationSalarySummary"))
+
     currencies = {t["currency"] for t in tiers}
     if len(currencies) > 1:
-        STATS["ashby_currency_conflicts"] += 1
-    pick = "USD" if "USD" in currencies else tiers[0]["currency"]
-    same = [t for t in tiers if t["currency"] == pick]
-    mins = [t["min"] for t in same if t["min"] is not None]
-    maxs = [t["max"] for t in same if t["max"] is not None]
-    return {"min": min(mins) if mins else None, "max": max(maxs) if maxs else None,
-            "currency": pick, "interval": same[0]["interval"]}
+        _bump("ashby_currency_conflicts")
+    # USD wins when present because it is the one currency every rate table has;
+    # otherwise the first tier's, which is the one the board listed first.
+    picked = "USD" if "USD" in currencies else tiers[0]["currency"]
+    same = [t for t in tiers if t["currency"] == picked]
+    lows = [t["min"] for t in same if t["min"] is not None]
+    highs = [t["max"] for t in same if t["max"] is not None]
+    return PayRange(
+        min(lows) if lows else None,
+        max(highs) if highs else None,
+        from_code(picked),
+        _as_interval(same[0]["interval"]),
+        "ashby-structured",
+    )
 
 
-def _parse_greenhouse(text):
-    """Anchored pair search: a range must sit next to salary wording, not be the first two $ in the ad.
-
-    Guards against '$2,000 401k match', '$1,000,000 OTE' and '$100,000,000 raised' being read as pay.
-    """
-    text = text or ""
-    for anchor in _ANCHOR.finditer(text):
-        window = text[max(0, anchor.start() - ANCHOR_WINDOW): anchor.end() + ANCHOR_WINDOW]
-        found = _find_pair(window)
-        if not found:
-            continue
-        lo, hi, cur = found
-        if lo > hi:
-            lo, hi = hi, lo
-        interval = "month" if _PER_MONTH.search(window) else "year"
-        # judge plausibility on the annualised figures: a monthly EUR 5,000-6,000 band is valid
-        if not _plausible(to_annual(lo, interval), to_annual(hi, interval)):
-            STATS["gh_pairs_rejected"] += 1
-            continue
-        return {"min": lo, "max": hi, "currency": cur, "interval": interval}
-    return None
-
-
-def parse_salary(job):
-    """Extract {min, max, currency, interval} from a normalized job by its source, or None."""
-    src = job.get("source")
-    if src == "ashby":
-        return _parse_ashby(job.get("raw_compensation"))
-    if src == "lever":
-        sr = job.get("raw_compensation")
-        if sr and (sr.get("min") or sr.get("max")):
-            return {"min": sr.get("min"), "max": sr.get("max"),
-                    "currency": sr.get("currency") or "USD", "interval": sr.get("interval") or "year"}
+def _parse_lever(raw: dict | None) -> PayRange | None:
+    """Lever's form-filled range. The bounds arrive in whatever order they were typed."""
+    if not raw or not (raw.get("min") or raw.get("max")):
         return None
-    if src == "greenhouse":
-        return _parse_greenhouse(job.get("description"))
-    return None
+    return PayRange(
+        raw.get("min"),
+        raw.get("max"),
+        from_code(raw.get("currency") or "USD"),
+        _as_interval(raw.get("interval") or "year"),
+        "lever-field",
+    )
 
 
-def to_annual(amount, interval):
-    """Scale an amount to annual: hour x2080, week x52, month x12, day x260, year x1."""
-    if amount is None:
-        return None
-    s = (interval or "year").lower()
-    if "hour" in s:
-        return amount * HOURS_PER_YEAR
-    if "week" in s:
-        return amount * WEEKS_PER_YEAR
-    if "month" in s:
-        return amount * MONTHS_PER_YEAR
-    if "day" in s:
-        return amount * 260
-    return amount
+def _accept(candidate: PayRange) -> bool:
+    """Plausibility as a search predicate, so an implausible match at one anchor
+    does not hide the real range at the next one."""
+    if judge_parsed(candidate).accepted:
+        return True
+    _bump("gh_pairs_rejected")
+    return False
 
 
-def normalize_salary(job, rates):
-    """parse -> annual -> USD -> mid (COALESCE) -> sanity bounds (PLAN.md §5).
+def _parse_greenhouse(text: str | None) -> PayRange | None:
+    """Anchored search over the ad, skipping bands that cannot be pay.
 
-    Returns dict: salary_min_usd, salary_max_usd, salary_mid_usd, has_salary, dropped_oob,
-    plus original currency/min/max/interval for the jobs table.
+    Rejections are counted: a jump in that count is a board changing its
+    wording, not the market changing what it pays.
     """
-    blank = {"salary_min_usd": None, "salary_max_usd": None, "salary_mid_usd": None,
-             "has_salary": False, "dropped_oob": False, "currency_original": None,
-             "salary_min_orig": None, "salary_max_orig": None, "salary_interval_orig": None}
-    s = parse_salary(job)
-    if not s:
-        return blank
-    currency, interval = s.get("currency") or "USD", s.get("interval") or "year"
-    lo = to_usd(to_annual(s.get("min"), interval), currency, rates)
-    hi = to_usd(to_annual(s.get("max"), interval), currency, rates)
-    if lo is not None and hi is not None:
-        mid = (lo + hi) / 2
-    else:
-        mid = lo if lo is not None else hi
-    orig = {"currency_original": currency, "salary_min_orig": s.get("min"),
-            "salary_max_orig": s.get("max"), "salary_interval_orig": interval}
-    if mid is None:
-        return {**blank, **orig}
-    # canary for mixed-currency / mis-parsed ranges that survived everything above
-    if lo and hi and hi / lo > 20:
-        STATS["ratio_guard_dropped"] += 1
-        return {**blank, **orig, "dropped_oob": True}
-    if mid < SALARY_MIN_USD or mid > SALARY_MAX_USD:
-        return {**blank, **orig, "dropped_oob": True}
-    return {"salary_min_usd": lo, "salary_max_usd": hi, "salary_mid_usd": mid,
-            "has_salary": True, "dropped_oob": False, **orig}
+    return find_anchored_range(text, accept=_accept)
+
+
+_PARSERS = {
+    "ashby": lambda job: _parse_ashby(job.get("raw_compensation")),
+    "lever": lambda job: _parse_lever(job.get("raw_compensation")),
+    "greenhouse": lambda job: _parse_greenhouse(job.get("description")),
+}
+
+
+def parse_salary(job) -> dict | None:
+    """The posted range for a job, in the board's own currency and period.
+
+    Returns the legacy dict shape (``min``/``max``/``currency``/``interval``) so
+    the existing callers and their tests keep working; :func:`parsed_range`
+    gives the same thing as a :class:`~etl.money.PayRange`.
+    """
+    found = parsed_range(job)
+    if found is None:
+        return None
+    return {
+        "min": found.low,
+        "max": found.high,
+        "currency": found.currency.code,
+        "interval": found.interval.value,
+    }
+
+
+def parsed_range(job) -> PayRange | None:
+    """The posted range as a value object, with its origin and currency confidence."""
+    parser = _PARSERS.get(job.get("source"))
+    return parser(job) if parser else None
+
+
+def normalize_salary(job, rates) -> dict:
+    """Parse, annualise, convert and judge — the stored salary columns for one job.
+
+    Every refusal is counted by its reason. The old code counted two of them and
+    lumped everything else into a single out-of-bounds flag, which made a board
+    changing its format look exactly like the market moving.
+    """
+    parsed = parsed_range(job)
+    result = convert_range(parsed, rates)
+    verdict = result.judgement.verdict
+    _bump(f"pay_{verdict.value.replace('-', '_')}")
+    if verdict is Verdict.IMPLAUSIBLE_SPREAD:
+        _bump("ratio_guard_dropped")
+    return result.to_row()
+
+
+def blank_salary() -> dict:
+    """The columns a job with no posted pay contributes."""
+    return convert_range(None, {}).to_row()
+
+
+# Re-exported for callers that only need the vocabulary.
+__all__ += ["Confidence", "CurrencyGuess", "Interval", "PayRange", "Verdict", "parsed_range"]
