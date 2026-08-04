@@ -1,6 +1,6 @@
 """Salary parsing/normalization to annual gross USD (PLAN.md §5, stage 2)."""
 
-from etl.salary import _parse_summary, normalize_salary, parse_salary, to_annual
+from etl.salary import normalize_salary, parse_salary, to_annual
 
 RATES = {"USD": 1.0, "GBP": 0.8, "EUR": 0.9}  # units per 1 USD
 
@@ -60,10 +60,16 @@ def _gh(text):
     return parse_salary({"source": "greenhouse", "description": text})
 
 
+def _summary(text):
+    """Ashby's scrapeable fallback: a compensation field, so no anchoring needed."""
+    return parse_salary({"source": "ashby", "raw_compensation": {
+        "scrapeableCompensationSalarySummary": text}})
+
+
 def test_pair_understands_commas_and_suffix_propagation():
-    assert _parse_summary("$150,000 - $180,000") == {
+    assert _summary("$150,000 - $180,000") == {
         "min": 150000.0, "max": 180000.0, "currency": "USD", "interval": "year"}
-    s = _parse_summary("$150-200K")           # bare lo inherits hi's K
+    s = _summary("$150-200K")                 # bare lo inherits hi's K
     assert s["min"] == 150000.0 and s["max"] == 200000.0
 
 
