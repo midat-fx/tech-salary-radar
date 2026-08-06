@@ -4,9 +4,13 @@ from pathlib import Path
 
 import httpx
 
-from etl.sources import fetch_ashby, fetch_greenhouse, fetch_lever
+from etl.sources import ashby, greenhouse, lever
 
-FIX = Path(__file__).parent / "fixtures"
+fetch_greenhouse = greenhouse.fetch
+fetch_lever = lever.fetch
+fetch_ashby = ashby.fetch
+
+FIX = Path(__file__).parent.parent / "fixtures"
 GREENHOUSE = FIX.joinpath("greenhouse.json").read_text()
 LEVER = FIX.joinpath("lever.json").read_text()
 ASHBY = FIX.joinpath("ashby.json").read_text()
