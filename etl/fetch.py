@@ -1,40 +1,14 @@
 """Seed-list crawl: iterate companies -> per-ATS clients -> normalized jobs (PLAN.md §3.1, stage 1)."""
 
-import json
-from pathlib import Path
-
-import httpx
-
-from etl.config import (
-    FETCH_CIRCUIT_BREAK,
-    FETCH_PAUSE_SEC,
-    HTTP_TIMEOUT,
-    SEED_PATH,
-    USER_AGENT,
-)
+from etl.config import FETCH_CIRCUIT_BREAK, FETCH_PAUSE_SEC
 from etl.clock import SystemSleeper
 from etl.rng import Jitter
-from etl.sources import FETCHERS
+from etl.sources import FETCHERS, build_client, load_seed
 
 
 def make_client(base_url=None):
     """Build an httpx.Client with the config User-Agent and HTTP_TIMEOUT."""
-    kwargs = {"headers": {"User-Agent": USER_AGENT}, "timeout": HTTP_TIMEOUT,
-              "follow_redirects": True}
-    if base_url:
-        kwargs["base_url"] = base_url
-    return httpx.Client(**kwargs)
-
-
-def load_seed(path=None):
-    """Load the seed file -> list of active {source|ats, slug, name} entries only."""
-    raw = json.loads(Path(path or SEED_PATH).read_text())
-    seed = []
-    for e in raw:
-        if e.get("status") == "active":
-            seed.append({"source": e.get("ats") or e.get("source"),
-                         "slug": e["slug"], "name": e.get("name", e["slug"])})
-    return seed
+    return build_client(base_url)
 
 
 def iter_jobs(client, seed, pause=FETCH_PAUSE_SEC, log=None, sleeper=None, rng=None):
@@ -68,3 +42,6 @@ def iter_jobs(client, seed, pause=FETCH_PAUSE_SEC, log=None, sleeper=None, rng=N
         yield from jobs
         if pause and i + 1 < len(seed):
             sleeper.sleep(jitter.next_pause())
+
+
+__all__ = ["iter_jobs", "load_seed", "make_client"]
