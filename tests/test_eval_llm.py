@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 from etl.config import LLM_BATCH_SIZE
-from etl.skills import extract_llm
+from etl.skills import extract_batch as extract_llm
 
 EVAL = Path(__file__).parents[1] / "data" / "eval" / "skills_eval.jsonl"
 BADGE = Path(__file__).parents[1] / "site" / "data" / "eval_badge.json"
