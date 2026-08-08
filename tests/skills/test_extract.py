@@ -1,7 +1,12 @@
-"""LLM response parsing / canonicalization (PLAN.md §6). Real Gemini not called here."""
+"""Extraction: what gets labelled, what is deliberately not stored, and why.
 
-from etl.skills import extract_for_jobs, extract_llm
-from etl.skills_catalog import canonicalize
+The real model is never called. extract_for_jobs now returns (rows, stats)
+rather than writing into a module-level dict, so two runs in one process cannot
+read each other's counters."""
+
+from etl.skills import extract_batch as extract_llm
+from etl.skills import extract_for_jobs
+from etl.skills.catalog import canonicalize
 
 
 def test_canonicalize_exact_only():
@@ -30,13 +35,16 @@ def test_extract_for_jobs_rows_and_cache_skip():
         # id 0 -> skills, id 1 -> none
         return {"items": [{"id": 0, "skills": ["Python", "Kubernetes"]}, {"id": 1, "skills": []}]}
 
-    rows = extract_for_jobs(jobs, processed_uids=set(), call=fake_call, pause=0)
+    rows, _ = extract_for_jobs(jobs, processed_uids=set(), call=fake_call, pause=0)
     uids = {r["job_uid"] for r in rows}
     assert "ashby:c:1" in uids and "ashby:c:2" in uids
     # job 2 processed but no skills -> exactly one NULL row
     assert [r["skill"] for r in rows if r["job_uid"] == "ashby:c:2"] == [None]
     # already-processed jobs are skipped
-    assert extract_for_jobs(jobs, processed_uids={"ashby:c:1", "ashby:c:2"}, call=fake_call, pause=0) == []
+    again, stats = extract_for_jobs(jobs, processed_uids={"ashby:c:1", "ashby:c:2"},
+                                   call=fake_call, pause=0)
+    assert again == []
+    assert stats.queue_depth == 0
 
 
 def _job(source, jid, desc="We use Python."):
@@ -56,7 +64,7 @@ def test_salary_bearing_jobs_are_labelled_first():
         sent.extend(payload)
         return {"items": [{"id": p["id"], "skills": ["Python"]} for p in payload]}
 
-    rows = extract_for_jobs(jobs, processed_uids=set(), limit=2, call=fake_call, pause=0,
+    rows, _ = extract_for_jobs(jobs, processed_uids=set(), limit=2, call=fake_call, pause=0,
                             priority=priority)
     labelled = {r["job_uid"] for r in rows}
     assert labelled == {"ashby:c:sal_new", "ashby:c:sal_old"}   # the salary-less job waits
@@ -69,7 +77,7 @@ def test_sources_are_interleaved():
     def fake_call(payload):
         return {"items": [{"id": p["id"], "skills": []} for p in payload]}
 
-    rows = extract_for_jobs(jobs, processed_uids=set(), limit=2, call=fake_call, pause=0)
+    rows, _ = extract_for_jobs(jobs, processed_uids=set(), limit=2, call=fake_call, pause=0)
     sources = {r["job_uid"].split(":")[0] for r in rows}
     assert sources == {"ashby", "greenhouse"}    # not two ashby jobs
 
@@ -81,7 +89,7 @@ def test_missing_id_is_not_cached_as_null():
     def fake_call(payload):
         return {"items": [{"id": 0, "skills": ["Python"]}]}      # id 1 omitted
 
-    rows = extract_for_jobs(jobs, processed_uids=set(), call=fake_call, pause=0)
+    rows, _ = extract_for_jobs(jobs, processed_uids=set(), call=fake_call, pause=0)
     assert {r["job_uid"] for r in rows} == {"ashby:c:1"}
 
 
@@ -91,4 +99,8 @@ def test_empty_description_is_not_sent():
     def fake_call(payload):
         raise AssertionError("must not be called")
 
-    assert extract_for_jobs(jobs, processed_uids=set(), call=fake_call, pause=0) == []
+    rows, stats = extract_for_jobs(jobs, processed_uids=set(), call=fake_call, pause=0)
+    assert rows == []
+    # not merely skipped: never queued, so it does not look like a job the
+    # budget failed to reach
+    assert stats.queue_depth == 0

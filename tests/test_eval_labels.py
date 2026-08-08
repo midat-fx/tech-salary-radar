@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from etl.skills_catalog import SKILLS
+from etl.skills.catalog import SKILLS
 
 EVAL = Path(__file__).parents[1] / "data" / "eval" / "skills_eval.jsonl"
 

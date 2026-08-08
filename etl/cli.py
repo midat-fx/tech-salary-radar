@@ -90,21 +90,18 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
     llm_stats = {}
     if not skip_llm:
         from etl.normalize import passes_role_filter
-        from etl.skills import STATS as LLM_STATS
-        from etl.skills import cache_state, extract_for_jobs
-        from etl.skills import reset_stats as reset_llm_stats
-        reset_llm_stats()
+        from etl.skills import extract_for_jobs, read_cache_state
         # the flagship metric can only use salary-bearing jobs -> label those first
         priority = {r["job_uid"]: (bool(r["has_salary"]), str(r["published_at"] or "")) for r in snap}
         tech = [j for j in jobs if passes_role_filter(j.get("title"), j.get("department"))]
-        limit = llm_limit if llm_limit is not None else None
-        current_uids, stale_uids = cache_state(data_dir)
-        rows = extract_for_jobs(tech, current_uids, priority=priority, stale_uids=stale_uids,
-                                **({"limit": limit} if limit is not None else {}), log=log)
+        cache = read_cache_state(data_dir)
+        rows, llm = extract_for_jobs(
+            tech, cache.current, priority=priority, stale_uids=cache.stale, log=log,
+            **({"limit": llm_limit} if llm_limit is not None else {}))
         if rows:
-            write_partition(rows, data_dir, "skills", dt, append=True)
+            write_partition(rows, data_dir, "skills", dt, append=True, log=log)
         skill_rows = len(rows)
-        llm_stats = {f"llm_{k}": v for k, v in LLM_STATS.items()}
+        llm_stats = {f"llm_{k}": v for k, v in llm.as_dict().items()}
 
     summary = {"boards": len(seed), "raw_jobs": len(jobs), "snapshot_rows": len(snap),
                "new_rows": len(new), "with_salary": sum(1 for r in snap if r["has_salary"]),
