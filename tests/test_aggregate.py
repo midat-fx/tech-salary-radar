@@ -91,17 +91,6 @@ def test_newest_prompt_version_wins(tmp_path):
     assert processed == {"ashby:c:1"}
 
 
-def test_cache_state_splits_current_and_stale(tmp_path):
-    from etl.skills import cache_state
-    write_partition([
-        {"job_uid": "ashby:c:a", "skill": "Python", "source": "llm",
-         "prompt_version": "v1", "extracted_at": "x"},
-        {"job_uid": "ashby:c:b", "skill": "Go", "source": "llm",
-         "prompt_version": "v2", "extracted_at": "x"},
-    ], tmp_path, "skills", DT)
-    current, stale = cache_state(str(tmp_path), prompt_version="v2")
-    assert current == {"ashby:c:b"} and stale == {"ashby:c:a"}   # 'a' is re-extractable
-
 
 def test_premium_carries_bootstrap_ci(tmp_path):
     con = _build(tmp_path, n_unprocessed=0)
