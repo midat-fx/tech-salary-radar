@@ -84,11 +84,11 @@ def test_newest_prompt_version_wins(tmp_path):
          "prompt_version": "v2", "extracted_at": "2026-08-20T00:00:00+00:00"},
     ], tmp_path, "skills", DT)
     con = _con(str(tmp_path))
-    from etl.aggregate import _skills_by_uid
-    by, processed = _skills_by_uid(con, ["ashby:c:1"])
+    from etl.aggregate import labels_for
+    index = labels_for(con, ["ashby:c:1"])
     con.close()
-    assert by["ashby:c:1"] == {"Go"}          # v1's Python is superseded, not merged
-    assert processed == {"ashby:c:1"}
+    assert index.skills("ashby:c:1") == {"Go"}   # v1's Python is superseded, not merged
+    assert index.was_read("ashby:c:1")
 
 
 
