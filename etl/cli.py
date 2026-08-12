@@ -4,11 +4,13 @@ import argparse
 import json
 from collections import Counter
 from pathlib import Path
-from statistics import median
 
 from etl import aggregate as agg
 from etl.clock import SystemClock
 from etl.config import TZ
+from etl.dedupe import deduplicate
+from etl.guards import check_plausibility, check_volume
+from etl.report import collect
 from etl.fetch import iter_jobs, load_seed, make_client
 from etl import salary as salary_mod
 from etl.fx import fetch_rates
@@ -33,61 +35,40 @@ def existing_job_uids(data_dir, exclude_dt=None):
 
 
 class VolumeGuardError(RuntimeError):
-    """A source collapsed vs its recent history — refuse to write a poisoned day."""
+    """A source collapsed against its recent history — refuse to write a poisoned day.
 
-
-MIN_HISTORY_DAYS = 3
-SOURCE_FLOOR = 0.5      # a source must keep >=50% of its 7-day median
-TOTAL_FLOOR = 0.6       # ...and the day must keep >=60% of the expected total
-
-
-def volume_guard(data_dir, dt, by_source):
-    """Compare today's per-source row counts with the 7-day medians; return a list of problems.
-
-    A full Greenhouse outage (66% of the dataset) would otherwise be committed as a real market
-    crash into the append-only history, and timeseries would never recover from it.
+    Still an exception rather than a return value: the caller is a cron job, and
+    a non-zero exit is the only thing a cron job reliably notices.
     """
-    root = Path(data_dir) / "snapshots"
-    parts = [p for p in root.glob("dt=*/part.parquet") if p.parent.name != f"dt={dt}"]
-    if len(parts) < MIN_HISTORY_DAYS:
-        return []                     # not enough history to judge; don't block the launch week
-    import duckdb
-    files = ",".join(f"'{p}'" for p in parts)
-    rows = duckdb.sql(f"SELECT source, snapshot_date, count(*) FROM read_parquet([{files}]) "
-                      "GROUP BY 1,2 ORDER BY 2 DESC").fetchall()
-    hist = {}
-    for src, _d, n in rows:
-        hist.setdefault(src, []).append(n)
-    problems, expected_total = [], 0
-    for src, counts in hist.items():
-        med = median(counts[:7])
-        expected_total += med
-        got = by_source.get(src, 0)
-        if got < SOURCE_FLOOR * med:
-            problems.append(f"{src}: {got} rows vs 7-day median {med:.0f}")
-    got_total = sum(by_source.values())
-    if expected_total and got_total < TOTAL_FLOOR * expected_total:
-        problems.append(f"total: {got_total} rows vs expected ~{expected_total:.0f}")
-    return problems
 
 
 def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_limit=None):
-    """Testable core: fetch -> fx -> normalize -> write partitions (+ optional skills). Returns summary."""
+    """Testable core: fetch -> fx -> normalize -> dedupe -> guards -> write. Returns a summary."""
     salary_mod.reset_stats()
     kwargs = {"log": log} if pause is None else {"log": log, "pause": pause}
     jobs = list(iter_jobs(client, seed, **kwargs))
     rates = fetch_rates(client, data_dir)
     result = normalize_all(jobs, rates, dt, existing_job_uids(data_dir, exclude_dt=dt))
     snap, new, stats = result["snapshot_rows"], result["new_rows"], result["stats"]
+
+    # One job on two boards is one job: see ADR 0009. Done before the guards so
+    # the volume comparison is like for like across days.
+    snap, dedupe_report = deduplicate(snap)
+    kept = {row["job_uid"] for row in snap}
+    new = [row for row in new if row["job_uid"] in kept]
+
     by_source = dict(Counter(r["source"] for r in snap))
-    problems = volume_guard(data_dir, dt, by_source)
-    if problems:
-        raise VolumeGuardError("; ".join(problems))
-    write_partition(snap, data_dir, "snapshots", dt)
-    write_partition(new, data_dir, "jobs", dt)
+    verdict = check_volume(data_dir, dt, by_source)
+    verdict.merge(check_plausibility(snap))
+    if not verdict.ok:
+        raise VolumeGuardError("; ".join(str(f) for f in verdict.refusals))
+    for warning in verdict.warnings:
+        log(str(warning))
+    write_partition(snap, data_dir, "snapshots", dt, log=log)
+    write_partition(new, data_dir, "jobs", dt, log=log)
 
     skill_rows = 0
-    llm_stats = {}
+    llm_stats, llm_stats_obj = {}, None
     if not skip_llm:
         from etl.normalize import passes_role_filter
         from etl.skills import extract_for_jobs, read_cache_state
@@ -101,12 +82,27 @@ def run(client, seed, data_dir, dt, pause=None, log=print, skip_llm=True, llm_li
         if rows:
             write_partition(rows, data_dir, "skills", dt, append=True, log=log)
         skill_rows = len(rows)
+        llm_stats_obj = llm
         llm_stats = {f"llm_{k}": v for k, v in llm.as_dict().items()}
 
+    report = collect(
+        day=dt,
+        seed_size=len(seed),
+        raw_jobs=len(jobs),
+        snapshot_rows=len(snap),
+        new_rows=len(new),
+        with_salary=sum(1 for r in snap if r["has_salary"]),
+        filtered_non_tech=stats.get("filtered_non_tech", 0),
+        skill_rows=skill_rows,
+        dedupe=dedupe_report,
+        guards=verdict,
+        pay_stats=dict(salary_mod.STATS),
+        llm_stats=llm_stats_obj,
+    )
     summary = {"boards": len(seed), "raw_jobs": len(jobs), "snapshot_rows": len(snap),
                "new_rows": len(new), "with_salary": sum(1 for r in snap if r["has_salary"]),
-               "skill_rows": skill_rows, "by_source": by_source,
-               **stats, **dict(salary_mod.STATS), **llm_stats}
+               "skill_rows": skill_rows, "by_source": by_source, "report": report,
+               "dedupe": dedupe_report, **stats, **dict(salary_mod.STATS), **llm_stats}
     cache = Path(data_dir) / "cache"
     cache.mkdir(parents=True, exist_ok=True)
     (cache / "last_run.json").write_text(json.dumps(
@@ -124,13 +120,8 @@ def cmd_run(args):
     except VolumeGuardError as e:
         print(f"VOLUME GUARD: refusing to write {dt} — {e}", file=sys.stderr)
         sys.exit(2)
-    print(f"\n=== run {dt} ===")
-    print(f"boards: {s['boards']} | raw jobs fetched: {s['raw_jobs']}")
-    print(f"snapshot rows: {s['snapshot_rows']} by source {s['by_source']}")
-    print(f"with salary: {s['with_salary']} | new job_uids: {s['new_rows']}")
-    print(f"filtered non-tech: {s['filtered_non_tech']} | dropped OOB salary: {s['dropped_oob']}")
-    if not args.skip_llm:
-        print("(skills extraction: stage 5 — run with GEMINI_API_KEY)")
+    print()
+    print(s["report"].text())
 
 
 def cmd_backfill(args):

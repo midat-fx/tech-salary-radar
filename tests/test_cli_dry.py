@@ -53,7 +53,8 @@ def test_volume_guard_blocks_collapsed_source(tmp_path):
     otherwise the append-only history records a fake market crash forever."""
     import pytest
 
-    from etl.cli import VolumeGuardError, volume_guard
+    from etl.cli import VolumeGuardError
+    from etl.guards import check_volume
     from etl.normalize import write_partition
     for day in ("2026-08-17", "2026-08-18", "2026-08-19"):
         rows = [{"job_uid": f"greenhouse:c:{day}-{i}", "snapshot_date": day, "source": "greenhouse",
@@ -63,9 +64,9 @@ def test_volume_guard_blocks_collapsed_source(tmp_path):
                  "published_at": None} for i in range(100)]
         write_partition(rows, tmp_path, "snapshots", day)
 
-    assert volume_guard(str(tmp_path), "2026-08-20", {"greenhouse": 95}) == []      # healthy day
-    problems = volume_guard(str(tmp_path), "2026-08-20", {"greenhouse": 30})        # collapsed
-    assert problems and "greenhouse" in problems[0]
+    assert check_volume(str(tmp_path), "2026-08-20", {"greenhouse": 95}).ok        # healthy day
+    verdict = check_volume(str(tmp_path), "2026-08-20", {"greenhouse": 30})       # collapsed
+    assert not verdict.ok and "greenhouse" in verdict.refusals[0].detail
 
     client = httpx.Client(transport=httpx.MockTransport(_handler))
     seed = [{"source": "lever", "slug": "matchgroup", "name": "matchgroup"}]
@@ -75,8 +76,9 @@ def test_volume_guard_blocks_collapsed_source(tmp_path):
 
 
 def test_volume_guard_silent_until_enough_history(tmp_path):
-    from etl.cli import volume_guard
-    assert volume_guard(str(tmp_path), "2026-08-20", {"greenhouse": 1}) == []
+    # The launch week must not be blocked by a guard with nothing to compare to.
+    from etl.guards import check_volume
+    assert check_volume(str(tmp_path), "2026-08-20", {"greenhouse": 1}).ok
 
 
 def test_rerun_same_day_idempotent(tmp_path):
