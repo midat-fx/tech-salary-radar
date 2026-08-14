@@ -1,54 +1,13 @@
 """Turn normalized jobs into snapshot / new-job rows and write daily parquet partitions (stage 2)."""
 
-import re
 from datetime import datetime
 
-import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
-
 from etl.geo import read_remote, region_of
+from etl.publish.parquet import write_partition
+from etl.roles import passes_role_filter
 from etl.salary import normalize_salary
-from etl.schema import job_uid, table_for, validate_partition
+from etl.schema import job_uid
 from etl.seniority import is_management, seniority_of
-
-# hard deny wins over an allow-signal (eng-adjacent-but-not-dev, PM, design, GTM)
-_HARD_DENY = re.compile(r"\b(product manager|program manager|product owner|technical program|"
-                        r"designer|ux designer|ui designer|product designer|graphic designer|"
-                        r"design lead|sales engineer|solutions engineer|solutions consultant|"
-                        r"solutions architect|sales development|account executive|account manager|"
-                        r"partnerships|go[- ]to[- ]market|\bgtm\b|"
-                        # data-annotation gig work: median ~$29k against a ~$221k IC median
-                        r"labeler|labelling|annotator|data annotation)\b", re.I)
-# soft deny only applies when the title carries NO allow (tech) signal
-_SOFT_DENY = re.compile(r"\b(sales|recruit|talent|\bhr\b|people ops|human resources|legal|counsel|"
-                        r"finance|accounting|marketing|content|community|customer success|"
-                        r"customer support|\bsupport\b|\boffice\b|coordinator|facilities|"
-                        r"executive assistant|administrative|receptionist)\b", re.I)
-_ALLOW_ROLE = re.compile(r"\b(engineer|engineering|developer|programmer|software|backend|back[- ]end|"
-                         r"front[- ]?end|full[- ]?stack|sde|mobile|android|ios|data|machine learning|"
-                         r"\bml\b|\bai\b|mlops|devops|sre|site reliability|platform|infrastructure|"
-                         r"cloud|\bqa\b|quality assurance|sdet|test engineer|security|infosec|"
-                         r"applied scientist|research engineer|research scientist|analytics|"
-                         r"member of technical staff|\bmts\b)\b", re.I)
-_TECH_DEPT = re.compile(r"engineering|data|infrastructure|platform|security|technolog|research|r&d",
-                        re.I)
-
-
-def passes_role_filter(title, department=None):
-    """Keep only tech-IC roles. hard-deny (PM/design/sales-eng) wins; else an allow (tech) signal
-    wins over soft-deny (non-tech words); else a tech department keeps it (PLAN.md §3.7)."""
-    t = title or ""
-    if _HARD_DENY.search(t):
-        return False
-    if _ALLOW_ROLE.search(t):
-        return True
-    if _SOFT_DENY.search(t):
-        return False
-    if department and _TECH_DEPT.search(department):
-        return True
-    return False
-
 
 def normalize_job(job, rates, snapshot_date):
     """Full normalized record for one job (role-filter already passed)."""
@@ -130,36 +89,6 @@ def backfill_job_rows(jobs, rates, today):
         by_date.setdefault(fs, []).append(row)
     return by_date
 
-
-def write_partition(rows, data_dir, table, dt, append=False, log=None):
-    """Write a daily parquet partition (zstd, sorted by the table's key); overwrites the whole day.
-
-    Every row is checked against the table specification first. A row that
-    cannot be stored is dropped and counted rather than failing the day — one
-    malformed posting out of six thousand must not cost the crawl — while a
-    duplicate key still raises, because that means the pipeline built the day
-    wrong rather than a board sending something odd.
-
-    Empty rows -> no file (a columnless parquet is unreadable); a stale file for dt is removed.
-    append=True keeps the rows already stored for dt: the skills cache grows across several
-    runs of the same day, and each run only extracts what the anti-join left over.
-    """
-    from pathlib import Path
-    spec = table_for(table)
-    out = Path(data_dir) / table / f"dt={dt}" / "part.parquet"
-    if append and out.exists():
-        rows = pq.read_table(out).to_pylist() + list(rows)
-    rows, rejected = validate_partition(spec, rows)
-    if rejected and log:
-        log(f"{table} {dt}: dropped {len(rejected)} unstorable rows, first: {rejected[0].reason}")
-    if not rows:
-        if out.exists():
-            out.unlink()
-        return None
-    out.parent.mkdir(parents=True, exist_ok=True)
-    df = pd.DataFrame(rows).sort_values(list(spec.key)).reset_index(drop=True)
-    pq.write_table(pa.Table.from_pandas(df, preserve_index=False), out, compression="zstd")
-    return out
 
 
 # Re-exported so callers keep one import for "turn a fetched job into a row".
