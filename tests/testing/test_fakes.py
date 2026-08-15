@@ -74,7 +74,22 @@ class TestBoardClient:
     def test_the_transport_records_what_was_requested(self):
         client, handler = board_client({"acme": RecordedBoard(payload={"jobs": []})})
         greenhouse.fetch(client, "acme", RecordingSleeper())
-        assert "acme" in handler.requests[0]
+        assert "acme" in handler.board_requests[0]
+
+    def test_it_serves_rates_too_because_every_run_fetches_them(self):
+        from etl.fx import fetch_rates
+        from etl.testing import FixedClock
+
+        client, _ = board_client({})
+        assert fetch_rates(client, "/tmp", FixedClock()).get("GBP") == 0.79
+
+    def test_rates_can_be_switched_off_to_drive_the_dead_cascade(self):
+        from etl.fx import FxError, fetch_rates
+        from etl.testing import FixedClock
+
+        client, _ = board_client({}, rates=None)
+        with pytest.raises(FxError):
+            fetch_rates(client, "/tmp/nonexistent-fx-dir", FixedClock())
 
 
 class TestScriptedLabeller:
