@@ -65,6 +65,42 @@ flowchart LR
   duckdb -c "SELECT seniority, median(salary_mid_usd) FROM read_parquet('data/snapshots/*/part.parquet') WHERE has_salary AND NOT is_management GROUP BY 1"
   ```
 
+## Deliberate limits
+
+These are decisions, not gaps. Each one is written up in [`docs/adr/`](docs/adr/)
+with what it costs.
+
+- **No postings without a stated range enter the salary statistics** — and that
+  biases the base towards the United States, where pay-transparency law is why a
+  range is present at all. About one posting in five carries one.
+- **No management roles in the pay figures at all.** Manager, director, VP, head
+  and chief titles are removed rather than bucketed: their pay is a different
+  distribution, and mixing it moves the senior median without any sample
+  changing.
+- **No database.** Parquet in git and DuckDB over it. The history is the commit
+  log, which is what makes a chart reproducible from a commit.
+- **No incremental recomputation.** A day is aggregated whole, every time.
+- **No sources beyond the three ATSs.** Aggregators republish the same postings
+  with different semantics and no way to tell one company's opening from
+  another's copy of it.
+- **No skill detection without an LLM.** A keyword dictionary finds "Python" in
+  "not a Python role" and misses "питон"; the eval set is what keeps the model
+  honest instead.
+- **No historical currency conversion.** Every figure uses the rate on its
+  snapshot day, so a European salary from July and one from August are not
+  strictly comparable.
+- **No deletion from history.** A posting taken down stays in the snapshot of
+  the day it was open.
+- **No retroactive edits to past aggregates.** A day the guards refused is a gap
+  in the series, and the gap is the record.
+- **No personal data.** Recruiter names, contacts and applicant-facing fields
+  are never stored.
+- **No net-of-tax figures.** Everything is gross. A posting that quotes net is
+  read as gross and therefore understates; detecting it would need a
+  jurisdiction and a tax model that a job advert does not contain.
+- **Timezone anchoring is read, not inferred.** "Remote (CET)" is a European pay
+  market and "Remote" alone is unknown; no city is mapped to a zone.
+
 ## Run locally
 
 ```bash
