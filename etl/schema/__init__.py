@@ -25,6 +25,12 @@ from etl.schema.job import (
     job_uid,
     split_uid,
 )
+from etl.schema.migrations import (
+    MARKER_COLUMN,
+    PartitionRead,
+    detect_version,
+    read_partition_versioned,
+)
 from etl.schema.validate import (
     Rejected,
     check_invariants,
@@ -59,7 +65,9 @@ __all__ = [
     "Compatibility",
     "Field",
     "InvariantViolated",
+    "MARKER_COLUMN",
     "MissingColumn",
+    "PartitionRead",
     "RawJob",
     "Rejected",
     "SchemaError",
@@ -72,6 +80,8 @@ __all__ = [
     "coerce_row",
     "compatibility",
     "describe",
+    "detect_version",
+    "read_partition_versioned",
     "fill_missing",
     "is_readable",
     "job_uid",
