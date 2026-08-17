@@ -6,6 +6,11 @@ it forever. So the guards refuse rather than repair — see ADR 0005.
 """
 
 from etl.guards.breaker import BreakerState, CircuitBreaker
+from etl.guards.freshness import (
+    MAX_FX_AGE_DAYS,
+    MAX_NEWEST_POSTING_AGE_DAYS,
+    check_freshness,
+)
 from etl.guards.plausibility import (
     MAX_OTHER_REGION_SHARE,
     MAX_UNSPECIFIED_SHARE,
@@ -24,6 +29,8 @@ from etl.guards.volume import (
 )
 
 __all__ = [
+    "MAX_FX_AGE_DAYS",
+    "MAX_NEWEST_POSTING_AGE_DAYS",
     "MAX_OTHER_REGION_SHARE",
     "MAX_UNSPECIFIED_SHARE",
     "MIN_HISTORY_DAYS",
@@ -36,6 +43,7 @@ __all__ = [
     "Finding",
     "Severity",
     "Verdict",
+    "check_freshness",
     "check_plausibility",
     "check_volume",
     "refuse",

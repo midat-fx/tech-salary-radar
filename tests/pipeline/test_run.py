@@ -93,3 +93,19 @@ class TestEmptyBoards:
         execute(a_context(tmp_path), a_client(), SEED, set())
         outcome = execute(a_context(tmp_path, day="2026-08-20"), a_client(), SEED, set())
         assert "postings fetched" in outcome.text()
+
+
+class TestFreshness:
+    def test_a_stale_rate_table_warns_without_stopping_the_day(self, tmp_path):
+        # Every converted figure rests on it, and the run says so — but a day of
+        # real postings is worth more than a perfectly current rate.
+        ctx = a_context(tmp_path)
+        outcome = execute(ctx, a_client(), SEED, set())
+        assert outcome.verdict.ok
+
+    def test_rows_dated_off_the_partition_stop_the_write(self, tmp_path):
+        from etl.guards import check_freshness
+
+        rows = [{"snapshot_date": "2026-08-18", "published_at": None}]
+        verdict = check_freshness(rows, "2026-08-19", "2026-08-19", FixedClock().now())
+        assert not verdict.ok

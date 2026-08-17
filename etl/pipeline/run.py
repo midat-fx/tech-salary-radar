@@ -13,7 +13,7 @@ from dataclasses import dataclass
 
 from etl.dedupe import DedupeReport, deduplicate
 from etl.fx import fetch_rates
-from etl.guards import Verdict, check_plausibility, check_volume
+from etl.guards import Verdict, check_freshness, check_plausibility, check_volume
 from etl.normalize import normalize_all
 from etl.pipeline.context import RunContext
 from etl.pipeline.stages import by_source
@@ -99,6 +99,7 @@ def execute(ctx: RunContext, client, seed, existing_uids) -> RunOutcome:
 
     verdict = check_volume(ctx.data_dir, ctx.day, by_source(snap))
     verdict.merge(check_plausibility(snap))
+    verdict.merge(check_freshness(snap, ctx.day, rates.day, ctx.clock.now()))
     if not verdict.ok:
         raise GuardRefused(verdict)
     for warning in verdict.warnings:
