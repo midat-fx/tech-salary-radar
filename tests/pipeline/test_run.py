@@ -109,3 +109,21 @@ class TestFreshness:
         rows = [{"snapshot_date": "2026-08-18", "published_at": None}]
         verdict = check_freshness(rows, "2026-08-19", "2026-08-19", FixedClock().now())
         assert not verdict.ok
+
+
+class TestConfigGuard:
+    def test_the_run_checks_its_own_constants_before_fetching(self, tmp_path, monkeypatch):
+        # A constant wrong in relation to another produces a run that finishes
+        # and is quietly wrong.
+        import etl.guards.config as guard
+
+        from etl.guards import Severity, Verdict
+
+        monkeypatch.setattr(
+            guard, "check_config", lambda: Verdict().add("config", Severity.REFUSE, "broken")
+        )
+        monkeypatch.setattr("etl.pipeline.run.check_config", guard.check_config)
+        client, handler = board_client({"acme": RecordedBoard(payload={"jobs": []})})
+        with pytest.raises(GuardRefused, match="broken"):
+            execute(a_context(tmp_path), client, SEED, set())
+        assert handler.board_requests == []

@@ -13,7 +13,13 @@ from dataclasses import dataclass
 
 from etl.dedupe import DedupeReport, deduplicate
 from etl.fx import fetch_rates
-from etl.guards import Verdict, check_freshness, check_plausibility, check_volume
+from etl.guards import (
+    Verdict,
+    check_config,
+    check_freshness,
+    check_plausibility,
+    check_volume,
+)
 from etl.normalize import normalize_all
 from etl.pipeline.context import RunContext
 from etl.pipeline.stages import by_source
@@ -78,6 +84,15 @@ def execute(ctx: RunContext, client, seed, existing_uids) -> RunOutcome:
     from etl.fetch import iter_jobs
 
     salary_mod.reset_stats()
+
+    # Before anything is fetched: a constant that is wrong in relation to
+    # another produces a run that finishes and is quietly wrong, which is the
+    # failure mode the whole guards package exists for.
+    config_verdict = check_config()
+    if not config_verdict.ok:
+        raise GuardRefused(config_verdict)
+    for warning in config_verdict.warnings:
+        ctx.say(str(warning))
 
     jobs = list(
         iter_jobs(
