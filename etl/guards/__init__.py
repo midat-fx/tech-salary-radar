@@ -6,6 +6,7 @@ it forever. So the guards refuse rather than repair — see ADR 0005.
 """
 
 from etl.guards.breaker import BreakerState, CircuitBreaker
+from etl.guards.config import check_config
 from etl.guards.freshness import (
     MAX_FX_AGE_DAYS,
     MAX_NEWEST_POSTING_AGE_DAYS,
@@ -43,6 +44,7 @@ __all__ = [
     "Finding",
     "Severity",
     "Verdict",
+    "check_config",
     "check_freshness",
     "check_plausibility",
     "check_volume",

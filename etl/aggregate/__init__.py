@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 
 from etl.aggregate.bootstrap import MIN_STRATUM, REPLICATES, bootstrap_interval, weighted_premium
+from etl.aggregate.companies import CompanyStats, company_stats, top_companies
 from etl.aggregate.connection import open_dataset
 from etl.aggregate.labels import LabelIndex, labels_for
 from etl.aggregate.meta import (
@@ -40,7 +41,10 @@ __all__ = [
     "REPLICATES",
     "SALARY_NOTE",
     "TOP_N",
+    "CompanyStats",
     "Coverage",
+    "company_stats",
+    "top_companies",
     "DayPoint",
     "FxStatus",
     "LabelIndex",
@@ -68,18 +72,6 @@ _con = open_dataset
 def skill_premium(con, latest_date, rng=None):
     """The published shape of :func:`skill_premiums`."""
     return [row.as_dict() for row in skill_premiums(con, latest_date, rng)]
-
-
-def _top_companies(con, latest_date) -> list[dict]:
-    rows = con.execute(
-        "SELECT company, source, count(*) n FROM snap WHERE snapshot_date=? "
-        "GROUP BY 1,2 ORDER BY n DESC, company LIMIT 10",
-        [latest_date],
-    ).fetchall()
-    return [
-        {"company": company, "n": int(n), "url": BOARD_URL[source].format(slug=company)}
-        for company, source, n in rows
-    ]
 
 
 def _last_run(data_dir) -> dict:
@@ -131,7 +123,7 @@ def aggregate(data_dir, site_data_dir, clock=None):
                 "salary_note": SALARY_NOTE,
                 "attribution": ATTRIBUTION,
                 "skill_premium": skill_premium(con, latest_date),
-                "top_companies": _top_companies(con, latest_date),
+                "top_companies": top_companies(con, latest_date),
                 "coverage": coverage_of(with_salary, processed, total, _last_run(data_dir)).as_dict(),
             },
         )
