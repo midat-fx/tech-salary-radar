@@ -1,0 +1,2 @@
+day	raw_jobs	snapshot_rows	new_rows	with_salary	salary_share	duplicates_removed	skill_rows	llm_missing_ids	guard_verdict
+2026-08-19	16736	6602	115	1805	27.3%	0	352	0	clear
