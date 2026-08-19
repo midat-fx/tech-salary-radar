@@ -24,7 +24,7 @@ from etl.normalize import normalize_all
 from etl.pipeline.context import RunContext
 from etl.pipeline.stages import by_source
 from etl.publish import write_partition
-from etl.report import RunReport, collect
+from etl.report import RunReport, append_run, collect
 from etl.roles import passes_role_filter
 
 __all__ = ["RunOutcome", "GuardRefused", "execute"]
@@ -147,6 +147,7 @@ def execute(ctx: RunContext, client, seed, existing_uids) -> RunOutcome:
     cache = ctx.data_dir / "cache"
     cache.mkdir(parents=True, exist_ok=True)
     (cache / "last_run.json").write_text(json.dumps({"date": ctx.day, **report.as_dict()}))
+    append_run(cache, ctx.day, report.as_dict())
 
     return RunOutcome(
         report=report,
