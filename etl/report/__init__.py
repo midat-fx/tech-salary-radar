@@ -9,16 +9,30 @@ The order of the fields is a contract — see :mod:`etl.report.fields`.
 """
 
 from etl.report.collect import RunReport, collect
+from etl.report.journal import (
+    JOURNAL_FIELDS,
+    JOURNAL_NAME,
+    JournalEntry,
+    append_run,
+    journal_line,
+    read_journal,
+)
 from etl.report.fields import FIELD_ORDER, SECTIONS, Field, field_names, section_of
 from etl.report.render import MISSING, format_value, render, render_line
 
 __all__ = [
     "FIELD_ORDER",
+    "JOURNAL_FIELDS",
+    "JOURNAL_NAME",
+    "JournalEntry",
     "MISSING",
     "SECTIONS",
     "Field",
     "RunReport",
+    "append_run",
     "collect",
+    "journal_line",
+    "read_journal",
     "field_names",
     "format_value",
     "render",
