@@ -1,4 +1,4 @@
-"""Deterministic linter for the eval set — no LLM involved (PLAN improvements 1.8).
+"""Deterministic linter for the eval set — no LLM involved.
 
 The eval gate is only meaningful if its ground truth is real: every `expected` label must be
 literally present in the posting text (canonical name or a catalogue alias). This catches

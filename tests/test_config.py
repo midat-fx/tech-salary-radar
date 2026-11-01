@@ -1,4 +1,4 @@
-"""Skeleton sanity checks (PLAN.md §7): config and catalog import and stay self-consistent."""
+"""Skeleton sanity checks: config and catalog import and stay self-consistent."""
 
 from etl.config import SALARY_MAX_USD, SALARY_MIN_USD, SOURCES
 from etl.skills.catalog import CANONICAL, SKILLS

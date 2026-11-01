@@ -1,4 +1,4 @@
-"""Parse the three ATS formats from live-captured fixtures via httpx.MockTransport (PLAN.md stage 1)."""
+"""Parse the three ATS formats from live-captured fixtures via httpx.MockTransport."""
 
 from pathlib import Path
 

@@ -76,7 +76,7 @@ def cmd_run(args):
 
 
 def cmd_backfill(args):
-    """One-off: rebuild data/jobs/* keyed by each open job's publish date (PLAN.md stage 4)."""
+    """One-off: rebuild data/jobs/* keyed by each open job's publish date."""
     import shutil
 
     from etl.normalize import backfill_job_rows

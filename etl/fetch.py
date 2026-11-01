@@ -1,4 +1,4 @@
-"""Seed-list crawl: iterate companies -> per-ATS clients -> normalized jobs (PLAN.md §3.1, stage 1)."""
+"""Seed-list crawl: iterate companies -> per-ATS clients -> normalized jobs."""
 
 from etl.config import FETCH_CIRCUIT_BREAK, FETCH_PAUSE_SEC
 from etl.clock import SystemSleeper

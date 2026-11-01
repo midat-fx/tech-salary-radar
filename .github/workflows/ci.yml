@@ -1,7 +1,7 @@
 name: ci
 
 # ruff + pytest. The llm-eval step is added in stage 5 (needs GEMINI_API_KEY).
-# paths-ignore keeps daily data commits from triggering CI (PLAN.md §8 rule 8).
+# paths-ignore keeps daily data commits from triggering CI.
 on:
   push:
     branches: [main]

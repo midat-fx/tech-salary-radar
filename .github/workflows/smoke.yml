@@ -1,6 +1,6 @@
 name: smoke
 
-# Diagnostic: confirm the three public ATS APIs are reachable from Actions egress (PLAN.md §4).
+# Diagnostic: confirm the three public ATS APIs are reachable from Actions egress.
 on:
   workflow_dispatch:
 
