@@ -1,4 +1,4 @@
-"""Canonical skill catalog — exactly 61 skills. Exhaustive; do NOT edit (see PLAN.md §6.1)."""
+"""Canonical skill catalog — exactly 61 skills. Exhaustive; do NOT edit."""
 
 SKILLS = {
     "Python": ["python3", "питон"], "SQL": ["t-sql", "pl/sql"],

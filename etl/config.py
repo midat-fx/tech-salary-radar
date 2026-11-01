@@ -1,4 +1,4 @@
-"""All ETL constants. Single source of truth for the pipeline (see PLAN.md §3.4)."""
+"""All ETL constants. Single source of truth for the pipeline."""
 
 USER_AGENT = "tech-salary-radar/1.0 (+https://github.com/midat-fx/tech-salary-radar; midat.faizov@gmail.com)"
 

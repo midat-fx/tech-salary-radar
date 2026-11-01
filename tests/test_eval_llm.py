@@ -1,4 +1,4 @@
-"""Live Gemini eval: micro-F1 over data/eval/skills_eval.jsonl must be >= 0.75 (PLAN.md §6.4).
+"""Live Gemini eval: micro-F1 over data/eval/skills_eval.jsonl must be >= 0.75.
 
 Marked llm_eval -> auto-skipped when GEMINI_API_KEY is absent (see conftest.py).
 Batches exactly like production (LLM_BATCH_SIZE) so the score reflects the real pipeline, not a
@@ -39,7 +39,7 @@ def _bootstrap(per_doc, replicates=1000, seed=11):
 @pytest.mark.llm_eval
 def test_skills_micro_f1():
     if not EVAL.exists():
-        pytest.skip("eval set not built yet (needs owner-reviewed labels)")
+        pytest.skip("eval set not built yet (needs hand-reviewed labels)")
     examples = [json.loads(line) for line in EVAL.read_text().splitlines() if line.strip()]
 
     got = {}

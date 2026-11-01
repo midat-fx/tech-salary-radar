@@ -1,4 +1,4 @@
-"""skill_premium: only LLM-processed jobs form the pools; bootstrap CI is reported (PLAN.md §3.6)."""
+"""skill_premium: only LLM-processed jobs form the pools; bootstrap CI is reported."""
 
 from etl.aggregate import _con, skill_premium
 from etl.normalize import write_partition
@@ -35,7 +35,7 @@ def _skill_row(uid, skill):
 def _build(tmp_path, n_unprocessed, unprocessed_mid=500_000):
     """16 processed jobs WITH Python @200k, 10 processed WITHOUT @100k, N unprocessed @500k.
 
-    16 (not 10) because a skill needs >=15 salary-bearing jobs overall to qualify (PLAN.md §3.6).
+    16 (not 10) because a skill needs >=15 salary-bearing jobs overall to qualify.
     """
     snaps, jobs, skills = [], [], []
     for i in range(16):

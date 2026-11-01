@@ -1,4 +1,4 @@
-"""Salary parsing/normalization to annual gross USD (PLAN.md §5, stage 2)."""
+"""Salary parsing/normalization to annual gross USD."""
 
 from etl.salary import normalize_salary, parse_salary, to_annual
 
@@ -54,7 +54,7 @@ def test_greenhouse_regex_from_text():
     assert s and s["min"] == 108400 and s["max"] == 129600
 
 
-# --- golden cases lifted from production text (PLAN improvements 1.2 / 1.3 / 1.9) ---
+# --- golden cases lifted from production text ---
 
 def _gh(text):
     return parse_salary({"source": "greenhouse", "description": text})

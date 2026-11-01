@@ -1,6 +1,6 @@
 name: llm-eval
 
-# Quality gate for skill extraction (PLAN.md §6.4): micro-F1 >= 0.75 on the reviewed eval set.
+# Quality gate for skill extraction: micro-F1 >= 0.75 on the reviewed eval set.
 # A separate workflow on purpose: ci.yml uses paths-ignore ["data/**"], which would hide the very
 # pushes that change data/eval/**, and per-job path filters do not exist in Actions.
 on:

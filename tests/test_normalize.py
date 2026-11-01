@@ -1,4 +1,4 @@
-"""Region / seniority / management / role-filter / dedup (PLAN.md §3.6, §3.7)."""
+"""Region / seniority / management / role-filter / dedup."""
 
 import pytest
 
